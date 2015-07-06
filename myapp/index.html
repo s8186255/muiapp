@@ -3,16 +3,18 @@
 
 	<head>
 		<meta charset="utf-8">
-		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 		<title>hello world</title>
 		<link rel="stylesheet" href="css/mui.min.css">
 	</head>
 
 	<body>
 		<header class="mui-bar mui-bar-nav">
-			<a class="mui-icon mui-icon-bars mui-pull-left"></a>
-			<a id="info" class="mui-icon mui-icon-info-filled mui-pull-right" style="color: #999;"></a>
-			<h1 class="mui-title">应用标题</h1>
+			<a class="mui-icon mui-icon-bars mui-pull-left" style="color: #000;"></a>
+			<a id="info" class="mui-icon mui-icon-info-filled mui-pull-right" style="color: #000;"></a>
+			<h1 class="mui-title">应用标题1</h1>
 		</header>
 
 		<script src="js/mui.min.js"></script>
@@ -132,6 +134,45 @@
 					closeMenu();
 				} else {
 					openMenu();
+				}
+			});
+			 //敲击顶部导航，内容区回到顶部
+			document.querySelector('header').addEventListener('doubletap', function() {
+				main.children()[0].evalJS('mui.scrollTo(0, 100)');
+			});
+			 //主界面向右滑动，若菜单未显示，则显示菜单；否则不做任何操作
+			window.addEventListener("swiperight", openMenu);
+			 //主界面向左滑动，若菜单已显示，则关闭菜单；否则，不做任何操作；
+			window.addEventListener("swipeleft", closeMenu);
+			 //侧滑菜单触发关闭菜单命令
+			window.addEventListener("menu:close", closeMenu);
+			window.addEventListener("menu:open", openMenu);
+
+			 //重写mui.menu方法，Android版本menu按键按下可自动打开、关闭侧滑菜单；
+			mui.menu = function() {
+					if (showMenu) {
+						closeMenu();
+					} else {
+						openMenu();
+					}
+				}
+				//处理右上角关于图标的点击事件；
+			var subWebview = null,
+				template = null;
+			document.getElementById('info').addEventListener('tap', function() {
+				if (subWebview == null) {
+					//获取共用父窗体
+					template = plus.webview.getWebviewById("default-main");
+				}
+				if (template) {
+					subWebview = template.children()[0];
+					subWebview.loadURL('examples/info.html');
+					//修改共用父模板的标题
+					mui.fire(template, 'updateHeader', {
+						title: '关于',
+						showMenu: false
+					});
+					template.show('slide-in-right', 150);
 				}
 			});
 			
