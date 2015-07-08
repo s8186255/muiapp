@@ -23,7 +23,7 @@
 			var menu = null,
 				main = null;
 			var showMenu = true;
-			//初始化
+			 //初始化
 			mui.init({
 				swipeBack: false,
 				statusBarBackground: '#f7f7f7',
@@ -31,20 +31,41 @@
 					doubletap: true
 				},
 				subpages: [{
-					id: 'list',
-					url: 'grid-default.html',
+					id: 'main',
+					url: 'main.html',
 					styles: {
 						top: '45px',
 						bottom: 0,
 						bounce: 'vertical'
 					}
 				}],
-				preloadPages:[{
-					id:'hello01',
-					url:'res-list.html'
+				preloadPages: [{
+					id: 'hello',
+					url: 'examples/indexed-list.html',
+					styles: {
+						top: '45px',
+						bottom: 0,
+						bounce: 'vertical'
+					}
+				}, {
+					id: 'hello01',
+					url: 'plus/test.html',
+					styles: {
+						top: '45px',
+						bottom: 0,
+						bounce: 'vertical'
+					}
+				}, {
+					id: 'hello02',
+					url: 'list.html',
+					styles: {
+						top: '45px',
+						bottom: 0,
+						bounce: 'vertical'
+					}
 				}]
 			});
-			//html+的初始化
+			 //html+的初始化
 			mui.plusReady(function() {
 				//仅支持竖屏显示
 				plus.screen.lockOrientation("portrait-primary");
@@ -53,12 +74,12 @@
 				//处理侧滑导航，为了避免和子页面初始化等竞争资源，延迟加载侧滑页面；
 				setTimeout(function() {
 					menu = mui.preload({
-						id: 'index-menu',
-						url: 'index-menu.html',
+						id: 'menu',
+						url: 'menu.html',
 						styles: {
 							left: 0,
 							width: '70%',
-							zindex: -1 
+							zindex: -1
 						},
 						show: {
 							aniShow: 'none'
@@ -66,17 +87,15 @@
 					});
 				}, 200);
 			});
-			
-			
 			/*与菜单有关的配置			
-			* isInTrnsition，是否打开
-			* openMenu
-			* closeMenu
-			* 
-			* 
-			* */
+			 * isInTrnsition，是否打开
+			 * openMenu
+			 * closeMenu
+			 *
+			 *
+			 * */
 			var isInTransition = false;
-			
+
 			function openMenu() {
 				if (isInTransition) {
 					return;
@@ -132,7 +151,6 @@
 					}, 300);
 				}
 			};
-
 			document.querySelector('.mui-icon-bars').addEventListener('tap', function(e) {
 				if (showMenu) {
 					closeMenu();
@@ -151,7 +169,6 @@
 			 //侧滑菜单触发关闭菜单命令
 			window.addEventListener("menu:close", closeMenu);
 			window.addEventListener("menu:open", openMenu);
-
 			 //重写mui.menu方法，Android版本menu按键按下可自动打开、关闭侧滑菜单；
 			mui.menu = function() {
 					if (showMenu) {
@@ -179,7 +196,6 @@
 					template.show('slide-in-right', 150);
 				}
 			});
-			
 			 //首页返回键处理
 			 //处理逻辑：如果有menu，则关闭menu，否则在1秒内，连续两次按返回键，则退出应用，推出应用依靠的是plus.runtime.quit();这个系统函数
 			var first = null;
@@ -190,7 +206,7 @@
 					//首次按键，提示‘再按一次退出应用’
 					if (!first) {
 						first = new Date().getTime();
-						mui.toast('再按一次退出应用');
+						mui.toast('再按一次退出应用了');
 						setTimeout(function() {
 							first = null;
 						}, 1000);
