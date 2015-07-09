@@ -23,19 +23,19 @@
 		<div class="mui-content">
 			<ul class="mui-table-view mui-grid-view mui-grid-9">
 				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-					<a href="#" id='multi-voice'>
+					<a href="functions/multi-voice.html" id='multi-voice'>
 						<span class="mui-icon mui-icon-home"></span>
 						<div class="mui-media-body">一呼百应</div>
 					</a>
 				</li>
 				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-					<a href="#" id='hello01'>
+					<a href="#" id='multi-voice-record'>
 						<span class="mui-icon mui-icon-email"></span>
 						<div class="mui-media-body">群发语音</div>
 					</a>
 				</li>
 				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
-					<a href="#" id='hello02'>
+					<a href="functions/multi-message.html" id='hello02'>
 						<span class="mui-icon mui-icon-chatbubble"></span>
 						<div class="mui-media-body">群发短信</div>
 					</a>
@@ -60,20 +60,21 @@
 		mui.init({
 			swipeBack: true //启用右滑关闭功能
 		});
-		openUrl('hello02', 'hello02');
-		openUrl('hello01', 'hello01');
-		openUrl('multi-voice', 'multi-voice');
-		//openUrl('contact','contact')
+		 //		openUrl('hello02', 'hello02');
+		 //		openUrl('hello01', 'hello01');
+		 //		openUrl('multi-voice', 'multi-voice');
+		 //openUrl('contact','contact')
+		openUrl('functions/multi-record.html');
 
-		function openUrl(elementId, userDefinedId) {
-			document.getElementById(elementId).addEventListener('tap', function() {
+		function openUrl(url) {
+			document.getElementById('multi-voice').addEventListener('tap', function() {
 				//打开关于页面
 				mui.openWindow({
-					id: userDefinedId,
+					//id: userDefinedId,
+					url: url
 				});
 			});
 		}
-		
 	</script>
 
 </html>
