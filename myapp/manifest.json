@@ -23,9 +23,7 @@
         "Audio": {
             "description": "访问麦克风"
         },
-        "Messaging":{
-        	"description": "短彩邮件插件"
-        },
+        
         "Cache": {
             "description": "管理应用缓存"
         },
@@ -35,9 +33,7 @@
         "Console": {
             "description": "跟踪调试输出日志"
         },
-        "Contacts": {
-            "description": "访问系统联系人信息"
-        },
+        "Contacts": {},
         "Device": {
             "description": "访问设备信息"
         },

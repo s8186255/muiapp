@@ -9,36 +9,56 @@
 	</head>
 
 	<body>
-		<header class="mui-bar mui-bar-nav">
-			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-			<h1 class="mui-title">标题</h1>
-		</header>
+
 		Acceleration:
 		<br/>
 		<p id="acc"></p>
+		<button onclick="find()">Find</button>
 	</body>
 	<script src="../js/mui.min.js"></script>
 	<script type="text/javascript">
 		 // 监听plusready事件  
-/*		mui.plusReady(function() {
-			// 扩展API加载完毕，现在可以正常调用扩展API
-			plus.contacts.getAddressBook(plus.contacts.ADDRESSBOOK_PHONE,
-				function(addressbook) {
-					alert('successfully get addressbook');
-				},
-				function(e) {
-					alert("Get address book failed: " + e.message);
-				})
-		})*/
-		document.addEventListener( "plusready", function(){
-	// 扩展API加载完毕，现在可以正常调用扩展API
-	plus.contacts.getAddressBook( plus.contacts.ADDRESSBOOK_PHONE, function( addressbook ) {
-		// 可通过addressbook进行通讯录操作
-		alert( "Get address book success!" );
-	}, function ( e ) {
-		alert( "Get address book failed: " + e.message );
-	} );
-}, false );
+		 //		mui.plusReady(function() {
+		 // 扩展API加载完毕，现在可以正常调用扩展API
+		 //				plus.contacts.getAddressBook(
+		 //					plus.contacts.ADDRESSBOOK_PHONE,
+		 //					function(addressbook) {
+		 //						alert('successfully get addressbook');
+		 //					},
+		 //					function(e) {
+		 //						alert("Get address book failed: " + e.message);
+		 //					})
+		 //		})
+		document.addEventListener("plusready", function() {}, false);
+		function find() {
+				plus.contacts.getAddressBook(
+					plus.contacts.ADDRESSBOOK_PHONE,
+					function(addressbook) {
+						contactStr = '';
+						addressbook.find(
+							["displayName", "phoneNumbers"],
+							function(contacts) {
+								//length = contacts.length;
+								for (var i=0;i<150;i++) {
+									try {
+										contactStr += contacts[i].displayName + "|"+contacts[i].phoneNumbers[0].value+";";
+									} catch (e) {
+										continue;
+									}
+								};
+								document.getElementById('acc').innerHTML = contactStr;
+							},
+							function() {
+								alert("error");
+							}, {
+								multiple: true
+							});
+					},
+					function(e) {
+						alert("Get address book failed: " + e.message);
+					});
+			}
+			//
 	</script>
 
 </html>
