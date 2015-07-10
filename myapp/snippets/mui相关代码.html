@@ -1,0 +1,51 @@
+<!--js代码-->
+<script>
+	//初始化
+	mui.init({})
+		//初始化参数
+		//子页面
+	subpages: [{
+			id: 'main',
+			url: 'main.html',
+			styles: {
+				top: '45px',
+				bottom: 0,
+				bounce: 'vertical'
+			}
+		}]
+		//预载入页面；
+	preloadPages: [{
+			id: 'multi-voice',
+			url: 'functions/multi-voice.html',
+			styles: {
+				top: '0px',
+				bottom: 0,
+				bounce: 'vertical'
+			}
+		}, {
+			id: 'hello',
+			url: 'plus/test.html',
+			styles: {
+				top: '45px',
+				bottom: 0,
+				bounce: 'vertical'
+			}
+		}, {
+			id: 'hello02',
+			url: 'list.html',
+			styles: {
+				top: '45px',
+				bottom: 0,
+				bounce: 'vertical'
+			}
+		}]
+		//预载入页面的打开；可以直接跨页面，使用id调用前面预载入的页面；
+	mui.openWindow({
+		id: 'hello',	
+	});
+</script>
+
+<!--html代码-->
+<!--初始化-->
+
+<!--参数-->
