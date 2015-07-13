@@ -1,0 +1,209 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var page = 1;
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+
+			function plusReady() {
+				$('#li_load').hide();
+				loadInfo();
+			}
+
+			function loadInfo() {
+				plus.nativeUI.showWaiting("正在抽取奖品,请等待~");
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=choujiang&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&jsoncallback=choujiang',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						$("#plist").find("li").remove();
+						if (data.status == '1') {
+							$('#li_load').hide();
+							showDiv.style.display = "block";
+							divtitle.innerHTML = data.title;
+							divresult.innerHTML = data.result;
+							divcontent.innerHTML = data.content;
+							//$("#plist").append("<li style='font-size: 15px;' onclick='msgShow(" + data.id + ")'>【" + data.jine + "】" + "" + data.content + "</span></br><span style='color: #FF7472;'>" + data.jpType + "</span>" + "</li>");
+						} else {
+							$('#li_load').html(data.content);
+							$('#li_load').show();
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function myJiang(p) {
+				showDiv.style.display = "none";
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=myJiang&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&page=' + p + '&jsoncallback=myJiang',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						if (p == 1) {
+							$("#plist").find("li").remove();
+							$('#li_load').hide();
+						}
+						if (data.length > 0) {
+							$.each(data, function(index, element) {
+								if (element.zhong == "1") {
+									$("#plist").append("<li style='font-size: 15px;height:40px;' ><div class = 'jiangInfo-left-Y'></div><div class= 'jiangInfo-right'>" + element.addTime + "</br>" + element.title + "</div></li>");
+								} else {
+									$("#plist").append("<li style='font-size: 15px;height:40px;' ><div class = 'jiangInfo-left-N'></div><div class= 'jiangInfo-right'>" + element.addTime + "</br>" + element.title + "</div></li>");
+								}
+							});
+							$('#li_more').show();
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,木有了");
+							$('#li_load').show();
+							$('#li_more').hide();
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function allJiang(p) {
+				showDiv.style.display = "none";
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=allJiang&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&page=' + p + '&jsoncallback=allJiang',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						if (p == 1) {
+							$("#plist").find("li").remove();
+							$('#li_load').hide();
+						}
+						if (data.length > 0) {
+							$.each(data, function(index, element) {
+								if (element.zhong == "1") {
+									$("#plist").append("<li style='font-size: 15px;height:40px;' ><div class = 'jiangInfo-left-Y'></div><div class= 'jiangInfo-right'><span style='color: #FF7472;'>" + element.ddusername + "</span>&nbsp;&nbsp;" + element.addTime + "</br>" + element.title + "</div></li>");
+								} else {
+									$("#plist").append("<li style='font-size: 15px;height:40px;' ><div class = 'jiangInfo-left-Y'></div><div class= 'jiangInfo-right'><span style='color: #FF7472;'>" + element.ddusername + "</span>&nbsp;&nbsp;" + element.addTime + "</br>" + element.title + "</div></li>");
+								}
+							});
+							$('#li_more').show();
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,木有了");
+							$('#li_load').show();
+							$('#li_more').hide();
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function more() {
+				page++;
+				if (t == 'in') {
+					myJiang(page);
+				} else {
+					allJiang(page);
+				}
+			}
+			var t = "in";
+
+			function orderList(type) {
+				if (type == 'in') {
+					t = 'in';
+					document.getElementById("order_taobao").className = "order_taobao";
+					document.getElementById("order_mall").className = "order_mall";
+					myJiang(1);
+				} else if (type == 'out') {
+					t = "out";
+					document.getElementById("order_mall").className = "order_taobao";
+					document.getElementById("order_taobao").className = "order_mall";
+					allJiang(1);
+				}
+			}
+
+			function qr() {
+				if (showDiv.style.display == "block") {
+					showDiv.style.display = "none";
+				} else {
+					showDiv.style.display = "block";
+				}
+			}
+			var ws = null;
+
+			function goback() {
+				ws = plus.webview.getWebviewById("webview_shake.html");
+				ws.evalJS("shake_reload()");
+				back();
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+		<style type="text/css">
+			li {
+				padding: 0.7em;
+				margin-top: 8px;
+				background-color: #fff;
+			}
+			li:active {
+				background: #EAEAEA;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="goback();"></div>
+			<div class="nvtt">摇奖结果</div>
+			<div class="jiangHelp" onclick="clicked('webview_jiangpin.html', true);"></div>
+		</header>
+		<div id="content" class="scontent " style="margin-bottom:50px;">
+			<ul id="plist" style="list-style:none;margin:0;padding:0;"></ul>
+			<li class="ditem" id="li_load" style="text-align:center;border-style: none; "></li>
+			<li class="ditem" id="li_more" onclick="more() " style="display:none;border-style: none;font-siz:12px;height: 22px; "> 点击查看更多>></li>
+		</div>
+
+		<bottom>
+			<div id='order_taobao' class="order_taobao" onclick="orderList('in');">我的手气</div>
+			<div id='order_mall' class="order_mall" onclick="orderList('out');">大家的手气</div>
+		</bottom>
+
+		<div id="showDiv" class="showDiv">
+			<div style="border-radius:5px;background: #FF5452;width: 94%;margin-left:3%;color: #fff; float:left;margin-top:100px;">
+				<div id="divtitle" style="float: left; border-bottom: dashed 1px #cBcBcB; width:100%;font-size: 18px;line-height: 45px;"></div>
+				<div id="divresult" style="float: left; border-bottom: dashed 1px #cBcBcB; width:100%;height:55px;line-height: 55px; font-size: 18px;"></div>
+				<div style="float: left; width:100%;font-size: 15px;line-height: 20px;">
+					<div id="divcontent" style="margin-left:5%;width:90%;text-align:left;margin-top:10px;color: #eee;"></div>
+				</div>
+				<div style="float: left; width:100%;margin-top: 20px;">
+					<div class='showJiang' onclick="myJiang(1);">&nbsp;查看我的中奖记录&nbsp;</div>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

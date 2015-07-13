@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Choose Items</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../lib/mui/mui.css" />
+		<link rel="stylesheet" href="../../css/app.css" />
+	</head>
+
+	<body>
+		<nav class="mui-bar mui-bar-tab app-bottom-bar app-no-border app-no-shadow" >
+	  	  	 <button app-event="choose" class="mui-btn app-btn app-primary app-no-border" style="width:47%!important; ">OK</button>
+		     <button app-event="cancel" class="mui-btn app-btn app-primary app-no-border" style="width:47%!important; ">Cancel</button>
+		</nav>
+		<div class="mui-content has-app-bottom-bar">
+			<div class="search-c">
+			</div>
+			<!--下拉刷新容器-->
+			<div id="refreshContainer" class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul id="choose_list" class="mui-table-view mui-table-view-chevron">
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script id="choose_list" type="text/template">
+		{{#data}}
+			<li class="mui-table-view-cell mui-{{type}} mui-left" value="{{getid}}">
+				<span class="{{icon}}"></span>
+				<input name="{{type}}" type="{{type}}">{{getname}}
+			</li>
+		{{/data}}
+	</script>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js"></script>
+	<script src="../../lib/mustache/mustache.min.js"></script>
+	<script src="../../lib/framework/search.js"></script>
+	<script>
+		App.pageIndex = 0;
+		App.go({
+			init : {
+				pullRefresh : {
+					// 开启下拉刷新
+					down : {
+						beforeDefined : function(tpl) {
+							App.pageNo = 1;
+							App.resetLoadMore();
+						}
+					},
+					// 上拉加载更多
+					up : {
+						hasMore : function (tpl) {
+							var result = tpl.ajax.result;
+							var hasMore = App.pageNo <= result.pageCount;
+							return hasMore;
+						}
+					},
+				},
+			},
+			deviceReady : function(){
+				App.pageNo = 1;
+				App.pageSize = 20;
+			},
+			events : {
+				keys : {
+					back : function(e) {
+						mui.back();
+					}
+				},
+				// 自定义事件
+				custom : {
+					choose:function(e){
+						var chooseItems = [];
+						var inputs = document.querySelectorAll("input");
+						for(var i = inputs.length; i--;) {
+							if(inputs[i].checked){
+								var id = inputs[i].parentNode.value;
+								var name = inputs[i].parentNode.innerText;
+								var item = {};
+								item[App.valueName] = id;
+								item[App.textName] = name;
+								chooseItems.push(item);
+							}
+						}
+						App.notifyOpener({items:chooseItems});
+						mui.back();
+					},
+					cancel:function(e){
+						mui.back();
+					},
+				}
+			},
+			// 模板渲染
+			template : {
+				// 定义模板的参数,比如分页参数等
+				defined : function(tpl) {
+					var styles = plus.webview.currentWebview().getStyle();
+					var data = styles.data;
+					App.multiple = data.multiple || false;
+					App.textName = data.textName;
+					App.valueName = data.valueName;
+					var url = data.url;
+					var items = data.items;
+					if (url) {
+						tpl.ajax.url = url;
+					} else if(items) {
+						tpl.ajax.result = {
+							data : {
+								data : items
+							}
+						}
+					}
+					
+					tpl.ajax.options.data.pageNo = App.pageNo++;
+					tpl.ajax.options.data.pageSize = App.pageSize;
+				},
+				// 渲染模板
+				render : function(tpl) {
+					if (!tpl.ajax.result || typeof tpl.ajax.result == 'undefined') {
+						return;
+					}
+					// HTTP请求返回的数据
+					var data = tpl.ajax.result.data;
+					// 准备好你的数据模型
+					var model = {
+						data : data,
+						type : function(){
+							return App.multiple == true ? 'checkbox' : 'radio';
+						},
+						getid : function(){
+							return this[App.valueName];
+						},
+						getname : function(){
+							return this[App.textName];
+						}
+					};
+					// 使用'大胡子'模板引擎来渲染
+					var output = Mustache.render(tpl.html, model);
+					return output;
+				}
+			},
+			appReady : function() {
+				App.notifyParent('settings', {
+					buttons : {
+						hide : true,
+					}
+				});
+			}
+		});
+	</script>
+</html>

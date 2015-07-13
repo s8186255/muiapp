@@ -1,0 +1,371 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var ws = null;
+			var tempUrl = null;
+			var time = 15000;
+
+			function plusReady() {
+					plus.nativeUI.showWaiting("数据加载中~");
+					document.getElementById("beiyaoqingren").innerHTML = localStorage.getItem("inv_beiyaoqingren");
+					ws = plus.webview.currentWebview();
+					var tempUrl = ws.tempUrl;
+					if (tempUrl == "注册成功") {
+						qrcode.style.display = "block";
+					}
+					loadInfo();
+					countJiang();
+					checkFav();
+					//checkUpdate("");
+				}
+			
+			//加载账户信息
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+
+			function loadInfo() {
+				var uuid = plus.device.uuid;				
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=info&platform='+plus.os.name+'&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&clientid=' + localStorage.getItem("clientid") + '&uuid=' + uuid + '&jsoncallback=userInfo',
+					timeout: time,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						if (data.status == 1) {
+							$("#username-text").html(data.username);
+							$("#userfanli").html(data.jifenbao);
+							$("#useryue").html(data.money);
+							$("#userorder").html(data.tbtotal);
+							$("#usermsg").html(data.msgtotal);
+
+						} else {
+							ws = plus.webview.currentWebview();
+							ws.close();
+							plus.ui.alert("登录信息错误,请重新登录!", function() {}, "温馨提示");
+							localStorage.removeItem("rm_uid");
+							localStorage.removeItem("rm_md5pwd");
+							localStorage.removeItem("rm_username");
+							localStorage.removeItem("inv_jine");
+							localStorage.removeItem("inv_renshu");
+							clicked('webview_login.html', true);
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+			
+			function closediv() {
+				qrcode.style.display = "none";
+			}
+
+			function checkFav() {
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=checkFav&uid=' + localStorage.getItem("rm_uid") + '&jsoncallback=checkFav',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						if (data.status == 1) {
+							$('#taoFav').show();
+						} else {
+							if (data.msg != "") {
+								plus.ui.alert(data.msg, function() {}, "温馨提示");
+							}
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function checkUpdate(iosName) {
+				var banben = "1.0";
+				var t_url = "";
+				if (iosName == '1') {
+					t_url = "&system=" + plus.os.name;
+				}
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=checkUdate&banben=' + banben + t_url + '&jsoncallback=checkUdate',
+					timeout: time,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						if (data.status == 1) {
+							// 弹出提示信息框
+							if (t_url != "") {
+								plus.ui.confirm("\n" + data.msg, function(i) {
+									if (i == 0) {
+										plus.runtime.openURL(data.http, '', '');
+										//clicked('webview_info.html', true, false, data.http);
+										plus.runtime.quit();
+									}
+								}, data.title, [data.button1, "下次"]);
+							} else {
+								$('#userUpdate').show();
+							}
+						} else {}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+
+			}
+
+			function refresh() {
+				loadInfo();
+			}
+
+			function isLogin(id, wa, ns, url) {
+				if (localStorage.getItem("rm_uid")) {
+					clicked(id, wa, ns, url);
+				} else {
+					clicked('webview_login.html', true, false, url, id);
+				}
+			}
+
+			function chafanli(id, wa, ns, url) {
+				// 弹出提示信息框
+				plus.ui.confirm("\n您将进入【淘宝收藏夹】，只有进入单件商品后，点击下方【返利模式购买】完成下单，才能获得返利！", function(i) {
+					if (i == 0) {
+						if (localStorage.getItem("rm_uid")) {
+							//alert(url);
+							clicked(id, wa, ns, url);
+						} else {
+							clicked('webview_login.html', true, false, url, id);
+						}
+					}
+				}, "亲，请仔细阅读下方说明！", ["嗯，知道操作了"]);
+			}
+
+			function clearCash() {
+				// 弹出提示信息框
+				plus.ui.confirm("亲，确认退出登录吗？", function(i) {
+					if (i == 0) {
+						localStorage.removeItem("rm_uid");
+						localStorage.removeItem("rm_md5pwd");
+						localStorage.removeItem("rm_username");
+						localStorage.removeItem("inv_jine");
+						localStorage.removeItem("inv_renshu");
+						ws = plus.webview.currentWebview();
+						ws.close();
+					}
+				}, "温馨提示", ["确定", "取消"]);
+			}
+
+			function tishi() {
+				plus.ui.alert("亲，本功能还未完善，技术还在赶工，敬请期待！ 感谢您的支持！", function() {}, "温馨提示");
+			}
+
+			function goback() {
+				if (qrcode.style.display == "block") {
+					// 弹出提示信息框
+					plus.ui.confirm("\n离人脉返现【现金见面礼】只差一步，确定要放弃吗？", function(i) {
+						if (i == 0) {
+							qrcode.style.display = "none";
+						}
+					}, "温馨提示", ["放弃", "继续填写"]);
+				} else {
+					back();
+				}
+			}
+
+			 //领取好友邀请奖励
+			function lingqu() {
+				var imei = plus.device.imei;
+				if (plus.os.name.toLowerCase() != "ios") {
+					if (imei == "" || imei <= 0) {
+						plus.ui.alert("非常抱歉，人脉返现不支持在此设备上运行！", function() {}, "温馨提示")
+						return;
+					}
+				}
+				var uuid = plus.device.uuid;
+				var invid = inv_id.value.trim();
+				if (invid.length <= 1) {
+					plus.ui.alert("\n亲，请填写正确的【邀请码】哦！如果没有【邀请码】,也可以试试手气的！", function() {}, "温馨提示");
+					return;
+				}
+				
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=lingqu&invid=' + invid + '&unid=' + uuid + '&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&jsoncallback=lingqu',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						if (data.status == 1) {
+							if (data.msg != "") {
+								plus.ui.alert("\n" + data.msg, function() {}, "温馨提示");
+								qrcode.style.display = "none";
+							}
+						} else {
+							if (data.msg != "") {
+								plus.ui.alert("\n" + data.msg, function() {}, "温馨提示");
+							}
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+			
+			
+			function countJiang() {
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=countJiang&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&jsoncallback=countJiang',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						if (data.status == 1) {
+							document.getElementById("countJ").innerText = " (剩余"+data.countJ+"次)";
+							//$('#countJ').innerText = "(您有"+data.countj+"次机会)";
+						} else {
+							if (data.msg != "") {
+								plus.ui.alert(data.msg, function() {}, "温馨提示");
+							}
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+			
+			//重新加载
+			function info_reload() {
+				plusReady();
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="goback();"></div>
+			<div class="nvtt">我的账户</div>
+			<div class="exit" onclick="clearCash();"></div>
+		</header>
+		<div id="content" class="scontent">
+			<ul class="dlist" id="dlist">
+				<li class="ditem_user" id="username" onclick="isLogin('webview_userEdit.html',true);">
+					<div class="username"></div>
+					<div class="user-text" id="username-text"></div>
+					<div class="editImg"></div>
+				</li>
+				<li class="ditem-empty" id="ditem-empty"></li>
+				<li class="ditem_user" onclick="isLogin('webview_duihuan.html',true);">
+					<div class="userhongbao"></div>
+					<div class="user-text-left">淘宝返利</div>
+					<div id="userfanli" class="user-text-right">0</div>
+					<div class="jiantou"></div>
+				</li>
+				<li class="ditem_user" onclick="isLogin('webview_tixian.html',true);">
+					<div class="useryue"></div>
+					<div class="user-text-left">其他返利</div>
+					<div id="useryue" class="user-text-right">0</div>
+					<div class="jiantou"></div>
+				</li>
+				<li class="ditem_user" onclick="isLogin('webview_order.html',true);">
+					<div class="userorder"></div>
+					<div class="user-text-left">订单明细</div>
+					<div id="userorder" class="user-text-right">0</div>
+					<div class="jiantou"></div>
+				</li>
+				<li class="ditem_user" onclick="isLogin('webview_msg.html',true);">
+					<div class="usermsg"></div>
+					<div class="user-text-left">站内短信</div>
+					<div id="usermsg" class="user-text-right">0</div>
+					<div class="jiantou"></div>
+				</li>
+				<li class="ditem_user" onclick="isLogin('webview_cha.html',true);">
+					<div class="usercha"></div>
+					<div class="user-text-left" style="width: 70%;">
+						订单跟踪 <span style="color: #FF0000;font-size: 15px;">(100%保证返利)</span>
+					</div>
+					<div class="jiantou"></div>
+				</li>
+				<li class="ditem_user" id="taoFav" style="display:none;" onclick="chafanli('webview_taobao.html',true,false,'http://h5.m.taobao.com/fav/index.htm');">
+					<div class="taoFav"></div>
+					<div class="user-text-left" style="width: 70%;">
+						我的收藏夹 <span style="color: #FF0000;font-size: 15px;">(淘宝)</span>
+					</div>
+					<div class="jiantou"></div>
+				</li>
+				<li class="ditem-empty" id="ditem-empty"></li>
+				<li class="ditem_user" id="userShake" onclick="clicked('webview_shake.html', true);">
+					<div class="usercomment"></div>
+					<div class="user-text-left" style="width: 70%;">
+						摇一摇<span style="color: #FF0000;font-size: 15px;" id = "countJ"> (签到)</span></div>
+					<div class="jiantou"></div>
+				</li>
+				<li class="ditem_user" id="usercontact" onclick="clicked('webview_inv.html', true);">
+					<div class="usercontact"></div>
+					<div class="user-text-left">邀请有奖<span style="color: #FF0000;font-size: 15px;"> (现金)</span></div>
+					<div class="jiantou"></div>
+				</li>
+				<li class="ditem_user" id="userhelp" onclick="clicked('webview_help.html',true,false,'http://www.rmfanx.com/apphelp/index.html');">
+					<div class="userhelp"></div>
+					<div class="user-text-left">返利教程</div>
+					<div class="jiantou"></div>
+				</li>
+				<li class="ditem_user" id="userhelp" onclick="clicked('webview_about.html', true);">
+					<div class="userAbout"></div>
+					<div class="user-text-left">关于我们</div>
+					<div class="jiantou"></div>
+				</li>
+				<li class="ditem_user" style="display:none;" id="userUpdate" onclick="checkUpdate('1');">
+					<div class="userUpdate"></div>
+					<div class="user-text">发现新版本啦~点击更新！</div>
+				</li>
+			</ul>
+		</div>
+
+		<div id="qrcode" class="qrcode">
+			<div style="border-radius:5px;float:left;background: #fff;margin-top: 100px;">
+				<div style="border-top-left-radius:5px;border-top-right-radius:5px;float: left; width:99%; font-size: 18px;padding-left: 1%; padding-top: 5px;padding-bottom: 5px; background: #FF5452;color: #FFFFFF;text-align: center;line-height: 22px;">
+					人脉返现【见面礼】</div>
+
+				<div style="border-top: dashed 1px #cBcBcB;float: left;text-align: left; width:99%; font-size: 16px;padding-left: 1%;background: #FF5452;color: #FFFFFF;padding-bottom: 5px;padding-top: 5px;">亲，快快填写【好友邀请码】吧！至少可获得<span id="beiyaoqingren"></span>哦！</div>
+				<div style="float: left; width:100%;margin-top: 25px;">
+					<input id="inv_id" class="input_userEdit" style="width: 50%;height: 30px;font-size: 18px;" type="text" placeholder="请输入邀请码" />
+				</div>
+				<div class="inv-left" onclick="lingqu();">领取见面礼</div>
+				<div class="inv-right" onclick="closediv();">无邀请码(试手气)</div>
+			</div>
+		</div>
+	</body>
+
+</html>

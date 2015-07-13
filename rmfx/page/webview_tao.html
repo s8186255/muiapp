@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../js/md5.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			function goBack() {
+				ws = plus.webview.currentWebview();
+				ws.close();
+			}
+
+			function refresh() {
+				document.getElementById("goodsName").value = '';
+			}
+
+			function clickImg() {
+				document.getElementById("goodsName").focus();
+			}
+
+			function searchTao() {
+				if (document.getElementById("goodsName").value.trim().length == 0) {
+					return;
+				}
+				var title = encodeURI(document.getElementById("goodsName").value);
+
+				if (localStorage.getItem("rm_uid")) {
+					clicked('webview_info.html', true, false, 'http://ai.m.taobao.com/search.html?q=' + title + '&pid=mm_32106831_3345285_13218236&commend=all&unid=' + localStorage.getItem("rm_uid") + '&taoke_type=1');
+				} else {
+					clicked('webview_login.html',true,false,'http://ai.m.taobao.com/search.html?q=' + title + '&pid=mm_32106831_3345285_13218236&commend=all&taoke_type=1','http://ai.m.taobao.com/search.html?q=' + title + '&pid=mm_32106831_3345285_13218236&commend=all&taoke_type=1');
+				}
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="goBack();"></div>
+			<div class="nvtt_tao">
+				<input id="url" type="hidden" value="http://www.rmfanx.com"></input>
+				<div style="width: 100%;"><span id="title">淘宝返利</span>
+				</div>
+			</div>
+			<div class="refresh" onclick="refresh();"></div>
+		</header>
+		<div id="content" class="scontent">
+			<div style="width:100%; height:50px;float: left;margin-top: 10px; box-shadow: 0px 1px 6px #CCC;">
+				<div style="float:left;background:url(../img/tao.png);background-repeat: no-repeat;background-size:50px;height: 50px;width: 19%;"></div>
+				<div style="float:left;width: 81%;text-align: left;">
+					<div style="float:left;width:80%;">
+						<input id="goodsName" style="-webkit-user-select:auto; width:85%;height:30px;margin-top:5px;border:solid 1px #FFC8B4;color: #777;font-size: 16px;" type="text" placeholder="粘贴商品标题拿返利" />
+					</div>
+					<div onclick="searchTao()" style="float:left;height:45px;margin-top:7px;width:20%;background:url(../img/btn_search.png);background-repeat: no-repeat;background-size:37px;"></div>
+				</div>
+			</div>
+
+			<div onclick="clickImg();" style="background:url(../img/taobk.png);background-repeat: no-repeat;background-size:100%;height: 100%;"></div>
+		</div>
+	</body>
+
+</html>

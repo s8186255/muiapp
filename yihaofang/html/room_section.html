@@ -1,0 +1,172 @@
+<section id="room_section" data-scroll="true"  data-transition="cover">
+	<style TYPE="text/css">
+	    #rptroom{width: 95%;margin: 0 auto;text-align: center;}
+		#rptroom ul{width: 100%; line-height:35px; float:right; text-align:center; margin:0 auto; background: #E5E5E5;list-style: none;}	
+		#rptroom ul li{width: 33.33%; float: left; font-size: 10px; border-right:1px solid #DCDDDD;background:#E5E5E5 ;}	
+		#newitem{width: 95%; margin:0 auto;height:40px; line-height:40px; text-align:center; margin:0 auto; margin-top:5px; margin-bottom:5px; }
+  		#newitem button{height:40px;width: 100%; background:#D1D1D1; border-radius:0px 0px; font-size:20px; color:#FFFFFF;background: #E64346;}
+		.itemdel{margin: 0 auto;margin:12px 0px 0px 5px;float:left;}
+		.itemdel img{width: 25px;opacity: 0.1;}
+		.flist li{margin-top:3px;}
+	</style>
+    <header>
+        <nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title" id="roomtitle">房间详情</h1>
+    </header>
+    <article id="room_waiting" >
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+    <article id="room_article" data-scroll="true" class="active">
+    	<div id="scrollcon" style="padding: 5px 0px 10px 0px;">
+    		
+    		<div class="fheader" id="roomheader">
+			<table border="0">
+				<tr>
+					<td width="55%" class="ffee">
+						<h2 id="rfee">0</h2>
+						<p id="rbasic">努力加载中...</p>
+					</td>
+					<td width="35%" class="finfo">
+						<ul>
+							<li id='rf01'>努力加载中...</li>
+							<li id='rf02'>努力加载中...</li>
+							<li id='rf03'>努力加载中...</li>
+						</ul>
+					</td>
+					<td style="border-left: 1px solid #DCDDDD;">
+						<ul class="fact">
+							<li><a data-target="section" href="#roomedit_section" id='rebtn'><img src="img/edit.png"/></a></li>
+							<li><img src="img/del.png" onclick="roomDel();"/></li>
+						</ul>
+					</td>
+				</tr>
+			</table>			
+		</div>
+		<div id="rptroom">
+		</div>
+		<div class="clear"></div>
+		<div id="newitem"></div>
+		<div class="clear"></div>
+		<div class='fbody' id='roombody'>
+		</div>	
+		<div class="clear"></div>
+    	</div>		
+    </article>
+</section>
+
+<script type="text/javascript">
+	$("#room_section").on('pageshow',function(){
+		setSonParam();
+	});
+	
+	$("#room_section").on('pageinit',function(){
+		var rid=getID();
+		localStorage.setItem('rid',rid);
+		
+		//设置编辑和添加按钮
+		//J.showToast($('#rabtn').href);
+		//$('#rabtn').attr('href','#roomadd_section?id='+rid);
+		$('#rebtn').attr('href','#roomedit_section?id='+rid);
+		showRoom(rid);
+		$("#room_article").attr('class','active');
+		$("#room_waiting").removeAttr('class');
+	});
+	
+	function showRoom(id){
+		var token=localStorage['token'];
+		var user=localStorage['uname'];
+		//var furl=localStorage.server+'datatest.php?s=room&rid='+id+'&callback=?';
+		var furl=localStorage.server+'data.php?t='+token+'&u='+user+'&s=room&id='+id+'&callback=?';
+		$.getJSON(furl,function(data){
+			
+			var r=eval(data);
+			//J.showToast('ok');
+			//处理头部数据
+			//$('#roomtitle').html('['+r['info'][4]+']预算详情');
+			$('#rfee').html('<span class="sy">￥</span>'+allNum(r['info'][0],3,','));
+						
+			var basic=r['info'][4]+r['info'][1]+'平米，'+r['info'][2]+'个门，'+r['info'][3]+'个窗';					
+			$('#rbasic').html(basic);					
+			
+			$('#rf01').html(r['info'][4]);
+			$('#rf02').html(r['info'][5]);
+			$('#rf03').html(myNum(r['info'][6],3,',')+'￥/m²');
+			
+			//处理报表显示		
+			var rpt='<ul>';
+			$.each(r['rpt'], function(k,v){
+				rpt+='<li>'+r['rptname'][k]+'：￥'+myNum(v,3,',')+'</li>';
+			});
+			rpt+='</ul>';
+			$('#rptroom').html(rpt);
+			
+			
+			//显示变价条目
+			var c='';
+			if(typeof(r['ci']) != 'undefined'){
+				c+='<ul class="flist" id="citem">';
+				$.each(r['ci'], function(k,v){
+					c+='<li>';
+					c+='<div class="item"><div class="z"><span class="itemdel"><img src="img/del.png" onclick="itemDel('+v+')"></span>';
+					c+='<a data-target="section" href="#item_section?iid='+v+'"><span class="fname">'+r['cname'][k]+'</span></a></div><a data-target="section" href="#item_section?iid='+v+'"><div class="y"><span class="ficon"><img src="img/an-ts.png"></span>';
+					c+='<span class="fsum">￥'+myNum(r['cprice'][k],3,',')+'</span>';
+					c+='</div></a></div></li>';	
+				});
+				c+='</u>';
+			}
+
+			//显示固定价条目
+			var b='';
+			if(typeof(r['bi']) != 'undefined'){
+				b+='<ul class="flist" id="bitem">';
+				$.each(r['bi'], function(k,v){
+					b+='<li>';
+					b+='<div class="item"><div class="z"><span class="itemdel"><img src="img/del.png" onclick="itemDel('+v+')"></span>';
+					b+='<a data-target="section" href="#item_section?iid='+v+'"><span class="fname">'+r['bname'][k]+'</span></a></div><a data-target="section" href="#item_section?iid='+v+'"><div class="y"><span class="ficon"><img src="img/an-ts.png"></span>';
+					b+='<span class="fsum">￥'+myNum(r['bprice'][k],3,',')+'</span>';
+					b+='</div></a></div></li>';			
+				});
+				b+='</u>';
+			}
+
+			var a='<a data-target="section" href="#itemadd_section?id='+localStorage['rid']+'"><button>+添加 '+r['info'][4]+' 费用项目</button></a>';
+			$('#newitem').html(a);		//添加条目按钮生成
+			$('#roombody').html(c+b);
+			//$('#roomheader').removeClass('fhidden');
+			$("#room_article").show();
+			J.Scroll('#room_article',{vScroll:true,vScrollbar : false});		
+		});	
+	}
+	
+	function roomDel(){
+		var rid=getID();
+			//J.showToast(confirm('确认要删除这个工地吗？'));
+		if(confirm('确认要删除这个房间吗？删除后将无法恢复')){
+			var rid=localStorage['rid'];
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var furl=localStorage.server+'room.php?t='+token+'&u='+user+'&id='+rid+'&a=del&callback=?';
+			$.getJSON(furl,function(data){
+				showPlan(localStorage['pid']);
+				window.history.go(-1);
+			});
+		}
+	}
+	
+	function itemDel(id){
+		if(confirm('确认要删除这个条目吗？删除后将无法恢复')){
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var furl=localStorage.server+'item.php?t='+token+'&u='+user+'&id='+id+'&a=del&callback=?';
+			//alert(furl);
+			$.getJSON(furl,function(data){
+				showPlan(localStorage['pid']);			
+				showRoom(localStorage['rid']);
+										
+			});
+		}
+	}
+</script>

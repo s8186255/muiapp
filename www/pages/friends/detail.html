@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>联系人详情</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../lib/mui/mui.css" />
+		<link rel="stylesheet" href="../../css/app.css" />
+		<script src="../../lib/mui/mui.js"></script>
+		<script src="../../lib/framework/z-app.js"></script>
+		<script src="../../lib/mustache/mustache.min.js"></script>
+		<!--<script src="../../lib/framework/utils.js"></script>
+		<script src="../../lib/framework/results.js"></script> -->
+		<script src="../../js/contact/contact.js"></script>
+		<style>
+			.app-detail-p {
+				padding: 8px 0 0 0;
+			  	color: #333;
+			  	line-height: 30px;
+			}
+			 
+			.app-qrcode-detail {
+			}
+			app-qrcode-detail img {
+				width:100%;
+			}
+			.mui-table-view .mui-collapse .mui-navigate-right.app-detail{
+				color: #333;
+			}
+            .mui-button-row .mui-btn{
+            	margin-left: 10px;
+            	margin-right: 10px;
+            } 
+			.mui-content.has-btn-bar{
+				padding-bottom: 55px;
+			}
+			.btn-bar{
+				position: fixed;
+				background: rgba(247,247,247,.9);
+				height: 65px;
+				border-bottom: 0;
+				width: 100%;
+				bottom: 0;
+				/*text-align: center;*/
+				padding: 10px 0;
+				padding-bottom: 8px;
+			}
+			.btn-bar .mui-btn{
+				width: 45%;
+				height: 100%;
+				font-size: 17px !important;
+			}
+			.app-primary {
+				background-color: rgba(24,103,194,0.8);
+				color: white;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content has-btn-bar">
+			<div id="user_detail"  >
+	  		
+			</div>
+		</div>
+	</body>
+
+    <script id="user_detail" type="text/template" url='/api/oa/user/get_by_id'>
+    	{{#data}}
+ 		<div class="mui-table-view-divider"></div>
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell mui-media">
+				<a href="javascript:void(0);">
+					<img style="border-radius: 5%;" app-event="viewImg" class="mui-media-object mui-pull-left app-detail-logo" src="{{{userImg}}}">
+					<div class="mui-media-body">
+						<div style="height:30px;" class="mui-ellipsis-2 app-detail-font">{{name}}</div>
+						<div style="height:10px;line-height:20px;" class="app-detail-gray">性别：{{genderDesc}} </div>
+						<div style="height:40px;line-height:50px;" class="app-detail-gray">部门：{{#dept}}{{name}}{{/dept}}</div>
+						<div style="height:20px;line-height:20px;" class="app-detail-gray">机构：{{#tenant}}{{name}}{{/tenant}} </div>
+					</div>
+				</a>
+			</li>
+		</ul>
+		<div class="mui-clearfix"></div>
+		<ul class="mui-table-view">
+			<li class="mui-table-view-divider"></li>
+			<li class="mui-table-view-cell">
+				<a class="app-detail">
+					<span class="iconfont icon-shouji"></span>手机
+					{{#mobile}}<span class="mui-badge mui-badge-inverted app-detail-font" app-event="dialPhone" phone-number="{{mobile}}">{{mobile}} <span class="mui-icon mui-icon-phone mui-badge-green mui-badge-inverted" ></span></span>{{/mobile}}
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a class="app-detail">
+					<span class="iconfont icon-zuoji"></span>电话
+					{{#phone}}<span class="mui-badge mui-badge-inverted app-detail-font" app-event="dialPhone" phone-number="{{phone}}">{{phone}} <span class="mui-icon mui-icon-phone mui-badge-green mui-badge-inverted" ></span></span>{{/phone}}
+				</a>
+			</li>
+ 
+			<li class="mui-table-view-cell"> 
+				<a class="app-detail">
+					<span class="mui-icon mui-icon-email"></span>邮箱
+					<span class="mui-badge mui-badge-inverted app-detail-font">{{email}}</span>
+	    		</a>
+			</li>		
+			<li class="mui-table-view-cell">
+				<a class="app-detail">
+					<span class="mui-icon mui-icon-location-filled"></span>办公地
+					<span class="mui-badge mui-badge-inverted app-detail-font">{{officeLocationDesc}}</span>
+				</a>
+			</li>
+			<li class="mui-table-view-divider"></li>
+			<li class="mui-table-view-cell mui-collapse mui-active">
+				<a class="mui-navigate-right app-detail" href="#">
+					<span class="iconfont icon-gangwei"></span>职责
+				</a>
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell app-detail-font">
+					  <div class="app-detail-p">{{jobDescription}}</div>
+					</li>
+				</ul>
+			</li>
+			<li class="mui-table-view-divider"></li>
+			<li class="mui-table-view-cell mui-collapse mui-active app-qrcode-detail">
+				<a class="mui-navigate-right app-detail" href="#">
+					<span class="iconfont icon-erweima"></span>二维码
+				</a>
+				<ul class="mui-table-view">
+					<li class="mui-table-view-cell app-detail-font">
+					<div class="app-detail-p">
+					  <img app-event="viewQRCode" width="100%" src="{{{qrCodeUrl}}}">
+                   </div>
+					</li>
+				</ul>
+			 </li>
+			 <li class="mui-table-view-divider"></li>
+		</ul>
+		<div class="btn-bar">
+	  	  	 <button app-event="saveToBook" class="mui-btn  app-primary app-no-border" style="margin-left: 3.4%;">保存到手机</button>
+		     <button app-event="sendContact" class="mui-btn app-primary app-no-border" style="margin-left: 2.4%;">发送给他人</button>
+		</div>
+        {{/data}}
+    </script>
+    
+	<script>
+
+	    
+		// GO GO GGO
+		App.go({
+			deviceReady : function() {
+				
+			},
+			events : {
+				view : {
+					hide : function(e) {
+						plus.webview.currentWebview().clear();	
+					}
+				},
+				keys : {
+					back : function(e) {
+						mui.back();
+					}
+				},
+				gesture : {
+					swiperight : function(e) {
+						var detail = e.detail;
+						if (Math.abs(detail.angle) < 3) {
+							mui.back();
+						}
+					}
+				},
+				custom : {
+					reload : function(e){
+						plus.webview.currentWebview().reload(true);
+					},
+					viewQRCode : function(e) {
+						var tgt = e.target;
+						var url = tgt.getAttribute('src');
+						plus.nativeUI.confirm( "新窗口打开二维码图片?", function(e){
+							if (e.index==0) {
+								plus.runtime.openURL(url);
+							}
+						}, "二维码图片", ["好的","取消"] );
+					},
+					//打电话
+					dialPhone : function(e){
+						var tgt = e.target ; 
+						if(tgt){
+						  contactUtil.dialPhone({mobile : tgt.getAttribute('phone-number')}) ;	
+						}
+
+					},
+					saveToBook : function(e){
+                        contactUtil.saveToBook(contactUtil.model.data);
+					},
+					sendContact : function(e){
+                        contactUtil.sendContact(contactUtil.model.data);
+					}, 
+					viewImg:function(e){
+						var path=e.target.src;
+						App.openWindow("/pages/common/view-img.html", {
+							styles: {
+								title : "查看头像", 
+								path : path  
+							}
+						})
+					}
+				}
+			}, 
+			// 处理模板 
+			template : {
+				// 模板定义
+				defined : function(tpl) {
+					var styles = plus.webview.currentWebview().getStyle();
+					var dataid = styles.id;
+					tpl.ajax.options.data.id=dataid;
+				},
+				// 模板渲染
+				render : function(tpl) {
+					// HTTP请求返回的数据
+					var data = tpl.ajax.result.data;
+					// 准备数据模型
+                     var model = {
+                     	data : data ,
+             			userImg : function(){
+	                   		var imgUrl =  (typeof this.headImage =='undefined' || this.headImage == '') ? ('../../img/logo-gray.png'): (App.opts.init.http.base + this.headImage) ;
+			                return imgUrl ;
+	                   },
+                     };
+                     
+                     contactUtil.model = model ; 
+					// 使用'大胡子'模板引擎来渲染
+					var output = Mustache.render(tpl.html, model);
+//					console.log(output);  
+					return output;
+				}
+			}, 
+			appReady : function(){
+				App.notifyParent('settings', {
+					buttons : {
+						data : [
+							{
+								id : 'reload', 
+								text: '刷新', 
+								icon:'mui-icon-refreshempty',
+							}
+						],
+						onNotify : 'reload'
+					}
+				})
+			}
+		});
+	</script>
+</html>

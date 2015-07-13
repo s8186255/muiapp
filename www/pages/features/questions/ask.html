@@ -1,0 +1,339 @@
+	<!DOCTYPE html>
+	<html>
+	
+	<head>
+		<meta charset="utf-8">
+		<title>Ask a Question</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../../lib/mui/mui.css">
+		<link rel="stylesheet" href="../../../css/app.css">
+		<style>
+			.input-row-right{
+				position: absolute;
+				top: 5px;
+				right: 7px;
+				font-size:30px!important;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<div class="mui-content">
+			<form class="mui-input-group app-no-border" style="padding-top:10px;" id="form">
+				<div class="mui-multi-row">
+					<label>Tags</label>
+					<div name="tagTexts" style="padding:5px 10px 10px 12px;min-height:40px;"></div>
+					<input id="tagIds" type="hidden" name="tagIds" value="">
+					<span app-event="chooseTags" class="mui-icon mui-icon-plus-filled input-row-right app-color-blue"></span>
+				</div>
+				<div class="mui-multi-row" style="margin-top:10px;">
+					<label>Images</label>
+					<div id="imageShow" name="imageShow" style="padding:10px 10px 10px 16px;min-height:50px;">
+					</div>
+					<input id="imageIds" type="hidden" name="imageIds" value="">
+					<input id="imagePaths" type="hidden" name="imagePaths" value="">
+					<span app-event="chooseImages" class="mui-icon mui-icon-plus-filled input-row-right app-color-blue"></span>
+				</div>
+				<div class="mui-multi-row" style="margin-top:10px;">
+					<label>Description</label>
+					<textarea id="description" name="description" class="wd-speech" rows="30" placeholder="Descript your question here"></textarea>
+					<span class="mui-icon mui-icon-speech wd-icon-speech"></span>
+				</div>
+			</form>
+		</div>
+	</body>
+	<script id="imageShow" url="/api/questions/images" type="text/template">
+		<div id="{{id}}" style="position:relative; float: left; padding-top:13px; padding-bottom:10px; width:83px; min-height:100px;">
+			<span class="image-upload" app-event="removeImage" path="{{path}}" type="{{type}}" dataid="{{id}}" style="position: absolute; right:0; top:0;" class="">
+				<span class="mui-icon mui-icon-close app-color-red" style="font-size:30px; font-weight: bolder;"></span>
+			</span> 
+			<img src="{{path}}" width="68px" /> 
+		</div>
+	</script>
+	<script src="../../../lib/mui/mui.js"></script>
+	<script src="../../../lib/framework/z-app.js"></script>
+	<script src="../../../lib/mustache/mustache.min.js"></script>
+	<script src="../../../lib/framework/utils.js"></script>
+	<script src="../../../lib/framework/results.js"></script> 
+	<script>
+		App.go({
+			events : {
+				keys : {
+					back : function(e) {
+						mui.back();
+					}
+				},
+				custom:{
+					save : function(e) {
+						var tags = document.getElementById('tagIds')
+						var desc = document.getElementById('description');
+						if (tags.value == '') {
+							mui.toast('please choose tags');
+							tags.focus();
+							return false;
+						}
+						if (desc.value == '') {
+							mui.toast('Description required');
+							desc.focus();
+							return false;
+						}
+						var pathArray = [];
+						var imageUploadDom = document.getElementsByClassName('image-upload');
+						App.each(imageUploadDom, function(i,d){
+							var _path = d.getAttribute('path');
+							pathArray.push(_path);
+						});
+						var data = { tags : tags.value, description : desc.value };
+						App.httpClient().ajax('POST', "/api/questions", {loading:true,data:data}, function(resp){
+							var questionId = resp.id;
+							//上传图片
+							if (pathArray.length > 0) {
+								App.opts.events.custom.uploadImages({detail:{
+									questionId : questionId,
+									paths : pathArray,
+									onUploadComplete : function(resp2){
+										// 通知打开当前页面的那个页面
+										App.notifyOpener(resp);
+										// 关闭当前页面
+										mui.back();
+									}
+								}});
+							} else {
+								mui.toast('send success');
+								// 通知打开当前页面的那个页面
+								App.notifyOpener(resp);
+								// 关闭当前页面
+								mui.back();
+							}
+						}, function(xhr, type, statusText){
+							mui.toast("failed!"+statusText);
+						});
+					},
+					removeTag : function(e) {
+						var tgt = e.target; 
+						plus.nativeUI.confirm( "Do you want to remove this tag?", function(e){
+							if (e.index==0) {
+								tgt.parentNode.removeChild(tgt);
+							}
+						}, "Confirm", ["Yes","No"] );
+					},
+					chooseTags : function(e) {
+						var textDom = form.querySelector('div[name=tagTexts]');
+						var idDom = form.querySelector('input[name=tagIds]');
+						var data = {
+							multiple : true,
+							textName : 'text',
+							valueName : 'id',
+							url : '/api/tags',
+//							items : [
+//								{ text:'Biology', value:'1', class : 'iconfont icon-huaxue app-color-red' },
+//								{ text:'English', value:'2', class : 'iconfont icon-yingyu app-color-orange' },
+//								{ text:'Jazz', value:'3', class : 'iconfont icon-jazz app-color-green' },
+//								{ text:'Music', value:'4', class : 'iconfont icon-yinyue app-color-blue' }
+//							]
+						};
+						App.openWindow("/pages/common/choose.html",{
+							layout: "/pages/common/page_layout.html",
+							styles : {
+								top: "48px",
+								bottom: "0px",
+								bounce: 'none',
+								popGesture: 'hide',
+								data : data
+							},
+							title : 'Choose Tags',
+							onNotify : function(e) {
+								var ids = [];
+								var names = [];
+								App.each(e.detail.items, function(i,v){
+									var id = v[data.valueName];
+									ids.push(id);
+									var name = v[data.textName];
+									var _d = '<span app-event="removeTag" class="mui-badge app-background-blue app-font16" style="margin-bottom:5px; line-height:14px;">'+name+'<span class="mui-icon mui-icon-close app-font20"></span></span>';
+									names.push(_d);
+								});
+								textDom.innerHTML = names.join("&nbsp;&nbsp;");
+								idDom.value = ids.join(",");
+							}
+						});
+					},
+					removeImage : function(e) {
+						var tgt = e.target; 
+						var id = tgt.getAttribute('dataid');
+						var type = tgt.getAttribute('type');
+						var path = tgt.getAttribute('path');
+						var domId = id;
+						var dom = document.getElementById(domId);
+						plus.nativeUI.confirm( "Do you want to remove this image?", function(e){
+							if (e.index==0) {
+								if ("local" == type) {
+									dom.parentNode.removeChild(dom);
+								} else {
+									//send a ajax request to remove the image
+								}
+							}
+						}, "Confirm", ["Yes","No"] );
+					},
+					chooseImages : function(e) {
+						App.actionSheet()
+					},
+					handleActionSheet : function(e){
+						var detail = e.detail; 
+						var index = detail.index;
+						var target = detail.target;
+						
+						if(index == 1) {
+							var cmr = plus.camera.getCamera();
+							var res = cmr.supportedImageResolutions[0];
+							var fmt = cmr.supportedImageFormats[0];
+							App.showWaiting();
+							cmr.captureImage(
+								function(path){
+									if (target) {
+										target.close();
+									}
+									plus.nativeUI.closeWaiting();
+									plus.io.resolveLocalFileSystemURL(path, function (entry) {
+										var path = entry.toLocalURL();
+										handleImage(path);
+									}, function (e) {
+										plus.nativeUI.toast("Camera error：" + e.message);
+									} );  
+								},
+								function(error) {
+									plus.nativeUI.closeWaiting();
+								},
+								{
+									filename: '_doc/camera/',
+									resolution:res,
+									format:fmt
+								}
+							);
+						}else if(index==2){
+							plus.gallery.pick(function(path){
+								if (target) {
+									target.close();
+								}
+								handleImage(path);
+						    }, function(error){
+						    });
+						} else {
+							if (target) {
+								target.close();
+							}
+						}
+					},
+					chooseImages : function(e){
+						var target = App.actionSheet({
+							title : "Choose Images", 
+							cancel : "Cancel",
+							buttons : [ { title : "Camera" }, { title : "Photo" } ], 
+							autoClose : false,
+							url : '/pages/questions/choose_images.html',//当原生ActionSheet不可用时,用URL代替
+							styles : {
+								height : '150px',
+								bottom : '0px',
+							},
+							onNotify : function(e){
+								var idx = e.detail.index;
+								App.opts.events.custom.handleActionSheet({detail: {index:idx, target:target}});
+							},
+						});
+					},
+					uploadImages : function(e) {
+						var detail = e.detail;
+						var imagePaths = detail.paths;
+						if (!imagePaths) {
+							console.log("no image path need to upload");
+							return;
+						}
+						var questionId = detail.questionId;
+						App.showWaiting();
+						//创建上传任务
+						var appidkey = plus.storage.getItem('appidkey');
+						var appid;
+						if (appidkey) {
+							appid = plus.storage.getItem(appidkey);
+						}
+						var url = App.opts.init.http.base+'/api/questions/upload-images?'+appidkey+"="+appid;
+						var task = plus.uploader.createUpload(url,{method:'POST', blocksize:0,retry:1},function(t, status){
+							plus.nativeUI.closeWaiting();
+							if(status==200){
+								plus.nativeUI.toast('success!');
+								var resp = JSON.parse(t.responseText);
+								if (detail.onUploadComplete) {
+									detail.onUploadComplete(resp);
+								}
+							}else{
+								plus.nativeUI.toast('failed!');
+								//图片上传失败, 删掉问题 TODO
+//								App.httpClient().ajax("");
+							}
+						});
+						
+						//设置上传文件
+						App.each(imagePaths, function(i, path){
+							var name = "image_"+i;
+							task.addFile(path, {key:name})	
+						});
+						task.addData("questionId", questionId+"");
+						//开始上传
+						task.start(); 
+					}
+				}
+			},
+			appReady : function() {
+				var form = document.getElementById('form');
+				App.notifyParent('settings', {
+					buttons : {
+						data : [
+							{ 
+								text: 'Send',
+								class:'app-primary'
+							}
+						],
+						onNotify : 'save'
+					}
+				})
+			}
+		});
+		
+		function handleImage(path) {
+			var tgt = document.getElementById('imageShow');
+			var length = tgt.children.length;
+			var tpl = document.scripts['imageShow'];
+			var model = {
+				id : 'local_'+length,
+				type : 'local',
+				path : path,
+			}; 
+			var pathArray = [];
+			var pathDom = document.getElementById('imagePaths');
+			var paths = pathDom.value;
+			if (paths) {
+				App.each(paths.split(","), function(i,v){
+					pathArray.push(v);
+				});
+			}
+			pathArray.push(path);
+			pathDom.value = pathArray.join(",");
+			
+			var output = Mustache.render(tpl.innerHTML, model);
+			tgt.insertAdjacentHTML('beforeend',output);
+//			App.openWindow("/pages/common/image_crop.html", {
+//				styles : {
+//					data : {
+//						path : path,
+//						uploadUrl : "/api/questions/upload-images",
+//					}
+//				},
+//				onNotify : function(e) {
+//					//
+//					alert(JSON.stringify(e.detail));
+//				}
+//			});
+		}
+	</script>
+	</html>

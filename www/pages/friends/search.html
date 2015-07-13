@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>搜索通讯录</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../lib/mui/mui.css">
+		<link rel="stylesheet" href="../../css/app.css">
+		<style>
+			body {
+				background: white;
+			}
+			.app-primary {
+				background-color: rgba(24,103,194,0.81);
+				color: white;
+			}
+			.app-form {
+				padding: 40px 32px 0px 32px;
+				background: white;
+			}
+			.app-form input {
+				display: block;
+				width: 100%;
+				margin: 0 auto;
+				outline: none;
+				padding-top: 26px;
+				padding-bottom: 26px;
+				border: none;
+				border-bottom: 1px solid #eee;
+				border-radius: 0px;
+				background: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="app-bar mui-bar mui-bar-nav app-no-shadow">
+			<h1 class="mui-title">搜索通讯录</h1>
+			<button class="mui-icon mui-icon-back mui-action-back app-bar-btn"></button>
+		</header>
+		<div class="mui-content">
+			<form class="app-form">
+				<div class="app-input-row">
+					<label></label>
+					<input id='keyword' type="text" class="mui-input-clear" placeholder="关键词">
+				</div>
+				<br />
+				<br />
+				<div class="app-input-row">
+					<button app-event="search" class="mui-btn app-primary mui-btn-block app-no-border " onclick="return false;">搜索</button>
+				</div>
+			</form>
+		</div>
+	</body>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js"></script>
+	<script>
+		App.go({
+			events : {
+				keys : {
+					back : function(e) {
+						mui.back();
+					}
+				},
+				custom : {
+					search : function(e) {
+						// 检查输入合法性
+						var kw = document.getElementById('keyword');
+//						if (kw.value == '') {
+//							mui.toast('请填写关键词');
+//							kw.focus();
+//							return false;
+//						}
+						var data = { keyword : kw.value||'' };
+						App.notifyOpener(data);
+						mui.back();
+					},
+					reset : function(e) {
+						document.getElementsByClassName('app-form')[0].reset();
+					}
+				}
+			},
+			appReady : function() {
+			}
+		});
+	</script>
+</html>

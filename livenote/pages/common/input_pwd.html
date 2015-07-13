@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>输入OA密码</title>
+		<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../lib/mui/mui.css">
+		<link rel="stylesheet" href="../../css/app.css">
+		<style>
+			body {
+				background: white;
+			}
+			.app-primary {
+				background-color: rgba(24,103,194,0.81);
+				color: white;
+			}
+			.app-form {
+				padding: 40px 32px 0px 32px;
+				background: white;
+			}
+			.app-form input {
+				display: block;
+				width: 100%;
+				margin: 0 auto;
+				outline: none;
+				padding-top: 26px;
+				padding-bottom: 26px;
+				border: none;
+				border-bottom: 1px solid #eee;
+				border-radius: 0px;
+				background: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="app-bar mui-bar mui-bar-nav app-no-shadow">
+			<h1 class="mui-title">输入OA密码</h1>
+			<button app-event="close" class="mui-icon mui-icon-close mui-pull-right app-bar-btn"></button>
+			<!--<button app-event="reset" class="mui-icon mui-icon-refreshempty mui-pull-right app-bar-btn"></button>-->
+		</header>
+		<div class="mui-content">
+			<form class="app-form" onsubmit="return false;">
+				<div class="app-input-row">
+					<label></label>
+					<input id='pwd' type="password" class="mui-input-clear" placeholder="输入OA密码">
+				</div>
+				<br />
+				<div class="app-input-row">
+					<button app-event="inputpwd" class="mui-btn app-primary mui-btn-block app-no-border ">确认密码</button>
+				</div>
+			</form>
+		</div>
+	</body>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js"></script>
+	<script>
+		App.go({
+			deviceReady : function(){
+				plus.webview.currentWebview().setStyle({popGesture : 'none'});
+				var styles = plus.webview.currentWebview().getStyle();
+				App.autoBack = styles.autoBack;
+			},
+			events : {
+				device : {
+					pause : function(e) {
+						App.opts.events.custom.reset({});
+						App.notifyOpener({pwd:null});
+					},
+					resume : function(e){
+						App.opts.events.custom.reset({});
+						App.notifyOpener({pwd:null});
+					}
+				},
+				keys : {
+					back : function(e) {
+						// 通知打开当前页面的那个页面,修改密码成功了
+						App.notifyOpener({pwd:null});
+						if (App.autoBack == true) {
+							mui.back();	
+						}
+					}
+				},
+				custom : {
+					reset : function(e) {
+						document.getElementsByClassName('app-form')[0].reset();
+					},
+					close : function(e) {
+						// 通知打开当前页面的那个页面
+						App.notifyOpener({pwd:null});
+						if (App.autoBack == true) {
+							mui.back();	
+						}
+					},
+					inputpwd : function(e) {
+						// 检查输入合法性
+						var p = document.getElementById('pwd');
+						if (p.value == '') {
+							mui.toast('请填写密码');
+							p.focus();
+							return false;
+						}
+						
+						var d = { success: true, pwd : p.value };
+						// 通知打开当前页面的那个页面,修改密码成功了
+						App.notifyOpener(d);
+						// 关闭当前页面
+						if (App.autoBack == true) {
+							mui.back();	
+						}
+					},
+				}
+			},
+			appReady : function() {
+			},
+		});
+	</script>
+</html>

@@ -1,0 +1,86 @@
+	<!DOCTYPE html>
+	<html>
+	
+	<head>
+		<meta charset="utf-8">
+		<title>Answer</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../../lib/mui/mui.css">
+		<link rel="stylesheet" href="../../../css/app.css">
+		<style>
+			.input-row-right{
+				position: absolute;
+				top: 5px;
+				right: 7px;
+				font-size:30px!important;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<div class="mui-content">
+			<form class="mui-input-group app-no-border" style="padding-top:10px;" id="form">
+				<div class="mui-multi-row">
+					<label>Your Answer</label>
+					<textarea id="description" name="answer" class="wd-speech" rows="30" placeholder="Descript your answer here"></textarea>
+					<span class="mui-icon mui-icon-speech wd-icon-speech"></span>
+				</div>
+			</form>
+		</div>
+	</body>
+	<script src="../../../lib/mui/mui.js"></script>
+	<script src="../../../lib/framework/z-app.js"></script>
+	<script src="../../../js/common/dict.js"></script>
+	<script>
+		App.go({
+			deviceReady : function(){
+				var questionId = plus.webview.currentWebview().getStyle().questionId;
+				App.questionId = questionId;
+			},
+			events : {
+				keys : {
+					back : function(e) {
+						mui.back();
+					}
+				},
+				custom:{
+					save : function(e) {
+						var desc = document.getElementById('description');
+						if (desc.value == '') {
+							mui.toast('Description required');
+							desc.focus();
+							return false;
+						}
+						
+						var data = { question_id : App.questionId, description : desc.value };
+						App.httpClient().ajax('POST', "/api/answers", data, function(resp){
+							mui.toast('success');
+							// 通知打开当前页面的那个页面
+							App.notifyOpener(resp);
+							// 关闭当前页面
+							mui.back();
+						}, function(xhr, type, statusText){
+							mui.toast("failed!"+statusText);
+						});
+					},
+				}
+			},
+			appReady : function() {
+				var form = document.getElementById('form');
+				App.notifyParent('settings', {
+					buttons : {
+						data : [
+							{ 
+								text: 'Send',
+								class:'app-primary'
+							}
+						],
+						onNotify : 'save'
+					}
+				})
+			}
+		});
+	</script>
+	</html>

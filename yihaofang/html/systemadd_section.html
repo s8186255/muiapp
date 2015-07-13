@@ -1,0 +1,130 @@
+<style TYPE="text/css">
+#sysaddcon{width: 95%;text-align: center;margin: 0 auto;}
+
+#sysnow{list-style: none;width: 100%;margin-top: 10px;}
+#sysnow li{margin: 0 auto;width:100%;float: left;height: 50px;line-height:50px ;background: #F8F8F8; border: 1px solid #C1C1C1;margin-top:5px;}
+#sysnow li .z{margin-left:15px;}
+#sysnow li img{width: 30px;opacity: 0.1;margin-top:10px;margin-right:10px;}
+
+#sysadd{list-style: none;width: 100%;margin-top: 10px;}
+#sysadd li{margin: 0 auto;width:100%;float: left;height: 50px;line-height:50px ;background: #F8F8F8; border: 1px solid #C1C1C1;margin-top:5px;}
+#sysadd li .z{margin-left:15px;}
+#sysadd li img{width: 30px;opacity: 0.1;margin-top:10px;margin-right:10px;}
+</style>
+
+<section id="systemadd_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">系统增删</h1>
+    </header>
+    <article id="yawaiting_article" class="active" >
+		<img src="./img/loading.gif" width="100%">
+	</article>
+    <article id="systemadd_article" data-scroll="true">
+    	<div class="scrollcon" style="padding: 5px 0px 10px 0px;">
+    		<div id="sysaddcon">	
+	    		<ul id="sysnow"></ul>
+				<div class="clear"></div>
+				<div class="feditheader" id="sysaddinfo"></div>
+				<ul id="sysadd"></ul>
+			</div>
+    	</div>			
+    </article>
+</section>
+<script type="text/javascript">
+	$("#systemadd_section").on('pageshow',function(){
+		setSonParam();
+	});
+
+	$("#systemadd_section").on('pageshow',function(){
+		showSysAdd();
+		
+		//增删操作不刷新waiting
+		$("#yawaiting_article").removeAttr('class');
+		$("#systemadd_article").attr('class','active');
+	});	
+
+function showSysAdd(){
+		var type=getID();		
+		if(type=='z'){
+			var is_basic=1;
+			var info='其他管理费用';
+		}
+		if(type=='s'){
+			var is_basic=0;
+			var info='可添加的高级家居系统';
+		}
+		
+		var token=localStorage['token'];
+		var user=localStorage['uname'];
+		var saurl=localStorage['server']+'system.php?t='+token+'&u='+user+'&a=list&id='+localStorage['pid']+'&type='+is_basic+'&callback=?';
+		//alert(saurl);
+		$.getJSON(saurl,function(data){
+			if(data==undefined){
+				window.history.go(-1);
+			}else{
+				var s=eval(data);
+				if(s['my']==undefined){
+					var now='';
+					var add='';
+					$.each(s['name'], function(k,v) {
+						add+='<li ><div class="z">'+v+' :<span style="color:#AAAAAA"> '+myNum(s['sn'][k],3,',')+'元</span></div>';
+						add+='<div class="y"><img src="./img/add.png"/ onclick="sysAdd('+k+','+s['sn'][k]+')"></div></li>';
+					});
+				}else{
+					var now='';
+					var add='';
+					$.each(s['name'], function(k,v) {    
+						if(s['my'][k]!=undefined){
+							//输出选中的条目
+							//
+	  						//<div class="y"><img src="./img/del.png"/ onclick="sysDel(yid)"></div></li>
+							now+='<li ><div class="z">'+v+' :<span style="color:#AAAAAA"> '+myNum(s['my'][k],3,',')+'元</span></div>';
+							now+='<div class="y"><img src="./img/del.png"/ onclick="sysDel('+k+')"></div></li>'
+						}else{
+							//输出未选择中的条目
+							add+='<li ><div class="z">'+v+' :<span style="color:#AAAAAA"> '+myNum(s['sn'][k],3,',')+'元</span></div>';
+							add+='<div class="y"><img src="./img/add.png"/ onclick="sysAdd('+k+','+s['sn'][k]+')"></div></li>';
+						}
+					});
+				}
+				
+				$('#sysaddinfo').html(info);
+				$('#sysnow').html(now);
+				$('#sysadd').html(add);
+				
+				//处理开始页面就能滚动
+				$("#systemadd_article").show();
+				J.Scroll('#systemadd_article',{vScroll:true,vScrollbar : false});
+
+			}
+	});	
+}
+
+function sysAdd(id,fee){
+	var pid=localStorage['pid'];
+	//alert(pid+':'+id+':'+fee);
+	var token=localStorage['token'];
+	var user=localStorage['uname'];
+	var saurl=localStorage['server']+'system.php?t='+token+'&u='+user+'&a=add&pid='+localStorage['pid']+'&id='+id+'&v='+fee+'&callback=?';
+	$.getJSON(saurl,function(data){
+		showSysAdd();
+		showPlan(pid);	
+	});
+}
+
+function sysDel(id){
+	var pid=localStorage['pid'];
+	//alert(pid+':'+id);
+	var token=localStorage['token'];
+	var user=localStorage['uname'];
+	var saurl=localStorage['server']+'system.php?t='+token+'&u='+user+'&a=del&pid='+localStorage['pid']+'&id='+id+'&callback=?';
+	$.getJSON(saurl,function(data){		
+		showSysAdd();
+		showPlan(pid);	
+	});
+}
+
+</script>

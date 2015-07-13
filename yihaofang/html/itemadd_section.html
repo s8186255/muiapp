@@ -1,0 +1,147 @@
+<style TYPE="text/css">
+#iacon table tr td:nth-child(1){width: 25%;text-align: center;color:#BBB;}
+#iacon table tr td:nth-child(1){width: 25%;text-align: center;color:#BBB;} table tr td:nth-child(2){width: 75%;text-align: center;}
+#iacon table tr td:nth-child(1){width: 25%;text-align: center;color:#BBB;} table tr td:nth-child(2) .z{width: 75%;text-align: center;color:#BBB;}
+#iacon table tr td:nth-child(1){width: 25%;text-align: center;color:#BBB;} table tr td:nth-child(2) .y{width: 25%;text-align: center;color:#BBB;}
+#itemadd{margin-top:-10px;}
+#iacon{margin-top:5px;}
+</style>
+
+<section id="itemadd_section" data-scroll="true">
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">添加预算项目</h1>
+    </header>
+    
+    <article id="iawaiting_article" class="active">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+    <article id="itemadd_article" data-scroll="true">
+			<div class="scrollcon" style="padding: 5px 0px 10px 0px;">
+				<div class="feditcon" id="iacon">
+					<table>
+					<tr>
+	    	 			<td>名称</td>
+	    	 			<td><input type="text" class="finput" id="ianame" name="ianame" placeholder="输入新的条目名..." value=""></td> 			
+    	 			</tr>
+	    	 		<tr>
+	    	 			<td>装修阶段</td>
+	    	 			<td>
+	    	 				<select name="iajd" id="iajd"></select>
+	    	 			</td>
+	    	 		</tr>
+    	 		<tr>
+    	 			<td>计算对象</td>
+    	 			<td>
+    	 				<select name="iap" id="iap">
+						</select>
+    	 			</td>
+    	 		</tr>
+    	 		<tr>
+    	 			<td>主材单价</td>
+    	 			<td>
+						<input type="number" class="finput" id="iaz" name="iaz" placeholder="请输入主材单价..." value="">
+					</td>
+    	 		</tr>
+    	 		 <tr>
+    	 			<td>辅材单价</td>
+    	 			<td>
+						<input type="number" class="finput" id="iaf" name="iaf" placeholder="请输入辅材单价..." value="">
+					</td>
+    	 		</tr>
+    	 		 <tr>
+    	 			<td>人工单价</td>
+    	 			<td>
+						<input type="number" class="finput" id="iag" name="iag" placeholder="请输入人工单价..." value="">
+					</td>
+    	 		</tr>
+    	 		<tr>
+    	 			<td>工种种类</td>
+    	 			<td><select name="iagz" id="iagz"></select></td>
+    	 		</tr>
+					</table>
+				</div>	
+				<div class="fbuttoncon">
+					<button id="itemadd" class="fbtn">添加条目</button>
+				</div>
+			</div>
+    </article>
+</section>
+<script type="text/javascript">
+	$("#itemadd_section").on('pageshow',function(){
+		setSonParam();
+	});
+
+	$("#itemadd_section").on('pageinit',function(){
+		var rid=getID();
+		//获取协议模板的列表
+		showItemAdd(rid);
+		$("#iawaiting_article").removeAttr('class');
+		$("#itemadd_article").attr('class','active');
+		
+		$("#itemadd").click(function(){
+			$("#iawaiting_article").attr('class','active');
+			$("#itemadd_article").removeAttr('class');
+			
+			var rid=localStorage['rid'];
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var server=localStorage['server'];
+			
+			var name=$("#ianame").val();
+			var p=$("#iap  option:selected").val();
+			var gz=$("#iagz  option:selected").val();
+			var jd=$("#iajd  option:selected").val();
+			var z=$("#iaz").val();
+			var f=$("#iaf").val();
+			var g=$("#iag").val();
+
+			var iaurl=server+'item.php?t='+token+'&u='+user+'&a=add&d[name]='+name+'&d[jd_id]='+jd+'&d[gz_id]='+gz+'&id='+rid+'&p='+p+'&z='+z+'&f='+f+'&g='+g+'&callback=?';
+			//alert(iaurl);
+			$.getJSON(iaurl,function(data){
+				$("#ianame").val('');	
+				$("#iaz").val('');
+				$("#iaf").val('');
+				$("#iag").val('');
+				
+				showRoom(localStorage['rid']);
+				showPlan(localStorage['pid']);			
+				showSites();
+				window.history.go(-1);
+				
+				$("#iawaiting_article").removeAttr('class');
+				$("#itemadd_article").attr('class','active');
+			});		
+		});	
+	});
+	
+	function showItemAdd(rid){
+		var token=localStorage['token'];
+		var user=localStorage['uname'];
+		//var furl=localStorage.server+'datatest.php?s=room&rid='+id+'&callback=?';
+		var furl=localStorage.server+'item.php?t='+token+'&u='+user+'&id='+rid+'&a=ialist&callback=?';
+		$.getJSON(furl,function(data){
+			var p=eval(data);
+			var ps='';
+			$.each(p['p'], function(k,v) {    
+				ps+='<option value="'+k+'">'+v[0]+': '+p['r'][k]+' '+v[1]+'</option>';                                                      
+			});
+			$("#iap").html(ps);
+			
+			var jd='';
+			$.each(p['jd'], function(k,v) {    
+				jd+='<option value="'+k+'">'+v+'</option>';                                                      
+			});
+			$("#iajd").html(jd);
+			
+			var gz='';
+			$.each(p['gz'], function(k,v) {    
+				gz+='<option value="'+k+'">'+v+'</option>';                                                      
+			});
+			$("#iagz").html(gz);
+		});
+	}
+</script>

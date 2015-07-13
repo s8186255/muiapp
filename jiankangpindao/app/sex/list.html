@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+		<title>健康频道</title>
+
+		<link rel="stylesheet" href="../../lib/mui/0.7.0/css/mui.css" />
+		<link rel="stylesheet" href="../../lib/fontawesome/4.2.0/css/font-awesome.css" />
+		<link rel="stylesheet" href="../common/hc.css" />
+
+		<script type="text/javascript" src="../../lib/mui/0.7.0/js/mui.js"></script>
+		<script type="text/javascript" src="../common/html2dom.js"></script>
+		<script type="text/javascript" src="../common/hc.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" id="hcHeader">
+			<h1 class="mui-title">两性</h1>
+			<a class="mui-icon mui-icon-reload mui-pull-right" id="hcRefresh"></a>
+		</header>
+
+		<div class="mui-content" id="hcContent">
+			<ul class="mui-table-view" id="hcSexList">
+				<!--<li class="mui-table-view-cell">
+					<a href="#">
+						<span class="hc-title mui-ellipsis-2">title</span>
+					</a>
+				</li>-->
+			</ul>
+		</div>
+
+		<script>
+			(function($) {
+
+				var lwv = null;
+				// 给列表项绑定页面跳转事件
+				$('#hcSexList').on('tap', 'a', function(e) {
+					var href = this.getAttribute('href'),
+						title = this.getElementsByClassName('mui-ellipsis-2')[0].textContent;
+					// 打开详情页面
+					lwv = plus.webview.create('list-item.html', 'list-item.html', {
+						top: '0',
+						bottom: '0'
+					}, { //自定义扩展参数，可以用来处理页面间传值
+						title: title, // 需要加载的页面的标题
+						href: href // 需要加载的页面地址
+					});
+					lwv.onloading = function() {
+						hc.loadingShow(' ');
+					};
+					lwv.onloaded = function() {
+						setTimeout(function() {
+							lwv.show('fade-in', 200, function() {
+								hc.loadingHide();
+							});
+						}, 500);
+					};
+					e.preventDefault();
+				});
+
+				$.plusReady(function() {
+					// 退出应用
+					var first = null;
+					$.back = function() {
+						// 处理逻辑：2 秒内，连续两次按返回键，则退出应用
+						// 首次按键，提示‘再按一次退出应用’
+						if (!first) {
+							first = new Date().getTime();
+							$.toast('再按一次退出应用');
+							setTimeout(function() {
+								first = null;
+							}, 2000);
+						} else {
+							if (new Date().getTime() - first < 2000) {
+								plus.runtime.quit();
+							}
+						}
+					};
+					// 初始化配置（写在这里是为了保证上拉加载的 DOM 结构已经生成）
+					$.init({
+						pullRefresh: {
+							container: '#hcSexList', // 待刷新区域标识，querySelector能定位的css选择器均可，比如：id、.class等
+							up: {
+								contentdown: '上拉显示更多',
+								contentrefresh: "正在加载", // 可选，正在加载状态时，上拉加载控件上显示的标题内容
+								callback: pullupRefresh // 必选，刷新函数，根据具体业务来编写，比如通过ajax从服务器获取新数据；
+							}
+						}
+					});
+					// 初始化时隐藏上拉加载的字样
+					document.getElementsByClassName('mui-pull-bottom-pocket')[0].style.display = 'none';
+					generateList('http://health.sina.cn/?sa=t605d1v3691&vt=4&pos=42', function() {
+						document.getElementsByClassName('mui-pull-bottom-pocket')[0].style.display = 'block';
+					});
+					document.getElementById('hcRefresh').onclick = function() {
+						listRefresh();
+					};
+				});
+
+				/**
+				 * 两性知识列表刷新
+				 */
+				function listRefresh() {
+					$.ajaxSettings.complete = function() {
+						hc.loadingHide();
+					};
+					hc.loadingShow('更新中');
+					$.get('http://health.sina.cn/?sa=t605d1v3691&vt=4&pos=42', null, function(data) {
+						// 将字符串转化为HTMLDocument对象
+						var parser = new DOMParser(),
+							doc = parser.parseFromString(data, "text/html"),
+							i = 0; // 刷新后的列表项循环计数
+						// 获取两性知识列表项
+						var listItems = doc.getElementsByClassName('p_column_list')[0].getElementsByTagName('a');
+						// 创建列表
+						var hcListFirstItem = document.getElementById('hcSexList').getElementsByTagName('li')[0], // 获取当前第一条列表项
+							hcListFirstItemTitle = hcListFirstItem.getElementsByClassName('mui-ellipsis-2')[0].textContent, // 获取当前第一条列表项的标题
+							newListItems = '';
+						for (i; i < listItems.length; i += 1) {
+							var iLi = '',
+								iHref = listItems[i].getAttribute('href'),
+								iTitle = listItems[i].textContent;
+							iLi = '<li class="mui-table-view-cell">' +
+								'<a href="' + iHref + '">' +
+								'<span class="hc-title mui-ellipsis-2">' + iTitle + '</span>' +
+								'</a>' +
+								'</li>';
+							newListItems += iLi;
+							// 一旦碰到相同的标题，则表示已无更新的文章，那么就添加更新文章列表，之后立即跳出循环
+							if (iTitle === hcListFirstItemTitle) {
+								hcListFirstItem.outerHTML = newListItems;
+								window.scrollTo(0, 0); // 更新成功后回滚到页面顶部
+								$.toast('更新成功！');
+								return;
+							}
+						}
+					}, 'html');
+				};
+
+				/**
+				 * 上拉加载更多
+				 */
+				var pCount = 2, // 第一次上拉，加载第二页
+					pCountMax = 10; // 最大加载页数
+				function pullupRefresh() {
+					var preUrl = sufUrl = url = '',
+						that = this;
+					if (pCount <= pCountMax) {
+						preUrl = 'http://health.sina.cn/?sa=d1t605v3691&cpage='; // 请求地址前缀
+						sufUrl = '&sid=0&vt=4&node_id=321559?' + Math.random(); // 请求地址后缀
+						url = preUrl + pCount + sufUrl; // 完整地址
+						// 加载分页列表
+						generateList(url, function() {
+							pCount += 1; // 加载成功后，页码 +1
+							that.endPullupToRefresh(pCount > pCountMax); // 若页数等于最大加载数，则表示没有数据可以加载了
+						});
+					}
+				};
+
+				/**
+				 * 生成两性知识列表
+				 */
+				function generateList(url, callback) {
+					// 列表加载完成后隐藏加载框
+					$.ajaxSettings.complete = function() {
+						hc.loadingHide();
+					};
+					hc.loadingShow();
+					$.get(url, null, function(data) {
+						// 将字符串转化为HTMLDocument对象
+						var parser = new DOMParser(),
+							doc = parser.parseFromString(data, "text/html"),
+							i = 0; // 列表项循环计数
+						// 获取两性知识列表项
+						var listItems = doc.getElementsByClassName('p_column_list')[0].getElementsByTagName('a');
+						// 创建列表
+						var list = '';
+						for (i; i < listItems.length; i += 1) {
+							var iLi = '',
+								iHref = listItems[i].getAttribute('href'),
+								iTitle = listItems[i].textContent;
+							iLi = '<li class="mui-table-view-cell">' +
+								'<a href="' + iHref + '">' +
+								'<span class="hc-title mui-ellipsis-2">' + iTitle + '</span>' +
+								'</a>' +
+								'</li>';
+							list += iLi;
+						}
+						document.getElementById('hcSexList').innerHTML += list;
+						// success callback
+						callback = callback || function() {};
+						callback();
+					}, 'html');
+				};
+
+			})(mui);
+		</script>
+	</body>
+
+</html>

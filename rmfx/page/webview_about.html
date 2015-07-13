@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../js/md5.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			function goBack() {
+					ws = plus.webview.currentWebview();
+					ws.close();
+				}
+				// 获取应用信息
+
+			function getAppInfo() {
+				plus.runtime.getProperty(plus.runtime.appid, function(wgtinfo) {
+					//appid属性
+					var wgtStr = wgtinfo.version;
+					document.getElementById("banben").innerText = wgtStr;
+				});
+			}
+
+			function copyToClip(str, temp) {
+				switch (plus.os.name) {
+					case "Android":
+						// Android平台: plus.android.*
+						var Context = plus.android.importClass("android.content.Context");
+						var main = plus.android.runtimeMainActivity();
+						var clip = main.getSystemService(Context.CLIPBOARD_SERVICE);
+						plus.android.invoke(clip, "setText", str);
+						break;
+					case "iOS":
+						// iOS平台: plus.ios.*
+						var UIPasteboard = plus.ios.importClass("UIPasteboard");
+						//这步会有异常因为UIPasteboard是不允许init的，init的问题会在新版中修改
+						var generalPasteboard = UIPasteboard.generalPasteboard();
+						// 设置/获取文本内容:
+						generalPasteboard.setValueforPasteboardType(str, "public.utf8-plain-text");
+						var value = generalPasteboard.valueForPasteboardType("public.utf8-plain-text");
+						break;
+					default:
+						// 其它平台
+						break;
+				}
+				if (temp == 1) {
+					plus.ui.alert('\n已成功复制人脉返现客服Q群号码，\n欢迎查找加入人脉客服Q群!', '', '温馨提示');
+				} else if (temp == 2) {
+					plus.ui.alert('\n已成功复制人脉返现客服QQ号，\n欢迎查找加为好友!', '', '温馨提示');
+				} else if (temp == 3) {
+					plus.ui.alert('\n已复制人脉返现网址，欢迎访问!', '', '温馨提示');
+				} else {
+					plus.ui.alert('\n信息已成功复制!');
+				}
+			}
+
+			function gettoken() {
+				var tokenID = plus.push.getClientInfo().token;
+				var clientid = plus.push.getClientInfo().clientid;
+				alert(tokenID);
+				copyToClip(tokenID + "||" + clientid, 4);
+			}
+
+			function gotoUrl(url) {
+				plus.runtime.openURL(url);
+			}
+
+			function plusReady() {
+					getAppInfo();
+				}
+				//加载账户信息
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="goBack();"></div>
+			<div class="nvtt_tao">
+				<div style="width: 100%;" onclick="gettoken();"><span id="title">关于我们</span>
+				</div>
+			</div>
+		</header>
+		<div id="content" class="scontent">
+			<center>
+				<div class="logo" onclick="gotoUrl('http://www.rmfanx.com');"></div>
+			</center>
+			<center>
+				<li class="ditem" id="li_load" style="margin-top:20px; padding-left:15%;font-size:17px;border-radius: 0px;width:80%;text-align:left;border-style: none; ">
+					当前版本：<span id="banben"></span>
+				</li>
+				<li onclick="gotoUrl('http://jq.qq.com/?_wv=1027&k=cAeqlU')" class="ditem" id="li_load" style="margin-top:1px;padding-left:15%;font-size:17px;border-radius: 0px;width:80%;text-align:left;border-style: none; ">
+					客服 Q群：<span id="banben">386627223</span><span style="font-size:12px;color:#FF5452 ;"> 点击加入</span>
+				</li>
+				<li onclick="copyToClip('986690600',2);" class="ditem" id="li_load" style="margin-top:1px;padding-left:15%;font-size:17px;border-radius: 0px;width:80%;text-align:left;border-style: none; ">
+					联系客服：<span id="banben">986690600 (QQ)</span>
+				</li>
+				<li onclick="copyToClip('179670018',2);" class="ditem" id="li_load" style="margin-top:1px;padding-left:15%;font-size:17px;border-radius: 0px;width:80%;text-align:left;border-style: none; ">
+					联系客服：<span id="banben">179670018 (QQ)</span>
+				</li>
+				<li onclick="copyToClip('www.rmfanx.com',3);" class="ditem" id="li_load" style="margin-top:1px;padding-left:15%;font-size:17px;border-radius: 0px;width:80%;text-align:left;border-style: none; ">
+					官方网址：<span id="banben">www.rmfanx.com</span>
+				</li>
+			</center>
+		</div>
+	</body>
+
+</html>

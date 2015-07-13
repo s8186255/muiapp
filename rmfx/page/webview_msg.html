@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			function openWebview(url) {
+				plus.webview.create(url).show();
+			}
+			var page = 1;
+			var t = "in";
+			 //加载账户信息
+			function loadInfo(type) {
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=msg&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&type=' + t + '&page=' + page + '&jsoncallback=msg',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						$("#plist").find("li").remove();
+						if (data!=null) {
+							$.each(data, function(index, element) {
+								$('#li_load').hide();
+								$("#plist").append("<li style='font-size: 15px;line-height:25px' onclick='msgShow("+element.id+")'>[" + element.see + "]&nbsp;<span style='color: #FF7472;'>" + element.addtime + "</span></br>" + "" + element.content + "</span>" + "</li>");
+							});
+							$('#li_more').show();
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,木有信息");
+							$('#li_load').show();
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function refresh() {
+				page = 1;
+				loadInfo(t);
+			}
+
+			$(function() {
+				loadInfo('in');
+			})
+
+			function orderList(type) {
+				if (type == 'in') {
+					t = 'in';
+					document.getElementById("order_taobao").className = "order_taobao";
+					document.getElementById("order_mall").className = "order_mall";
+					loadInfo(1);
+				} else if (type == 'out') {
+					t = "out";
+					document.getElementById("order_mall").className = "order_taobao";
+					document.getElementById("order_taobao").className = "order_mall";
+					loadInfo(2);
+				}
+			}
+			
+			function msgShow(msgId){
+				clicked("webview_msgInfo.html",true,false,'',msgId);
+			}
+
+			function more() {
+				page++;
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=msg&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&type=' + t + '&page=' + page + '&jsoncallback=msg',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						if (data!=null) {
+							$.each(data, function(index, element) {
+								$('#li_load').hide();
+								$("#plist").append("<li style='font-size: 15px;line-height:25px' onclick='msgShow("+element.id+")'>[" + element.see + "]&nbsp;<span style='color: #FF7472;'>" + element.addtime + "</span></br>" + "" + element.content + "</span>" + "</li>");
+							});
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,没有了!");
+							$('#li_load').show();
+							$('#li_more').hide();
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+			
+			function goback() {
+				ws = plus.webview.getWebviewById("page/webview_user.html");
+				ws.evalJS("info_reload()");
+				back();
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+		<style type="text/css">
+			li {
+				padding: 0.7em;
+				margin-top: 8px;
+				background-color: #fff;
+			}
+			li:active {
+				background: #EAEAEA;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="goback();"></div>
+			<div class="nvtt">站内短信</div>
+			<div class="refresh" onclick="msgShow(0);" style="float:left;height:25px;margin-top:15px;width:15%;background:url(../img/msg.png);background-repeat: no-repeat;background-size:25px;""></div>
+		</header>
+		<div id="content" class="scontent" style="margin-bottom:50px;" >
+			<ul id="plist" style="list-style:none;margin:0;padding:0;text-align:left;">
+			</ul>
+			<li class="ditem" id="li_load" style="text-align:center;border-style: none;" >玩命加载中,请等待~</li>
+			<li class="ditem" id="li_more" onclick="more()" style="display:none;border-style: none;font-siz:12px;height: 22px;"> 点击查看更多短信>></li>
+		</div>
+
+		<bottom>
+			<div id='order_taobao' class="order_taobao" onclick="orderList('in');">收信箱</div>
+			<div id='order_mall' class="order_mall" onclick="orderList('out');">发信箱</div>
+		</bottom>
+		
+	</body>
+
+</html>

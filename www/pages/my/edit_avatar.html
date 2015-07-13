@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>头像操作</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../lib/mui/mui.css">
+		<link rel="stylesheet" href="../../css/app.css">
+		<style type="text/css">
+		</style>
+	</head>
+
+	<body style="background-color: #ffffff;">
+		<ul id="menus" class="mui-table-view">
+			<li class="mui-table-view-cell">
+				<a index="1" app-event="clickMenu" class="app-btn" href="javascript:void(0)">
+					<span class="mui-icon mui-icon-camera"></span> 拍照
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a index="2" app-event="clickMenu" class="app-btn" href="javascript:void(0)">
+					<span class="mui-icon mui-icon-image"></span> 从相册选择
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a index="3" app-event="clickMenu" class="app-btn" href="javascript:void(0)">
+					<span class="mui-icon mui-icon-search"></span> 查看大图
+				</a>
+			</li>
+			<div class="mui-table-view-divider app-mini-divider"></div>
+			<li class="mui-table-view-cell">
+				<a index="4" app-event="clickMenu" class="app-btn" href="javascript:void(0)">
+					<span class="mui-icon mui-icon-undo"></span> 取消
+				</a>
+			</li>
+		</ul> 
+	</body>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js"></script>
+	<script>
+		App.go({
+			events : {
+				custom : {
+					clickMenu : function(e){
+						var tgt = e.target;
+						App.notifyOpener('clickMenu', {index:tgt.getAttribute('index')});
+					}
+				}
+			}
+		});
+	</script>
+</html>

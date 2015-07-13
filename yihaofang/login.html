@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>1号装修宝</title>
+    <link rel="stylesheet" href="css/Jingle.css">
+    <link rel="stylesheet" href="css/bao.css">
+</head>
+
+<body>
+	<div id="section_container">
+		<style type="text/css">
+			#logocon{width:100%; text-align:center; }
+			#loginheader{padding:10px 0px 0px 0px;margin-top:10px;margin-bottom:10px;}
+			#loginheader .z{width: 35%; text-align:center ;}
+			#loginheader .y{width: 65%;margin: 0 auto;}
+			#loginheader .y h2{width:100%;margin:0 auto; font-size: 18px;float: left;height: 40px;line-height: 40px;color:#EE7621;}
+			#loginheader .y h3{width:100%;margin:0 auto; font-size: 14px;float: left;height: 30px;line-height: 30px;color:#BBBBBB;}
+			
+			#lmore{width: 100%;list-style: none;}
+			#lmore li{width: 100%;float: left;height: 60px;line-height: 60px;border-top: 1px solid #E5E5E5;}
+			#lmore li .z{width: 20%;text-align: center;}
+			#lmore li .z img{width: 30px;}
+			#lmore li .y{width: 80%;}
+			#lmore li .y .z{width: 90%;height: 60px;line-height: 60px;float: left;}
+			#lmore li .y .y{width: 10%;text-align: center;}
+			#lmore li .y .y img{width: 10px;}
+			.lmoretitle{width:100%;float:left;margin:0 auto;height: 40px;line-height: 40px;font-size:18px;color:#000000;text-align: left;margin-top: 12px;color:#000;}
+			
+			#bcon{width: 80%;margin: 0 auto;}
+			#baologin{width:45%;float: left;background:#CC0000; border:1px solid #CC0000;}
+			#baoreg{width:45%;float: right;background:#A5A5A5; border:1px solid #7C7C7C;}
+			
+			#logindiv{width: 100%;margin: 0 auto;margin-top: 60px;}
+		</style>
+		<section id="login_section" class="active">
+			<header>
+				<nav class="left">
+				</nav>
+				<h1 class="title">登陆1号房装修宝</h1>
+				<nav class="right">
+				</nav>
+			</header>
+			 <article id="loginwaiting_article" class="active" >
+				<img src="./img/loading.gif" width="100%">
+			</article>
+			<article id="login_article" data-scroll="true" >
+				<div class="scrollcon" style="padding: 0px 0px 30px 0px;">
+					<div id="logindiv">
+						<div id="logocon">
+							<img src="./img/logo.png" style="width: 50%;">
+						</div>
+						<iframe  width="100%" height="100%" id="loginframe" src="http://bao.yihaofang.com/applogin/app.php"></iframe>
+					 </div>
+					<div class="clear"></div>
+					 <div id="bcon">
+						<button id="baologin">登陆</button>
+						<a data-target="section" href="#reg_section"><button id="baoreg">注册</button></a>				
+					 </div>
+					 <div class="clear"></div>
+				 </div>
+			</article>
+			
+			<article id="loged_article" data-scroll="true" >
+				<div class="scrollcon" style="padding: 0px 0px 30px 0px;">
+					<div class="fheader" id="loginheader">
+						<div class="z">
+							<img src="img/noimg.jpg"  style="width:80px;">
+						</div>
+						<div class="y">
+							<h2></h2>
+							<h3></h3>
+						</div>
+					</div>
+				 
+				<div class="clear"></div>
+				
+				<ul id="lmore">
+					<li>
+						<a data-target="section" href="#suggest_section">
+						<div class="z">
+							<img src="img/q007.png">
+						</div>
+						<div class="y">
+							<div class="z">
+								<h2 class="lmoretitle" >我要吐槽</h2>
+							</div>
+							<div class="y">
+								<img src="img/an-ts.png">
+							</div>
+						</div>
+						</a>
+					</li>
+					<li></li>
+				</ul>
+				
+				 <div class="clear"></div>
+				<div style="width: 100%;margin: 0 auto;text-align: center;">
+						<button id="mylogout"class="fbtn">退出</button>				
+				 </div>
+				 <div class="fpadding"></div>
+				 </div>
+			</article>			
+		</section>	
+	</div>
+<script type="text/javascript" src="js/zepto.js"></script>
+<script type="text/javascript" src="js/iscroll.js"></script>
+<script type="text/javascript" src="js/template.min.js"></script>
+<script type="text/javascript" src="js/Jingle.debug.js"></script>
+<script type="text/javascript" src="js/zepto.touch2mouse.js"></script>
+<script type="text/javascript" src="js/function.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+<script type="text/javascript">
+	//plus准备完毕
+	document.addEventListener("plusready",function(){
+		//backbutton('login_section');		//监控硬件按钮			
+	},false);
+	
+	$("#login_section").on('pageshow',function(){
+		setFatherParam();
+	});
+	
+	$("#login_section").on('pageinit',function(){
+		//$("#loginframe").attr('src',localStorage['userver']+'app.php');
+		//刷新加载
+		$("#login_article").show();
+		
+		//判断用户登陆状态,显示窗口
+		if(localStorage['token']==undefined){
+			$("#login_article").show();
+			$("#login_article").addClass("active");
+			$("#loginwaiting_article").removeClass();
+		}else{
+			var user='你好,'+localStorage['uname'];
+			$("#loginheader .y h2").html(user);
+			
+			var tsp = new Date(localStorage['time'] * 1000);
+			var time='登陆时间:'+tsp.toLocaleString();
+			$("#loginheader .y h3").html(time);
+			
+			//初始化滚动
+			//$("#loged_article").show();
+			//J.Scroll('#loged_article',{vScroll:true,vScrollbar : false});
+			
+			$("#loged_article").addClass("active");
+			$("#loginwaiting_article").removeClass();
+		}
+		
+		//设置目录深度，响应按钮
+		window.localStorage.setItem('stat','1');
+		
+		$("#mylogout").click(function(){
+			window.localStorage.removeItem('time');
+			window.localStorage.removeItem('token');
+			window.localStorage.removeItem('uname');
+			location.href="login.html";
+			//显示登陆框
+			$("#loged_article").removeClass();
+			$("#login_article").addClass("active");			
+		});
+		
+		//登陆检查
+		$("#baologin").click(function(){
+			//模拟iframe中的远程FORM的submit被点击
+			var loginframe=$(window.frames["loginframe"].document);
+			
+			//获取hash，防止非法登陆
+			var hash=loginframe.find('#hash').val();
+			var username=loginframe.find('#username').val();
+			var passwd=loginframe.find('#passwd').val();
+			
+			//检测用户输入是否输入用户名
+			if(username==''){
+				J.showToast('请输入用户名','error top');
+				return false;
+			}
+			
+			//检测用户是否输入密码
+			if(passwd==''){
+				J.showToast('请输入密码','error top');
+				return false;
+			}
+			
+			//判断用户输入是否正确，必须输入用户名和密码
+			loginframe.find("#applogin").click();
+			
+			//1.加载动画，关闭iframe
+			$("#loginwaiting_article").addClass("active");
+			$("#login_article").removeClass();
+			
+			//2.设置定时器判断是否有返回页面（获取指定id的值不为空，且值表示已经登陆）
+			//10秒钟后超时,重新登陆
+			checkLogin(10);					
+		});
+		
+	}); 
+	
+	//用户登陆信息侦听函数
+	//判断用户登陆iframe中是否存在正确的返回值
+	function checkLogin(limit){
+		if(limit>0){
+			limit--;
+			var token=$(window.frames["loginframe"].document).find("#token").val();
+			var uname=$(window.frames["loginframe"].document).find("#uname").val();
+			var time=$(window.frames["loginframe"].document).find("#time").val();
+			var loged=$(window.frames["loginframe"].document).find("#loged").val();
+			if(loged==1){
+				if(typeof(token)!='undefined' && typeof(uname)!='undefined' && typeof(time)!='undefined'){
+						//3.保存本地令牌及guid				
+						window.localStorage.setItem('token',token);
+						window.localStorage.setItem('uname',uname);
+						window.localStorage.setItem('time',time);
+						
+						//登陆标志，跳转后页面显示提示(用户友好行为，用于显示提示用户的信息)
+						window.localStorage.setItem('loged',1);
+						
+						//显示用户信息
+						var user='你好,'+localStorage['uname'];
+						$("#loginheader .y h2").html(user);
+						
+						var tsp = new Date(localStorage['time'] * 1000);
+						var time='登陆时间:'+tsp.toLocaleString();
+						$("#loginheader .y h3").html(time);
+						
+						//4.跳转页面
+						$("#loginwaiting_article").removeClass();
+						$("#loged_article").addClass("active");
+						//location.href ="login.html";
+						
+				}else{
+						J.showToast('用户名密码错误，请重试','error');
+						location.href="login.html";
+						$("#loginwaiting_article").removeClass();
+						$("#login_article").addClass("active");
+				}
+							
+			}else{
+				setTimeout('checkLogin('+limit+')',1000);
+			}
+					
+		}else{
+			//5.超时重新加载登陆页面
+			//alert('服务器超时，请重试');
+			J.showToast('服务器超时，请重试','error top');
+			location.href="login.html";
+			//$("#loginwaiting_article").removeClass();
+			//$("#login_article").addClass("active");
+		}		
+	}
+</script>
+</body>
+</html>

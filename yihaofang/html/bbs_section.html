@@ -1,0 +1,26 @@
+<style TYPE="text/css">
+</style>
+
+<section id="bbs_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">装修论坛</h1>
+    </header>
+	
+    <article id="bbswaiting_article">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+    <article id="bbs_article" data-scroll="true"  class="active"> 
+    	 	<div style="width: 95%;margin: 0 auto;height: 91%;">
+    	 		<iframe src="http://bbs.yihaofang.com/forum-133-1.html" width="100%" height="100%" frameborder="0"></iframe>
+    	 	</div>	 	
+    </article>
+</section>
+<script type="text/javascript">
+	$("#bbs_section").on('pageshow',function(){
+		setSonParam();
+	});
+</script>

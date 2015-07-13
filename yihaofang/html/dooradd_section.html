@@ -1,0 +1,63 @@
+<style TYPE="text/css">
+
+</style>
+
+<section id="dooradd_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">添加门</h1>
+    </header>
+    <article id="dawaiting_article">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+    <article id="dooradd_article" class="active" data-scroll="true">
+    	<div style="width: 100%;margin: 0 auto;">		
+			<div class="feditcon" id="sacon">
+				<table>
+					<tr>
+						<td>门宽度</td>
+						<td><input type="number" class="finput" id="daw" placeholder="请输入门宽度..."/></td>
+					</tr>
+					<tr>
+						<td>门高度</td>
+						<td><input type="number" class="finput" id="dah" placeholder="请输入门高度..."/></td>
+					</tr>
+				</table>
+				<input hidden="hidden" id="dastyle" value="1"/>
+			</div>	
+			<div class="fbuttoncon">
+				<button id="dooradd"class="fbtn">添加门</button>
+			</div>
+		</div>
+    </article>
+</section>
+<script type="text/javascript">
+	$("#dooradd_section").on('pageshow',function(){
+		setSonParam();
+	});
+
+	$("#dooradd_section").on('pageinit',function(){
+		$("#dooradd").click(function(){
+			$("#dawaiting_article").attr('class','active');
+			$("#dooradd_article").removeAttr('class');		
+			var rid=localStorage['rid'];
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var w=$('#daw').val();
+			var h=$('#dah').val();
+			var st=$('#dastyle').val();
+			var waurl=localStorage['server']+'room.php?t='+token+'&u='+user+'&a=dadd&id='+rid+'&d[w]='+w+'&d[h]='+h+'&callback=?';
+			$.getJSON(waurl,function(data){
+				$('#daw').val('');
+				$('#dah').val('');
+				window.history.go(-1);	
+				showRoomEdit(rid);
+				showRoom(rid);
+				$("#dawaiting_article").removeAttr('class');
+				$("#dooradd_article").attr('class','active');
+			});				
+		});		
+	});
+</script>

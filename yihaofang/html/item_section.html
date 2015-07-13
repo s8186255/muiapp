@@ -1,0 +1,112 @@
+<section id="item_section" data-scroll="true">
+    <style TYPE="text/css">
+	</style>
+    <header>
+        <nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title" id="itemtitle">费用详情</h1>
+    </header>
+    
+     <article id="item_waiting" class="active">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+    <article  id="item_article" data-scroll="true">
+    	<div id="scrollcon" style="padding: 5px 0px 10px 0px;">
+    		<div class="fheader">
+			<table border="0">
+				<tr>
+					<td width="55%" class="ffee">
+						<h2 id="ifee"></h2>
+						<p id="ibasic"></p>
+					</td>
+					<td width="35%" class="finfo" >
+						<ul>
+							<li id='if01'></li>
+							<li id='if02'></li>
+							<li id='if03'></li>
+						</ul>
+					</td>
+					<td style="border-left: 1px solid #DCDDDD;">
+						<ul class="fact">
+							<li><a data-target="section" href="#itemedit_section" id="iebtn"><img src="img/edit.png"/></a></li>
+							<li><img src="img/del.png" onclick="delMe()"/></li>
+						</ul>
+					</td>
+				</tr>
+			</table>			
+		</div>
+		<div class="clear"></div>
+		<div class='fbody' id='itemack'>
+		</div>	
+		<div class='fbody' id='ads'>
+			<iframe src=""></iframe>
+			<iframe src=""></iframe>
+		</div>
+		<div class="clear"></div>
+    	</div>
+    </article>
+</section>
+<script type="text/javascript">
+	$("#item_section").on('pageshow',function(){
+		setSonParam();
+	});
+
+	$("#item_section").on('pageinit',function(){
+		var iid=getID();
+		$('#iebtn').attr('href','#itemedit_section?iid='+iid);
+		showItem(iid);
+		
+	});	
+	
+	function showItem(id){
+		//alert(localStorage['token']);
+	 	var tk=localStorage['token'];
+		var user=localStorage['uname'];
+	 	//var furl=localStorage.server+'datatest.php?s=item&rid='+id+'&callback=?';
+	 	var furl=localStorage.server+'data.php?t='+tk+'&u='+user+'&s=item&id='+id+'&callback=?';
+		$.getJSON(furl,function(data){		
+			var item=eval(data);		
+			//处理头部数据
+			//$('#itemtitle').html('['+item['info'][3]+']费用详情');
+			$('#ifee').html('<span class="sy">￥</span>'+myNum(item['info'][0],3,','));
+						
+			var basic=item['info'][1]+item['info'][2]+','+item['info'][3];					
+			$('#ibasic').html(basic);
+			
+			$('#if01').html('主材:'+myNum(item['fee'][0],3,','));
+			$('#if02').html('辅材:'+myNum(item['fee'][1],3,','));
+			$('#if03').html('人工:'+myNum(item['fee'][2],3,','));
+			
+			//添加介绍内容
+			if(item['ack']!=false){
+				var aurl='<iframe  width="100%" height="100%" src="'+localStorage['server']+'ack.php?id='+item['ack']+'"></iframe>';
+				$("#itemack").html(aurl);
+			}
+
+			$("#item_article").show();
+			J.Scroll('#item_article',{vScroll:true,vScrollbar : false});		
+			//添加广告内容
+			
+			$("#item_waiting").removeAttr('class');
+			$("#item_article").attr('class','active');
+		});	
+	 }
+		
+	function delMe(){	
+		if(confirm('确认要删除这个条目吗？删除后将无法恢复')){
+			var iid=getID();
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var furl=localStorage.server+'item.php?t='+token+'&u='+user+'&id='+iid+'&a=del&callback=?';
+			//alert(furl);
+			$.getJSON(furl,function(data){
+				showPlan(localStorage['pid']);	
+				showRoom(localStorage['rid']);
+				window.history.go(-1);
+			});
+		}
+	}
+	
+</script>

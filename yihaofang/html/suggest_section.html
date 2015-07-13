@@ -1,0 +1,66 @@
+<style TYPE="text/css">
+#sugcon{margin-bottom: 5px;}
+#sugcon table{margin-top:15px;margin-bottom:0px;}
+</style>
+
+<section id="suggest_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">我要吐槽</h1>
+    </header>
+	
+    <article id="suggestwaiting_article">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+    <article id="suggest_article" data-scroll="true"  class="active"> 
+    	 <div class="scrollcon" style="padding: 0px 0px 10px 0px;">
+    	 	<div class="feditheader" id="suginfo">感谢您使用1号房APP,有啥意见您都说吧</div>
+    	 	<div class="feditcon" id="sugcon">
+				<table>
+					<tr>
+						<td><input type="text" name="sugtitle" id="sugtitle" value="" placeholder="您要反映的问题..."/></td>
+					</tr>				
+					<tr>
+						<td><textarea rows="12" name="sugmemo" id="sugmemo"  placeholder="问题的具体描述..."></textarea></td>
+					</tr>
+				</table>
+				<div style="margin:0 auto;width: 85%;margin-bottom: 10px;text-align: left;color:#BBBBBB;">我们将通过您注册时的邮箱回复您。</div>
+			</div>	
+		 </div>
+		 <div class="fbuttoncon">
+			<button id="sugadd" class="fbtn">马上吐槽</button>
+		</div>
+    </article>
+</section>
+<script type="text/javascript">
+	$("#suggest_section").on('pageshow',function(){
+		setSonParam();
+	});
+	
+	$("#suggest_section").on('pageinit',function(){
+		//将吐槽的内容发回服务器
+		$("#sugadd").click(function(){
+			var title=$('#sugtitle').val();
+			var memo=$('#sugmemo').val();
+			//alert(title+'\n'+memo);
+			if(title==''){
+				J.showToast('你要吐槽啥啊？','error');
+				return false;
+			}
+			var gaurl=localStorage['server']+'suggest.php?t='+localStorage['token']+'&u='+localStorage['uname'];			
+			if(memo=='')memo='没详情';
+			gaurl+='&st='+title+'&sm='+memo;
+			gaurl+='&a=add&callback=?';
+			//alert(gaurl);
+			$.getJSON(gaurl,function(data){
+				J.showToast('吐槽成功！我们将会尽快联系您','success');
+				window.history.go(-1);
+				$('#sugtitle').val('');
+				$('#sugmemo').val('');
+			});
+		});
+	});
+</script>

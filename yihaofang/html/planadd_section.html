@@ -1,0 +1,229 @@
+<style TYPE="text/css">
+#pacon{margin-top: 3px;margin-bottom: 5px;}
+#pacon table {margin-top: 10px;margin-bottom:3px;}
+#pacon table tr td:nth-child(1){width: 25%;text-align: center;color:#BBB;height: 35px;line-height: 35px;}
+#pacon table tr td:nth-child(2){width: 75%;text-align: center;height: 35px;line-height: 35px;}
+#pacon table tr td:nth-child(2) .z{width: 75%;text-align: center;color:#BBB;}
+#pacon table tr td:nth-child(2) .y{width: 25%;text-align: center;color:#BBB;}
+#pacon .control-group{height: 30px;line-height: 30px;text-align: center;border-color: #E88E8F;}
+#pacon .control-group li{height: 30px;line-height: 30px;text-align: center;border-color: #E88E8F;padding: 0px;}
+#pacon .control-group .active {background: #E88E8F;}
+
+#pat2 tr td{height: 40px;line-height: 40px;}
+#pat3 .control-group li {height: 30px;line-height: 30px;text-align: center;border-color: #E64346;padding: 0px;}
+#pat3 .control-group .active {background: #E64346;}
+
+#planadd{margin-top: 5px;}
+.fhr{margin: 0 auto;width: 90%; height:1px;margin-bottom: 5px; border-bottom: 1px solid #DDD;}
+</style>
+
+<section id="planadd_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">添加方案</h1>
+    </header>
+    <article id="pawaiting_article" class="active">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+    <article id="planadd_article" data-scroll="true"> 	
+    	 <div class="scrollcon" style="padding: 0px 0px 30px 0px;">
+    	 	<div class="feditcon" id="pacon">
+				<table id="pat1">	
+					<tr>
+						<td>方案名称</td>
+						<td><input type="text" class="finput" id="paname" name="paname" value="新的方案"></td>
+					</tr>
+					<tr>
+						<td>装修面积</td>
+						<td>
+							<div class="z"><input type="number" class="finput" id="paarea" name="paarea" value=""></div>
+							<div class="y">平方米</div>
+						</td>
+					</tr>
+					<tr>
+						<td>装修档次</td>
+						<td>
+							<ul class="control-group" id="palevel">
+			                    <li><input type="hidden" value="1" />简单</li>
+			                    <li><input type="hidden" value="2" />基本</li>
+			                    <li class="active"><input type="hidden" value="3" />中档</li>
+			                    <li><input type="hidden" value="4" />高档</li>
+			                     <li><input type="hidden" value="5" />奢华</li>
+                			</ul>
+						</td>
+					</tr>
+					<tr>
+						<td>装修预算</td>
+						<td>
+							<div class="z"><input type="number" class="finput" id="pafee" name="pafee" placeholder="请输入您的预算..." value=""></div>
+							<div class="y">万元</div>
+						</td>
+					</tr>
+			</table>
+			<div class="fhr"></div>
+			<table id="pat2">
+					<tr>
+						<td>居住空间</td>
+						<td>
+							<ul class="control-group" id="b">
+			                    <li class="active"><input type="hidden" value="1" />1个</li>
+			                    <li><input type="hidden" value="2" />2个</li>
+			                    <li><input type="hidden" value="3" />3个</li>
+			                    <li><input type="hidden" value="4" />4个</li>
+                			</ul>
+						</td>
+					</tr>
+					<tr>
+						<td>公共空间</td>
+    	 				<td>
+    	 					<ul class="control-group" id="p">
+			                    <li><input type="hidden" value="1" />餐客厅</li>
+			                    <li class="active"><input type="hidden" value="2" />仅客厅</li>
+			                    <li><input type="hidden" value="3" />客厅+餐厅</li>
+                			</ul>
+						</td>
+					</tr>
+					<tr>
+    	 				<td>厨房状况</td>
+    	 				<td>
+    	 					<ul class="control-group" id="c">
+			                    <li class="active"><input type="hidden" value="1" />中式厨房</li>
+			                    <li><input type="hidden" value="2" />西式厨房</li>
+                			</ul>
+						</td>
+    	 			</tr>
+    	 			<tr>
+    	 				<td>洗浴空间</td>
+    	 				<td>
+    	 					<ul class="control-group" id="w">
+			                    <li class="active"><input type="hidden" value="1" />1个</li>
+			                    <li><input type="hidden" value="2" />2个</li>
+			                    <li><input type="hidden" value="3" />3个</li>
+                			</ul>
+						</td>
+    	 			</tr>
+    	 			<tr>
+    	 				<td>阳台数量</td>
+    	 				<td>
+    	 					<ul class="control-group" id="q">
+			                    <li class="active"><input type="hidden" value="1" />1个</li>
+			                    <li><input type="hidden" value="2" />2个</li>
+			                    <li><input type="hidden" value="3" />3个</li>
+                			</ul>
+						</td>
+    	 			</tr>
+				</table>
+				
+				<div class="fhr"></div>
+				<table id="pat3">
+					<tr>
+    	 				<td>家具家电</td>
+    	 				<td>
+    	 					<ul class="control-group" id="isfur">
+			                    <li><input type="hidden" value="1" />包含</li>
+			                    <li class="active"><input type="hidden" value="0" />不包含</li>
+                			</ul>
+						</td>
+    	 			</tr>
+    	 		</table>
+			</div>
+			<div class="fbuttoncon">
+				<button id="planadd"  class="fbtn" style="margin-top:3px;">生成方案</button>
+			</div>
+    	 </div>   	 
+    </article>
+</section>
+<script type="text/javascript">
+	var level=[800,1100,1600,2200,3100];
+	
+	$("#planadd_section").on('pageshow',function(){
+		setSonParam();
+	});
+	
+	$("#planadd_section").on('pageinit',function(){		
+		var sid=getID();
+		
+		//获取方案的信息，用于默认设置		
+		//var paurl=localStorage['server']+'site.php?t='+localStorage['token']+'&u='+localStorage['uname']+'&a=list&id='+sid+'&callback=?';
+		var paurl=localStorage['server']+'site.php?t='+localStorage['token']+'&u='+localStorage['uname']+'&a=list&id='+sid+'&callback=?';
+		$.getJSON(paurl,function(data){
+				if(data=='false'){
+					window.history.go(-1);
+				}else{
+					var d=eval(data);
+					$('#paarea').val(d['area']);				
+					//处理开始页面就能滚动
+					$("#planadd_article").show();
+					J.Scroll('#planadd_article',{vScroll:true,vScrollbar : false});
+					
+					$("#pawaiting_article").removeAttr('class');
+					$("#planadd_article").attr('class','active');
+				}
+		});
+		
+		$("#palevel li").click(function(){
+			var k=$("#palevel .active input").val();
+			//J.showToast(typeof(parseInt(k)));
+			fee=level[(parseInt(k)-1)];
+			//J.showToast(parseInt(k)-1);
+			var farea=$('#paarea').val();
+			if(farea!=''){
+				fee=(fee*farea/10000).toFixed(0);
+				$("#pafee").val(fee);
+			}else{
+				$('#paarea').focus();
+				J.showToast('您没有输入面积','error top');
+			}
+		});
+		
+		$("#planadd").click(function(){
+			//基本设置
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var server=localStorage['server'];
+			
+			//获取方案基本信息
+			var sid=getID();
+			var name=$('#paname').val();
+			var mj=$('#paarea').val();
+			var ys=$("#pafee").val();
+			var le=$("#palevel .active input").val();
+			var b=$("#b .active input").val();
+			var p=$("#p .active input").val();
+			var c=$("#c .active input").val();
+			var w=$("#w .active input").val();
+			var q=$("#q .active input").val();
+			var f=$("#isfur .active input").val();
+			
+			var room='['+b+','+p+','+c+','+w+','+q+']';
+			
+			//J.showToast(room);
+			
+			var paurl=server+'plan.php?t='+token+'&u='+user+'&a=add';
+			paurl+='&id='+sid+'&d[area]='+mj+'&d[name]='+name+'&d[cost]='+ys+'&d[level_id]='+le;
+			paurl+='&room='+room+'&f='+f;
+			paurl+='&callback=?';
+			//alert(paurl);
+			$.getJSON(paurl,function(data){
+				showSites();
+				window.history.go(-1);
+				$("#pawaiting_article").removeAttr('class');
+				$("#planadd_article").attr('class','active');
+			});	
+			//提交给服务器处理
+		});
+	});
+	
+	function systemAdd(id){
+		//J.showToast(ob.class,'error top');
+		if(system[(id-1)]==0){
+			system[(id-1)]=1;
+		}else{
+			system[(id-1)]=0;
+		}
+		
+		J.showToast(system);
+	}
+</script>

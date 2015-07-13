@@ -1,0 +1,67 @@
+<style TYPE="text/css">
+#sacon table tr td:nth-child(1){width: 25%;text-align: center;color:#BBB;}
+#sacon table tr td:nth-child(2){width: 75%;text-align: center;}
+</style>
+
+<section id="siteadd_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">输入工地信息</h1>
+    </header>
+    <article id="sawaiting_article">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+    <article id="siteadd_article" class="active" data-scroll="true">
+		<div style="width: 100%;margin: 0 auto;">		
+			<div class="feditcon" id="sacon">
+				<table>
+					<tr>
+						<td>工地名称</td>
+						<td><input type="text" class="finput" id="sname" name="sname" placeholder="给您的工地起个名字吧..." ></td>
+					</tr>
+					<tr>
+						<td>装修面积</td>
+						<td><input type="number" class="finput" id="sarea" name="sname" placeholder="您要装修的房屋面积..."></td>
+					</tr>
+				</table>
+			</div>	
+			<div class="fbuttoncon">
+				<button id="siteadd" class="fbtn">添加工地</button>
+			</div>
+		</div>
+    </article>
+</section>
+<script type="text/javascript">
+	$("#siteadd_section").on('pageshow',function(){
+		setSonParam();
+	});
+
+	$("#siteadd_section").on('pageinit',function(){
+		
+		$("#siteadd").click(function(){			
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var view=localStorage['view'];
+			var server=localStorage['server'];
+			var name=$('#sname').val();
+			var mj=$('#sarea').val();
+			if(name!='' && mj!='' && mj!=0){
+				$("#sawaiting_article").attr('class','active');
+				$("#siteadd_article").removeAttr('class');
+				var saurl=server+'site.php?t='+token+'&u='+user+'&a=add&d[name]='+name+'&d[area]='+mj+'&callback=?';
+				$.getJSON(saurl,function(data){
+					$('#sname').val('');
+					$('#sarea').val('');
+					showSites();
+					window.history.go(-1);				
+					$("#sawaiting_article").removeAttr('class');
+					$("#siteadd_article").attr('class','active');
+				});
+			}else{
+				J.showToast('请输入完整的信息','success top');
+			}				
+		});
+	});
+</script>

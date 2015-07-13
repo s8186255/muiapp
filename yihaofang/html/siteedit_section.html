@@ -1,0 +1,88 @@
+<style TYPE="text/css">
+#secon table tr td:nth-child(1){width: 25%;text-align: center;color:#BBB;}
+#secon table tr td:nth-child(2){width: 75%;text-align: center;}
+</style>
+
+<section id="siteedit_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">编辑工地基本信息</h1>
+    </header>
+    <article id="sewaiting_article" class="active" >
+		<img src="./img/loading.gif" width="100%">
+	</article>
+    <article id="siteedit_article" data-scroll="true">
+    	<div style="width: 100%;margin: 0 auto;">		
+			<div class="feditcon" id="secon">
+				<table>
+					<tr>
+						<td>工地名称</td>
+						<td><input type="text" class="finput"  id="sename" name="sename"></td>
+					</tr>
+					<tr>
+						<td>装修面积</td>
+						<td><input type="number" class="finput"   id="searea" name="searea"></td>
+					</tr>
+					<tr>
+						<td>基地地址</td>
+						<td><input type="text" class="finput"   id="seaddress" name="seaddress"></td>
+					</tr>
+				</table>
+				<input type="hidden" id="seid">
+			</div>	
+			<div class="fbuttoncon">
+				<button id="siteedit" class="fbtn">修改基地信息</button>
+			</div>
+		</div>
+    </article>
+</section>
+<script type="text/javascript">
+	$("#siteedit_section").on('pageshow',function(){
+		setSonParam();
+	});
+
+	$("#siteedit_section").on('pageinit',function(){
+		//加载数据
+		var id=getID();
+		var token=localStorage['token'];
+		var user=localStorage['uname'];
+		var server=localStorage['server'];
+		//J.showToast(id);
+		var slurl=server+'site.php?t='+token+'&u='+user+'&a=list&id='+id+'&callback=?';
+		$.getJSON(slurl,function(data){
+				if(data=='false'){
+					window.history.go(-1);
+				}else{
+					var d=eval(data);
+					$('#sename').val(d['name']);
+					$('#searea').val(d['area']);
+					$('#seaddress').val(d['address']);
+					$('#seid').val(d['set_id']);
+					
+					$("#sewaiting_article").removeAttr('class');
+					$("#siteedit_article").attr('class','active');
+				}
+		});
+		
+		//保存按钮
+		$("#siteedit").click(function(){
+			$("#sewaiting_article").attr('class','active');
+			$("#siteedit_article").removeAttr('class');
+			
+			var name=$('#sename').val();
+			var mj=$('#searea').val();
+			var adress=$('#seaddress').val();
+			var sid=$('#seid').val();
+			var seurl=server+'site.php?t='+token+'&u='+user+'&a=edit&id='+sid+'&d[name]='+name+'&d[area]='+mj+'&d[address]='+adress+'&callback=?';
+			$.getJSON(seurl,function(data){
+				showSites();
+				$("#siteedit_article").attr('class','active');
+				$("#sewaiting_article").removeAttr('class');
+				window.history.go(-1);	
+			});
+				
+		});
+	});
+</script>

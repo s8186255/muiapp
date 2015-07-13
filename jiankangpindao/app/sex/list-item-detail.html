@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+		<title>健康频道</title>
+
+		<link rel="stylesheet" href="../../lib/mui/0.6.0/css/mui.css" />
+		<link rel="stylesheet" href="../../lib/fontawesome/4.2.0/css/font-awesome.css" />
+		<link rel="stylesheet" href="../common/hc.css" />
+
+		<script type="text/javascript" src="../../lib/mui/0.6.0/js/mui.js"></script>
+		<script type="text/javascript" src="../common/html2dom.js"></script>
+		<script type="text/javascript" src="../common/hc.js"></script>
+
+		<style>
+			#hcSexContent iframe {
+				width: 100%;
+				margin: 0;
+				padding: 0;
+				border: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="hcSexContent"></div>
+		<!--<iframe id="hcSexContent" src="http://health.sina.cn/?sa=d139546t884v3649&sid=0&vt=4&node_id=321559" sandbox="allow-same-origin allow-top-navigation" seamless></iframe>-->
+
+		<script>
+			 //			var vh = window.innerHeight;
+			 //			var sIframe = document.createElement('iframe');
+			 //			document.getElementById('hcSexContent').appendChild(sIframe);
+			 //			sIframe.style.height = vh + 'px';
+			 //			sIframe.setAttribute('sandbox', 'allow-same-origin allow-top-navigation');
+			 //			sIframe.setAttribute('src', 'http://health.sina.cn/?sa=d139676t884v3649&sid=0&vt=4&node_id=321559');
+			mui.plusReady(function() {
+				var wv = plus.webview.currentWebview(),
+					vh = window.innerHeight;
+				var sIframe = document.createElement('iframe');
+				document.getElementById('hcSexContent').appendChild(sIframe);
+				sIframe.style.height = vh + 'px';
+				sIframe.setAttribute('sandbox', 'allow-same-origin');
+				sIframe.setAttribute('src', wv.href);
+				//				sIframe.setAttribute('src', 'http://health.sina.cn/?sa=d139676t884v3649&sid=0&vt=4&node_id=321559');
+				console.log(sIframe.getAttribute('src'));
+			});
+			 //			(function() {
+			 //
+			 //				mui.plusReady(function() {
+			 //					var wv = plus.webview.currentWebview(),
+			 //						vh = window.innerHeight;
+			 //					//					var sIframe = '<iframe src="' + wv.href + '" sandbox="allow-same-origin allow-top-navigation" seamless style="height: ' + vh + 'px;"></iframe>';
+			 //					//					document.getElementById('hcSexContent').innerHTML = sIframe;
+			 //					console.log(wv.href);
+			 //
+			 //					var sIframe = document.createElement('iframe');
+			 //					document.getElementById('hcSexContent').appendChild(sIframe);
+			 //					sIframe.style.height = vh + 'px';
+			 //					sIframe.setAttribute('sandbox', 'allow-same-origin');
+			 //					sIframe.setAttribute('sandbox', 'allow-top-navigation');
+			 //					sIframe.setAttribute('src', wv.href);
+			 //					//					sIframe.setAttribute('seamless', 'seamless');
+			 //
+			 //					//					document.getElementById('hcSexContent').style.height = vh + 'px';
+			 //					//					document.getElementById('hcSexContent').setAttribute('sandbox', 'allow-same-origin allow-top-navigation');
+			 //					//					document.getElementById('hcSexContent').setAttribute('seamless', 'seamless');
+			 //					//					document.getElementById('hcSexContent').setAttribute('src', wv.href);
+			 //				});
+			 //
+			 //			})();
+		</script>
+	</body>
+
+</html>

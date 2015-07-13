@@ -1,0 +1,154 @@
+<!DOCTYPE >
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>一号宝</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+     <link rel="stylesheet" href="css/Jingle.css">
+    <link rel="stylesheet" href="css/bao.css">
+</head>
+<body>
+<div id="section_container">
+	<style TYPE="text/css">
+		.siteact{list-style: none;}
+		.siteact li{float: left;margin:0 auto;margin: 8px 0px 3px 10px;}
+		.siteact img{width: 25px;opacity: 0.1;}
+	</style>
+    <section id="index_section" class="active"> 
+    	<header>
+		<h1 class="title">工地列表</h1>
+		<nav class="right">
+		      <a data-target="section" href="#siteadd_section" data-icon="plus"></a>
+		</nav>
+	</header>
+	    <article id="waiting_article" class="active">
+
+			<div class="loading" style="text-align: center;">
+				<img src="./img/loading.gif" width="100%">
+			</div>
+		</article>
+        <article id="index_article" data-scroll="true">
+            <div class="scrollcon" id="scrollcon"  style="padding: 0px 0px 30px 0px;">
+            	<div style="width: 100%;margin: 0 auto;text-align: center;margin-top:100px;" class="fhidden" id="nosite">
+					<img src="./img/n02.png" width="120px"/>
+					<h2 style="font-size: 18px;color:#BBBBBB ;">您还没有工地哦</h2>
+					<h2 style="font-size: 18px;color:#BBBBBB ;margin: 0 auto;">请点击右上角"+"添加工地</h2>
+				</div>
+            	
+            	<div id="fuuinfo"></div>
+            	<div class='fbody' id='sitebody'></div>
+            	<div class="fpadding"></div>
+        	</div>
+        </article>
+    </section>
+</div>
+
+<!-- lib -->
+<script type="text/javascript" src="js/zepto.js"></script>
+<script type="text/javascript" src="js/iscroll.js"></script>
+<script type="text/javascript" src="js/template.min.js"></script>
+<script type="text/javascript" src="js/Jingle.debug.js"></script>
+<script type="text/javascript" src="js/zepto.touch2mouse.js"></script>
+<script type="text/javascript" src="js/JChart.debug.js"></script>
+<script type="text/javascript" src="js/function.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+<script type="text/javascript" src="js/bao.js"></script>
+
+<script type="text/javascript">
+	document.addEventListener("plusready",function(){	
+	},false);
+	
+	$("#index_section").on('pageshow',function(){
+		setFatherParam();
+	});
+	
+	$("#index_section").on('pageinit',function(){
+		$("#index_article").removeAttr('class');
+		$("#waiting_article").attr('class','active');
+				
+		//登陆提示，告知用户已经登陆
+		if(localStorage['loged']==1){
+			window.localStorage.removeItem('loged');
+		}
+				
+		if(localStorage['token']!=undefined){
+			showSites();	
+		}else{
+			J.showMask('not login');
+		}
+	});
+	
+	function showSites(){
+		//处理初次登陆用户的方案生成
+			if(localStorage['plantoken']!=undefined && localStorage['token']!=undefined){
+				var pt=localStorage['plantoken'];
+				var pturl=localStorage['server']+'new.php?t='+localStorage['token']+'&u='+localStorage['uname']+'&pt='+pt+'&a=add&callback=?';
+				$.getJSON(pturl,function(data){
+					localStorage.removeItem('plantoken');
+				});
+			}
+		
+		//furl=localStorage.server+'datatest.php?s=site&callback=?';
+		var furl=localStorage['server']+'data.php?t='+localStorage['token']+'&u='+localStorage['uname']+'&s=site&callback=?';
+		//alert(furl);
+		$.getJSON(furl,function(data){
+			//J.showToast('ok');
+			//alert(data);
+			var s=eval(data);
+			if(s==false){
+				$('#nosite').removeClass('fhidden');		//没有基地信息时返回的内容
+				//$('#sitebody').html('还没有工地，赶快建一个吧');	
+			}else{
+				$('#nosite').addClass('fhidden');
+				var txt='';
+				$.each(s['sites'], function(k,v){
+					txt+='<div class="ftitle" id="sitetitle">';
+					txt+='<div class="z"><img src="img/site.png"><h4>'+fsubstr(s['sname'][k],16)+'</h4></div>';
+					txt+='<div class="y"><ul class="siteact">';
+					txt+='<li><a data-target="section" href="#planadd_section?id='+v+'"><img src="img/add.png"/></a></li>';
+					txt+='<li><a data-target="section" href="#siteedit_section?id='+v+'"><img src="img/edit.png"/></a></li>';
+					txt+='<li><img src="img/del.png" onclick="sitedel('+v+')"/></li>';
+					txt+='</ul></div></div><div class="clear"></div>';
+					txt+='<ul class="flist">';
+					
+					if(s['site_'+v]!=undefined){
+						$.each(s['site_'+v], function(kk,vv){
+							if(vv!=0){
+								txt+='<li><a data-target="section" href="#plan_section?pid='+vv+'">';
+								txt+='<div class="rec site"></div><div class="detail"><div class="z">';
+								txt+='<span class="fname">'+fsubstr(s['sname_'+v][kk],10)+'</span><span class="favg">'+myNum(s['avg_'+v][kk],3,',')+'￥/m²</span>';
+								txt+='</div><div class="y"><span class="ficon"><img src="img/an-ts.png"></span>';
+								txt+='<span class="fsum">￥'+myNum(s['fee_'+v][kk],3,',')+'</span></div></div></a></li>';	
+							}												
+						});
+					}				
+					txt+='</ul><div class="clear"></div>';
+				});						
+				$('#sitebody').html(txt);	//加载窗口内容
+			}
+			//处理开始页面就能滚动
+			$("#index_article").show();
+			J.Scroll('#index_article',{vScroll:true,vScrollbar : false});
+			
+			//处理窗口显示
+			$("#waiting_article").removeAttr('class');
+			$("#index_article").attr('class','active');
+		});
+	}
+	
+	function sitedel(id){
+		if(confirm('确认要删除这个工地吗？')){	
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var furl=localStorage.server+'site.php?t='+token+'&u='+user+'&id='+id+'&a=del&callback=?';
+			$.getJSON(furl,function(data){
+				showSites();
+			});
+		}
+	}
+</script>
+</body>
+</html>

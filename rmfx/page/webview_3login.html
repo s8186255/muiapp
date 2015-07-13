@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>Hello H5+</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var ws = null,
+				mubiaoUrl = null;
+			embed = null;
+			 // 扩展API加载完毕，现在可以正常调用扩展API 
+			function plusReady() {
+					ws = plus.webview.currentWebview();
+					var tempUrl = ws.tempUrl;
+					mubiaoUrl = ws.mubiaoUrl;
+					plus.nativeUI.showWaiting("页面加载中~");
+					embed = plus.webview.create(tempUrl, "embed", {
+						top: "56px",
+						bottom: "0px"
+					});
+					ws.append(embed);
+					embed.addEventListener("loaded", embedLoaded, false);
+					embed.addEventListener("loading", embedLoading, false);
+				}
+				// 判断扩展API是否准备，否则监听"plusready"事件
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+
+			 // 页面开始加载事件回调函数
+			function embedLoading(e) {
+				plus.nativeUI.showWaiting("页面加载中~");
+			}
+
+			 // 打开网址
+			function openUrl() {
+					var url = document.getElementById("url");
+					embed.loadURL(url.value);
+					url.blur();
+				}
+				// 页面加载后自动打开
+			document.addEventListener("DOMContentLoaded", function() {
+				if (embed) {
+					openUrl();
+				} else {
+					auto = true;
+				}
+			}, false);
+			 // 页面跳转完成事件
+			function embedLoaded() {
+				plus.nativeUI.closeWaiting();
+				var arr = embed.getTitle().split("|");
+
+				if (arr[0] == "登录成功") {
+					if (window.localStorage) {
+						localStorage.setItem("rm_uid", arr[1]);
+						localStorage.setItem("rm_md5pwd", arr[2]);
+						localStorage.setItem("rm_username", arr[3]);
+						localStorage.setItem("inv_jine", arr[4]);
+						localStorage.setItem("inv_renshu", arr[5]);
+						ws.close();
+						if (mubiaoUrl.length > 0) {
+							if (mubiaoUrl.indexOf("webview") >= 0) {
+								clicked(mubiaoUrl, true);
+							} else {
+								clicked('webview_info.html', true, false, mubiaoUrl.replace(/&k=/, '%26unid%3D' + localStorage.getItem("rm_uid") + '&k=').replace(/dduserid=0/, 'dduserid=' + localStorage.getItem("rm_uid") + '&k=') + '&unid=' + localStorage.getItem("rm_uid"));
+							}
+						} else {
+							plus.nativeUI.toast("亲,登陆成功啦~");
+						}
+					} else {
+						plus.ui.alert("暂不支持本手机型号,请联系在线客服!", function() {}, "温馨提示")
+					}
+				} else if (arr[0] == "注册成功") {
+					localStorage.setItem("rm_uid", arr[1]);
+					localStorage.setItem("rm_md5pwd", arr[2]);
+					localStorage.setItem("rm_username", arr[3]);
+					localStorage.setItem("inv_jine", arr[4]);
+					localStorage.setItem("inv_renshu", arr[5]);
+					ws.close();
+					clicked("webview_user.html", true, false, "注册成功", "注册成功");
+					plus.nativeUI.toast("亲,注册成功啦~");
+				}
+				document.getElementById("url").value = embed.getURL();
+				document.getElementById("title").innerText = embed.getTitle();
+			}
+
+			function wsClose() {
+				ws.close();
+			}
+
+			function goBack() {
+				//embed.back();
+				embed.canBack(function(e) {
+					if (e.canBack) {
+						embed.back();
+					} else {
+						ws.close();
+					}
+				});
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+		<style type="text/css">
+			#url {
+				width: 98%;
+				-webkit-user-select: auto;
+				padding-left: 0;
+				padding-right: 0;
+				border: 0px;
+				border-bottom: 1px solid #ECB100;
+				border-radius: 0;
+				outline: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="goBack();"></div>
+			<div class="nvtt1">
+				<input id="url" type="hidden" value="http://www.rmfanx.com"></input>
+				<div style="width: 200px;"><span id="title" style="font-size: 16px;width: 200px;">合作帐号登录</span>
+				</div>
+			</div>
+			<div class="nvbt1" style="font-size: 18px;" onclick="wsClose();">关闭</div>
+			<div class="refresh" onclick="openUrl();"></div>
+		</header>
+	</body>
+
+</html>

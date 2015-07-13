@@ -1,0 +1,129 @@
+<style TYPE="text/css">
+#pecon table tr td:nth-child(1){width: 25%;text-align: center;color:#BBB;}
+#pecon table tr td:nth-child(2){width: 75%;text-align: center;}
+#pecon table tr td:nth-child(2) .z{width: 75%;text-align: center;color:#BBB;}
+#pecon table tr td:nth-child(2) .y{width: 25%;text-align: center;color:#BBB;}
+#pecon .control-group{height: 30px;line-height: 30px;text-align: center;border-color: #E88E8F;}
+#pecon .control-group li{height: 30px;line-height: 30px;text-align: center;border-color: #E88E8F;padding: 0px;}
+#pecon .control-group .active {background: #E88E8F;}
+#planedit{width: 45%;float:left}
+#planrefresh{width: 45%;float:right;background: #7C7C7C;}
+</style>
+
+<section id="planedit_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title" id="petitle">编辑方案</h1>
+    </header>
+    <article id="pewaiting_article" class="active" >
+		<img src="./img/loading.gif" width="100%">
+	</article>
+    <article id="planedit_article" data-scroll="true">
+    	<div style="width: 100%;margin: 0 auto;">		
+			<div class="feditcon" id="pecon">
+				<table>
+					<tr>
+						<td>方案名称</td>
+						<td><input type="text" class="finput" id="pename" name="pename" value=""></td>
+					</tr>
+					<tr>
+						<td>装修档次</td>
+						<td>
+    	 					<ul class="control-group" id="pelevel">
+			                    <li><input type="hidden" value="1" />简单</li>
+			                    <li><input type="hidden" value="2" />基本</li>
+			                    <li><input type="hidden" value="3" />中档</li>
+			                    <li><input type="hidden" value="4" />高档</li>
+			                    <li><input type="hidden" value="5" />奢华</li>
+                			</ul>
+						</td>
+					</tr>
+					<tr>
+    	 				<td>装修面积</td> 
+    	 				<td>
+							<div class="z"><input type="number" class="finput" id="pearea" name="pearea" value=""></div>
+							<div class="y">平方米</div>
+						</td>
+    	 			</tr>
+					 <tr>
+    	 				<td>装修预算</td>
+    	 				<td>
+							<div class="z"><input type="number" class="finput" id="pefee" name="pefee" value=""></div>
+							<div class="y">万元</div>
+						</td>
+    	 			</tr>
+    	 			<tr>
+    	 				<td>装修风格</td>
+    	 				<td>
+    	 					<select name="pedecor" id="pedecor">
+    	 					</select>
+						</td>
+    	 			</tr>
+				</table>
+			</div>	
+			<div class="fbuttoncon">
+				<button id="planedit" class="fbtn">确认修改</button>
+				<button id="planrefresh" class="fbtn">生成新方案</button>
+			</div>
+		</div>
+    </article>
+</section>
+<script type="text/javascript">
+	$("#planedit_section").on('pageshow',function(){
+		setSonParam();
+	});
+
+	$("#planedit_section").on('pageinit',function(){
+		var pid=getID();
+		//获取数据
+		var plurl=localStorage['server']+'plan.php?t='+localStorage['token']+'&u='+localStorage['uname']+'&a=list&id='+pid+'&callback=?';
+		$.getJSON(plurl,function(data){
+				if(data=='false'){
+					window.history.go(-1);
+				}else{
+					var d=eval(data);
+					//$('#petitle').html('编辑方案 ['+d['plan']['name']+']');
+					$('#pename').val(d['plan']['name']);
+					$('#pearea').val(d['plan']['area']);
+					$('#pefee').val(d['plan']['cost']);
+					
+					//处理选中的档次
+					var lid=d['plan']['level_id'];
+					$('#pelevel li').eq(lid-1).attr('class','active');
+					
+					//生成装修风格的选项
+					$.each(d['decor'], function(k,v) {   
+						//alert(v);
+						$('#pedecor').append('<option value="'+k+'">'+v+'</option>');                                                         
+					});
+					
+					$("#pewaiting_article").removeAttr('class');
+					$("#planedit_article").attr('class','active');
+				}
+		});
+		
+		$("#planedit").click(function(){
+			$("#pewaiting_article").attr('class','active');
+			$("#planedit_article").removeAttr('class');
+			var pid=getID();
+			var name=$('#pename').val();
+			var mj=$('#pearea').val();
+			var cost=$('#pefee').val();
+			var le=$("#pelevel .active input").val();
+			var de=$("#pedecor  option:selected").val();
+			
+			var peurl=localStorage['server']+'plan.php?t='+localStorage['token']+'&u='+localStorage['uname']+'&a=edit&id='+pid+'&d[name]='+name+'&d[area]='+mj+'&d[cost]='+cost+'&d[level_id]='+le+'&d[decor_id]='+de+'&callback=?';
+			//alert(peurl);
+			$.getJSON(peurl,function(data){
+				showPlan(pid);
+				showSites();
+				window.history.go(-1);
+				
+				$("#planedit_article").attr('class','active');
+				$("#pewaiting_article").removeAttr('class');
+			});
+		});
+	});
+</script>

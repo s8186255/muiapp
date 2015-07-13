@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+		<title>健康频道</title>
+		<!--APP 启动时，首先检测是否需要升级-->
+		<script type="text/javascript" src="app/common/update.js"></script>
+
+		<link rel="stylesheet" href="lib/mui/0.7.0/css/mui.css" />
+		<link rel="stylesheet" href="lib/fontawesome/4.2.0/css/font-awesome.css" />
+		<link rel="stylesheet" href="app/common/hc.css" />
+
+		<script type="text/javascript" src="lib/mui/0.7.0/js/mui.js"></script>
+		<script type="text/javascript" src="app/common/html2dom.js"></script>
+		<script type="text/javascript" src="app/common/hc.js"></script>
+	</head>
+
+	<body>
+		<nav class="mui-bar mui-bar-tab" id="hcFooter">
+			<a class="mui-tab-item mui-active" href="app/life/list.html">
+				<span class="mui-icon fa fa-h-square"></span>
+				<span class="mui-tab-label">保健</span>
+			</a>
+			<a class="mui-tab-item" href="app/travel/list.html">
+				<span class="mui-icon fa fa-plane"></span>
+				<span class="mui-tab-label">旅行</span>
+			</a>
+			<a class="mui-tab-item" href="app/sex/list.html">
+				<span class="mui-icon fa fa-heart-o"></span>
+				<span class="mui-tab-label">两性</span>
+			</a>
+		</nav>
+
+		<div class="mui-slider animated" id="hcWelcome">
+			<div class="mui-slider-group">
+				<div class="mui-slider-item">
+					<img src="app/common/wel_1.jpg" />
+				</div>
+				<div class="mui-slider-item">
+					<img src="app/common/wel_2.jpg" />
+				</div>
+				<div class="mui-slider-item">
+					<div id="hcStartUsing">
+						<a>开始体验</a>
+					</div>
+					<img src="app/common/wel_3.jpg" />
+				</div>
+			</div>
+			<div class="mui-slider-indicator">
+				<div class="mui-indicator mui-active"></div>
+				<div class="mui-indicator"></div>
+				<div class="mui-indicator"></div>
+			</div>
+		</div>
+
+		<script>
+			(function($) {
+
+				var wv = null;
+				$.plusReady(function() {
+					// 读取 firstblood.app 文件，判断是否是首次打开 app ，如果是，则展示 app 简介的轮滑图片
+					plus.io.resolveLocalFileSystemURL("_doc/firstblood.app", function(entry) {
+						// 可通过 entry 对象操作 firstblood.app 文件
+						entry.file(function(file) {
+							var fileReader = new plus.io.FileReader();
+							//							console.log("getFile:" + JSON.stringify(file));
+							fileReader.readAsText(file, 'utf-8');
+							fileReader.onloadend = function(e) {
+								//								console.log('firstblood: ' + e.target.result);
+								// 如果是首次打开 app，则显示轮滑图片，如果不是，则移除轮滑图片，然后显示保健列表页
+								if (e.target.result === 'true') {
+									showWelcomeSlider();
+								} else {
+									var hcWelcome = document.getElementById('hcWelcome');
+									hcWelcome.parentNode.removeChild(hcWelcome);
+									plus.webview.getWebviewById('app/life/list.html').onloaded = function() {
+									plus.navigator.closeSplashscreen();
+									plus.webview.show('app/life/list.html', 'fade-in', 400);
+									};
+								}
+							};
+						});
+					}, function(e) { // 如果文件不存在，则创建它
+						// 读取 PRIVATE_DOC 文件夹
+						plus.io.requestFileSystem(plus.io.PRIVATE_DOC, function(fs) {
+							// fs.root 是根目录操作对象 DirectoryEntry
+							fs.root.getFile('firstblood.app', {
+								create: true
+							}, function(entry) {
+								//								console.log(entry.fullPath);
+								// 写入文件标记 true
+								entry.createWriter(function(writer) {
+									//								writer.onwritestart = function(e) {
+									//									console.log("Write data onwritestart! ReadyState: " + writer.readyState);
+									//								};
+									//								writer.onprogress = function(e) {
+									//									console.log("Write data progressing! ReadyState: " + writer.readyState);
+									//								};
+									//								writer.onwrite = function(e) {
+									//									console.log("Write data success! ReadyState: " + writer.readyState);
+									//								};
+									//								writer.onabort = function(e) {
+									//									console.log("Write data abort! ReadyState: " + writer.readyState);
+									//								};
+									//								writer.onerror = function(e) {
+									//									console.log("Write data error! ReadyState: " + writer.readyState);
+									//								};
+									//								writer.onwriteend = function(e) {
+									//									console.log("Write data end! ReadyState: " + writer.readyState);
+									//								};
+									writer.write('false');
+									writer.onwrite = function(e) {
+										showWelcomeSlider();
+									};
+								}, function(e) {
+									console.log(e.message);
+								});
+							});
+						}, function(e) {
+							console.log("Request file system failed: " + e.message);
+						});
+					});
+
+					/**
+					 * 安装后首次进入 app 时，显示关于 app 简介的轮滑图片
+					 */
+					function showWelcomeSlider() {
+						// 获得 slider 插件对象
+						var gallery = $('#hcWelcome'),
+							galleryImgHeight = 640,
+							hcWelcome = document.getElementById('hcWelcome'),
+							viewportHeight = plus.display.resolutionHeight,
+							galleryImgs = document.getElementById('hcWelcome').getElementsByTagName('img');
+						// 图片高度自适应处理
+						if (galleryImgHeight > viewportHeight) {
+							var i = 0;
+							for (i; i < galleryImgs.length; i += 1) {
+								galleryImgs[i].style.marginTop = -(galleryImgHeight - viewportHeight) / 4 + 'px';
+							}
+							// “开始体验”按钮定位
+							document.getElementById('hcStartUsing').style.bottom = ((galleryImgHeight - viewportHeight) / 4 + 50) + 'px';
+						}
+						gallery.slider();
+						// 设置 slider 高度为屏幕高度，然后显示它
+						hcWelcome.style.height = viewportHeight + 'px';
+						hcWelcome.style.display = 'block';
+						// slider 显示后再关闭启动界面，防止短暂白屏（实际上启动界面关闭后还是会有短暂的白屏，don't know why）
+						plus.navigator.closeSplashscreen();
+						// 点击“开始体验”按钮后，移除 hcWelcome 节点，然后显示保健列表页
+						var startUsing = document.getElementById('hcStartUsing').firstElementChild;
+						startUsing.addEventListener('touchend', function() {
+							hcWelcome.classList.add('zoomOut'); // 默认耗时 500ms
+							setTimeout(function() {
+								plus.webview.show('app/life/list.html', 'fade-in', 400);
+								hcWelcome.parentNode.removeChild(hcWelcome);
+							}, 500);
+
+							//							// 给轮滑图片一个渐隐的效果
+							//							var opa = 100;
+							//							for (var i = 0; i < 100; i += 1) {
+							//								opa -= 1;
+							//								hcWelcome.style.opacity = (opa / 100);
+							//								if (opa === 0) {
+							//									hcWelcome.parentNode.removeChild(hcWelcome);
+							//									plus.webview.show('app/life/list.html', 'fade-in', 400);
+							//								}
+							//							}
+						});
+					};
+
+					// 初始加载保健页面
+					plus.webview.create('app/life/list.html', 'app/life/list.html', {
+						top: '0',
+						bottom: '50px',
+						bounce: 'vertical'
+					});
+					// 保健页面开始加载时，再关闭程序启动界面
+					//					plus.webview.getWebviewById('app/life/list.html').onloading = function() {
+					//						console.log('onloading'); // not working in XIAOMI3
+					//						plus.navigator.closeSplashscreen();
+					//					};
+					//					plus.webview.getWebviewById('app/life/list.html').onloaded = function() {
+					//						plus.navigator.closeSplashscreen();
+					//					};
+					// 预加载旅行页面
+					$.preload({
+						url: 'app/travel/list.html',
+						id: 'app/travel/list.html',
+						styles: {
+							top: '0',
+							bottom: '50px',
+							bounce: 'vertical'
+						}
+					});
+					// 预加载两性页面
+					$.preload({
+						url: 'app/sex/list.html',
+						id: 'app/sex/list.html',
+						styles: {
+							top: '0',
+							bottom: '50px',
+							bounce: 'vertical'
+						}
+					});
+					// 导航选项卡切换
+					var tabs = document.getElementById('hcFooter').getElementsByTagName('a');
+					$('#hcFooter').on('tap', 'a', function(e) {
+						var id = this.getAttribute('href'); // webview id
+						wv = plus.webview.getWebviewById(id);
+						// 如果 webview 不可见，则显示它，同时隐藏其他的 webview 视窗
+						if (wv.isVisible() === false) {
+							for (var j = 0; j < tabs.length; j += 1) {
+								var _id = tabs[j].getAttribute('href'),
+									_wv = plus.webview.getWebviewById(_id);
+								if (_wv.id !== wv.id) {
+									_wv.hide();
+								}
+							}
+							wv.show('fade-in', 200);
+						}
+						e.preventDefault();
+					});
+				});
+
+			})(mui);
+		</script>
+	</body>
+
+</html>

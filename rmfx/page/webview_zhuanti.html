@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="misapplication-tap-highlight" content="no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>活动专场</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+
+		<script type="text/javascript" charset="utf-8">
+			function openWebview(url) {
+				plus.webview.create(url).show();
+			}
+
+			function plusReady1() {
+				plus.nativeUI.showWaiting("商品整理中~");
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=zt&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&jsoncallback=zt',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						$.each(data, function(index, element) {
+							$('#li_load').hide();
+							$("#testUl").append("<li class='ditem' onclick=" + "isLogin('webview_ztinfo.html',true,false,'" + element.links + "','" + element.links + "')" + ">" + "<div class='goods-li'>" + "<img src='" + element.index_pic + "'  width='100%' /></br>" + "<div class='goods-title' style='height: 30px;padding-top: 3px;'>" + "<span class='title-text' style='line-height: 30px;'>" + element.biaoti + "</span>" + "</div>" + "</li>");
+						});
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+			
+			
+			function plusReady() {
+				plus.nativeUI.showWaiting("商品整理中~");
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=chaofan&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&jsoncallback=chaofan',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						$.each(data, function(index, element) {
+							$('#li_load').hide();
+							$("#testUl").append("<li class='ditem' onclick=" + "isLogin('webview_ztinfo.html',true,false,'" + element.links + "','" + element.fan + "')" + ">" + 
+							"<div style = 'float:left;width:100%;overflow:hidden;line-height:28px;height:30px;font-size:17px'>" + element.title + "</div>"+
+							"<div class='goods-li'>" + "<img src='" + element.img + "'  width='100%' /></br>" +
+							"<div class='goods-title' style='height:auto;padding-top: 5px;'>" + 
+							"<div style = 'float:left;width:70%'><span class='title-text' style='line-height: 28px;font-size:17px;font-weight: bold;'>全场平均返利<span style='color:red'>" + element.fan + "%</span></span></div>"+
+							"<div style = 'float:left;width:30%;text-align:right;'><span class='title-text' style='line-height: 28px;font-size:17px;font-weight: bold;'>剩<span style='color:red'>" + element.time + "</span>天</span></div></div>" +
+							"</li>");
+						});
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			 //加载账户信息
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+
+			function isLogin(id, wa, ns, url,mubiao) {
+				if (localStorage.getItem("rm_uid")) {
+					clicked(id, wa, ns, url,mubiao);
+				} else {
+					clicked('webview_login.html', true, false, "专场", url);
+				}
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="back();"></div>
+			<div class="nvtt">活动专场</div>
+			<div class="jiangpinHelp" onclick="clicked('webview_help.html',true,false,'http://www.rmfanx.com/apphelp/index.html');"></div>
+		</header>
+		<div id="content" class="scontent">
+			<ul class="dlist" id="testUl">
+				<li class="ditem" id="li_load">玩命加载中,请等待~</li>
+			</ul>
+		</div>
+
+	</body>
+
+</html>

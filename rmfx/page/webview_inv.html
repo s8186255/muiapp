@@ -1,0 +1,230 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../js/jquery.qrcode.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			$(function() {
+				loadData();
+				invQrcode();
+			})
+
+			function invQrcode() {
+				var str = "a";
+				$('#invUrl').qrcode({
+					width: 150,
+					height: 150,
+					correctLevel: 0,
+					text: localStorage.getItem("invUrl"),
+					background: "#ffffff",
+					foreground: "#555"
+				});
+			}
+
+			var shares = null;
+			var bhref = false;
+			 // H5 plus事件处理
+			function plusReady() {
+				plus.webview.currentWebview().addEventListener("hide", function() {
+					shareHide();
+				}, false);
+				updateSerivces();
+			}
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+			/**
+			 * 更新分享服务
+			 */
+			function updateSerivces() {
+				plus.share.getServices(function(s) {
+					shares = {};
+					for (var i in s) {
+						var t = s[i];
+						shares[t.id] = t;
+					}
+				}, function(e) {});
+			}
+
+			/**
+			 * 分享操作
+			 * @param {String} id
+			 */
+			function shareAction(id, ex) {
+					var s = null;
+					shareClose();
+					if (!id || !(s = shares[id])) {
+						return;
+					}
+					if (s.authenticated) {
+						shareMessage(s, ex);
+					} else {
+						s.authorize(function() {
+							shareMessage(s, ex);
+						}, function(e) {});
+					}
+				}
+				/**
+				 * 发送分享消息
+				 * @param {plus.share.ShareService} s
+				 */
+
+			function shareMessage(s, ex) {
+					var msg = {
+						content: "人脉返现手机客户端",
+						extra: {
+							scene: ex
+						}
+					};
+					if (bhref) {
+						msg.href = localStorage.getItem("href");
+						msg.title = localStorage.getItem("title");
+						msg.content = localStorage.getItem("content");
+						msg.thumbs = ["_www/img/logo.png"];
+					}
+					s.send(msg, function() {
+						//alert("分享到\"" + s.description + "\"成功！ ");
+					}, function(e) {
+						//alert("分享到\"" + s.description + "\"失败: " + e.code + " - " + e.message);
+					});
+				}
+				// 分析链接
+
+
+			function shareHref() {
+					if (localStorage.getItem("rm_uid")) {} else {
+						var ws = plus.webview.currentWebview();
+						ws.close();
+						clicked('webview_login.html', true, false, '', "webview_inv.html");
+					}
+
+					bhref = true;
+					weixinTimeline.style.display = "none";
+					weixinSession.style.display = "none";
+					sinaweibo.style.display = "none";
+					tencentweibo.style.display = "none";
+					popover.style.display = "block";
+					menu.style.display = "block";
+					setTimeout(function() {
+						popover.style.opacity = "1";
+						menu.style.opacity = "1";
+						menu.style.webkitTransform = "translateY(0)";
+					}, 0);
+				}
+				// 取消分享
+
+			function shareHide() {
+					setTimeout(function() {
+						popover.style.display = "none";
+						menu.style.display = "none";
+					}, 500);
+					popover.style.opacity = "0";
+					menu.style.opacity = "0";
+					menu.style.webkitTransform = "translateY(100%)";
+				}
+				// 关闭分享（无动画）
+
+			function shareClose() {
+				popover.style.display = "none";
+				menu.style.display = "none";
+				popover.style.opacity = "0";
+				menu.style.opacity = "0";
+				menu.style.webkitTransform = "translateY(100%)";
+			}
+
+			function loadData() {
+				document.getElementById("inv-ma").innerHTML = localStorage.getItem("inv_qianzhui") + localStorage.getItem("rm_uid");
+				//document.getElementById("yaoqingren").innerHTML = localStorage.getItem("inv_yaoqingren");
+				//document.getElementById("beiyaoqingren").innerHTML = localStorage.getItem("inv_beiyaoqingren");
+				document.getElementById("inv_jine").innerHTML = localStorage.getItem("inv_jine") > 0 ? localStorage.getItem("inv_jine") : "0";
+				document.getElementById("inv_renshu").innerHTML = localStorage.getItem("inv_renshu") > 0 ? localStorage.getItem("inv_renshu") : "0";
+			}
+
+			function qr() {
+				if (qrcode.style.display == "block") {
+					qrcode.style.display = "none";
+				} else {
+					qrcode.style.display = "block";
+				}
+			}
+
+			function goback() {
+				if (qrcode.style.display == "block") {
+					qrcode.style.display = "none";
+				} else if (popover.style.display == "block") {
+					shareHide();
+				} else {
+					back();
+				}
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="goback();"></div>
+			<div class="nvtt_inv">
+				<div style="width: 100%;"><span id="title">邀请有奖</span></div>
+			</div>
+			<div class="erweima" onclick="qr();"></div>
+		</header>
+		<div id="content" class="scontent" style="background: #fff;">
+			<div>
+				<img src="../img/yaoqing.png" width="100%" />
+			</div>
+
+			<center>
+				<div>
+					<div class="div-inv1" style="width: 100%;">
+						<div class="div-inv-jine">累计邀请奖励(元)</div>
+						<div class="div-inv-jine">成功邀请好友(人)</div>
+						<div class="div-inv-shu" id="inv_jine" onclick="clicked('webview_invlist.html', true);">1</div>
+						<div class="div-inv-shu" id="inv_renshu" onclick="clicked('webview_invlist.html', true);">1</div>
+					</div>
+					<div class="div-inv">
+						<div class="div-inv-top">您的邀请码是：<span id="inv-ma" style="color: #FF5452;"></span>
+						</div>
+						<div class="div-inv-bottom" onclick="shareHref()">分享给我的好友</div>
+					</div>
+
+					<div class="div-inv2">
+						<div class="div-inv-guize2" style="width: 95%;margin-left:3%;margin-top: 10px;">邀请好友注册即可获得额外奖励，赶快分享给亲小伙伴吧~</div>
+					</div>
+
+					<div class="div-inv2"></div>
+
+				</div>
+			</center>
+
+			<div id="popover" class="popover" onclick="shareHide();"></div>
+			<div id="menu" class="menu">
+				<div style="margin-top: 10px;margin-bottom: 8px;">
+				<img src="../img/icon_wechat.png" width="25%" onclick="shareAction('weixin','WXSceneSession');" />
+				&nbsp;&nbsp;&nbsp;&nbsp;
+				<img src="../img/icon_wechat_moment.png" width="25%" onclick="shareAction('weixin','WXSceneTimeline');"/>
+				</div>
+				<div id="weixinSession" class="button" onclick="shareAction('weixin','WXSceneSession');">发送给微信好友</div>
+				<div id="weixinTimeline" class="button" onclick="shareAction('weixin','WXSceneTimeline');">分享到微信朋友圈</div>
+				<div id="sinaweibo" class="button" onclick="shareAction('sinaweibo')">分享到新浪微博</div>
+				<div id="tencentweibo" class="button" onclick="shareAction('tencentweibo')">分享到腾讯微博</div>
+			</div>
+			<div id="qrcode" class="qrcode">
+				<div style="width:90%;margin-left: 5%; border-radius:5px;background: #FFFFFF;float: left;margin-top: 100px;padding-bottom: 15px;">
+					<div id="invUrl" style="float: left; width:100%;margin-top: 30px;"></div>
+					<div style="float: left; width:100%;font-size: 15px;margin-top: 10px;color: #FF5452;">请您的好友扫描二维码</div>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

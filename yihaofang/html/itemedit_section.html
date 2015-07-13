@@ -1,0 +1,116 @@
+<style TYPE="text/css">
+    #iecon table tr td:nth-child(1){width: 25%;text-align: center;color:#BBB;}
+	#iecon table tr td:nth-child(2){width: 75%;text-align: center;}
+	#iecon table tr td:nth-child(2) .z{width: 60%;text-align: center;color:#BBB;}
+	#iecon table tr td:nth-child(2) .y{width: 40%;text-align: center;color:#BBB;}
+</style>
+
+<section id="itemedit_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">编辑条目</h1>
+    </header>
+    
+     <article id="iewaiting_article" class="active">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+
+    <article  id="itemedit_article" data-scroll="true">
+		<div class="scrollcon" style="padding: 5px 0px 10px 0px;">
+			
+			<div style="width: 100%;margin: 0 auto;">	
+    		<div class='feditheader' id="iteminfo"></div>
+			<div class="feditcon" id="iecon">
+				<table  id="iebasic">
+    	 			<tr>
+    	 				<td>主材</td>
+    	 				<td>
+							<div class="z"><input type="number" class="finput" id="itemz" name="itemz" value=""></div>
+							<div class="y itemdw"></div>
+						</td>
+    	 			</tr>
+    	 			
+    	 			<tr>
+    	 				<td>辅材</td>
+    	 				<td>
+							<div class="z"><input type="number" class="finput" id="itemf" name="itemf" value=""></div>
+							<div class="y itemdw"></div>
+						</td>
+    	 			</tr>
+    	 			
+    	 			<tr>
+    	 				<td>人工</td>
+    	 				<td>
+							<div class="z"><input type="number" class="finput" id="itemg" name="itemg" value=""></div>
+							<div class="y itemdw"></div>
+						</td>
+    	 			</tr>
+				</table>
+			</div>	
+			<div class="fbuttoncon">
+				<button id="itemedit" class="fbtn">确认修改</button>
+			</div>
+		</div> 
+    </article>
+</section>
+<script type="text/javascript">
+	$("#itemedit_section").on('pageshow',function(){
+		setSonParam();
+	});
+	
+	$("#itemedit_section").on('pageinit',function(){
+		var iid=getID();	
+		var token=localStorage['token'];
+		var user=localStorage['uname'];
+		var server=localStorage['server'];
+		//J.showToast(id);
+		var iurl=server+'item.php?t='+token+'&u='+user+'&a=list&id='+iid+'&callback=?';
+		//alert(iurl);
+		$.getJSON(iurl,function(data){
+			if(data=='false'){
+				window.history.go(-1);
+			}else{
+				var item=eval(data);
+				var all=(item[0][0]+item[0][1]+item[0][2])*item[2];
+				$("#itemz").val(item[0][0]);
+				$("#itemf").val(item[0][1]);
+				$("#itemg").val(item[0][2]);				
+				var txt='<span>['+item[4]+']</span>'+item[3]+'<span>'+item[2]+'</span>'+item[1]+item[5]+'<br> 预计花费<span>'+all.toFixed(0)+'</span>元';	
+				$("#iteminfo").html(txt);
+				
+				$('.itemdw').html('元/'+item[1]);
+				
+				$("#iewaiting_article").removeAttr('class');
+				$("#itemedit_article").attr('class','active');
+			}
+		});
+	
+		$("#itemedit").click(function(){	
+			$("#iewaiting_article").attr('class','active');
+			$("#itemedit_article").removeAttr('class');
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var pid=localStorage['pid'];
+			var iid=getID();
+			var z=$('#itemz').val();
+			var f=$('#itemf').val();
+			var g=$('#itemg').val();
+			//&a=edit&id=1&d[z]=100&d[f]=10&d[g]=5&
+			var ieurl=localStorage['server']+'item.php?t='+token+'&u='+user+'&a=edit&id='+iid+'&d[z]='+z+'&d[f]='+f+'&d[g]='+g+'&callback=?';
+			//alert(ieurl);
+			$.getJSON(ieurl,function(data){
+				showItem(iid);	//有错误，需要修改
+				showRoom(localStorage['rid']);
+				showPlan(localStorage['pid']);			
+				showSites();
+				window.history.go(-1);
+				
+				$("#iewaiting_article").removeAttr('class');
+				$("#itemedit_article").attr('class','active');
+			});
+		});
+	});
+
+</script>
