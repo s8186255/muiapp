@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>期待乐app首页</title>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no, address=no, email=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link href="../css/common.css" type="text/css" rel="stylesheet">
+    <link href="../css/center.css" type="text/css" rel="stylesheet">
+    <script src="../js/mui.min.js"></script>
+	<script src="../js/qidaile.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+	<div class="wrap">
+		<div class="top" id="needlogin">
+			<div class=""><span><img src="../images/center/material.png" width="auto" height="auto"></span></div>
+			<span id="login_btn" rel="login" title="用户登录"><input type="button" value="登  录" /></span>
+			<span id="reg_btn" rel="reg" title="用户注册"><input type="button" value="注  册" /></span>
+		</div>
+		<div class="top" id="islogin" style="display: none;">
+			<div class=""><span><img src="../images/center/material.png" width="auto" height="auto"></span></div>
+			<p id="username"></p>
+		</div>
+		<div class="center" id="user_contorl">
+			<ul>
+	            <li rel="center/orderlist" title="我的订单">
+	                <span><img src="../images/style/icon18.png" width="15" height="20"></span>
+	                <a>我的订单</a>
+	            </li>
+	            <li rel="center/account" title="我的账单">
+	                <span><img src="../images/style/icon19.png" width="15" height="20"></span>
+	                <a>我的账单</a>
+	            </li>
+	            <li rel="center/info" title="个人信息">
+	                <span><img src="../images/style/icon20.png" width="20" height="20"></span>
+	                <a>个人信息</a>
+	            </li>
+	            <li rel="center/coupon" title="优惠券">
+	                <span><img src="../images/style/icon21.png" width="20" height="20"></span>
+	                <a>优惠券</a>
+	            </li>
+	            <li rel="center/alipay" title="支付宝">
+	                <span><img src="../images/style/icon23.png" width="23" height="20"></span>
+	                <a>支付宝</a>
+	            </li>
+	        </ul>
+		</div>
+		<div class="bottom" id="loginout" style="display: none;"><input id="loginout_btn" type="button" value="退   出" /></div>
+	</div>
+	<script src="../js/main-center.js"></script>
+</body>
+</html>

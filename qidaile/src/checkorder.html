@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>期待乐--月供最低的大学生分期平台</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/common.css">
+		<link rel="stylesheet" href="../css/fenqi.css">
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/qidaile.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body style="background: #FFFFFF;">
+		<header class="mui-bar mui-bar-nav" style="background-color:#fe6407;">
+			<a onclick="return my_back();" class="mui-icon mui-icon-back mui-pull-left" style="color: #FFFFFF;"></a>
+			<h1 id="url-title" class="mui-title" style="font-size: 22px; font: '微软雅黑';color: #FFFFFF;">
+				订单确认
+			</h1>
+		</header>
+		<div class="fenqi">
+			<div class="fenqi-top clearfix">
+				<dl>
+					<dd>
+						<p>提示：价格最终以采购价格为准</p>
+						<span>链接：<span id="url"></span></span>
+					</dd>
+				</dl>
+				<div class="info">
+					<p>
+						<span id="title"></span>
+					</p>
+				</div>
+			</div>
+			<div class="fenqi-center">
+				<!--<div class="mui-input-row">
+					<label>商品价格</label>
+					<input type="text" placeholder="请输入商品价格" id="price" value=""/>
+				</div>
+				<div class="mui-input-row">
+					<label>商品首付</label>
+					<input type="text" placeholder="请输入首付金额" id="firstpay" value=""/>
+				</div>
+				<div class="mui-input-row mui-input-range">
+					<label>分期月数</label>
+					<input type="range" min="0" max="10" value="10">
+				</div>
+				<div class="mui-input-row">
+					<label>商品备注</label>
+					<input type="text" id="remark" placeholder="请输入订单的备注信息，如尺码，颜色等" value=""/>
+				</div>-->
+				<ul>
+					<li>
+						<span>商品价格：</span>
+						<input type="number" placeholder="请输入商品价格" id="price" value="0"/>
+						<em>元</em>
+					</li>
+					<li>
+						<span>首付金额：</span>
+						<input type="number" id="firstpay" placeholder="请输入首付金额" value="0"/>
+						<em>元</em>
+					</li>
+					<li>
+						<span>备注信息：</span>
+						<input type="text" id="remark" placeholder="订单备注,如尺码，颜色等" value=""/>
+					</li>
+					<li>
+						<span>分期期数：</span>
+						<select id="monthNum">
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10" selected="selected">10</option>
+						</select>
+						<em>期</em>
+					</li>
+				</ul>
+			</div>
+			
+		</div>
+			<div class="fenqi-bottom">
+				<p class="sail">优惠：APP下单减5元 (价格>1000元)</p>
+				<div class="xiadan clearfix">
+					<div class="left fl">
+						<p>
+							<span>首付:</span>
+							<span class="price">￥0元</span>
+						</p>
+						<p>
+							<span>月供:</span>
+							<span id="payment"></span>
+						</p>
+					</div>
+					<div class="right fr">
+						<input type="button" value="立即购买" id="buyBtn"/>
+					</div>
+				</div>
+			</div>
+		<script src="../js/checkorder.js"></script>
+	</body>
+</html>
+

@@ -1,0 +1,26 @@
+@charset "utf-8";
+/* CSS Document */
+/*重置浏览器默认样式*/
+.fenqi {margin-top: 50px;}
+.fenqi-top{background:#fff; padding:10px 2%;}
+.fenqi-top dl{overflow:hidden; padding-bottom:5px;}
+.fenqi-top dl dt{display:block; width:50px; height:50px; border:1px solid #ccc; margin-right:10px;}
+.fenqi-top dl dd{width:98%;}
+.fenqi-top dl dd p{height:28px; font-size:16px; overflow:hidden;line-height:28px; margin-bottom:5px;}
+.fenqi-top dl dd p a{color:#FA5A0C;}
+.fenqi-top dl dd span a{color:#999;}
+.fenqi-top .info p{font-size:16px; line-height:24px; color:#666;}
+
+.fenqi-center{background:#fff; padding:0 2%; margin-bottom:50px;}
+.fenqi-center ul{width:100%; border-top:1px solid #ccc; padding:10px 0;}
+.fenqi-center ul li{height:40px; line-height:40px; font-size:14px; color:#666;}
+.fenqi-center ul li input{width:60%; height:32px; border:1px solid #ccc; border-radius:5px; padding:0 5px; color:#999;}
+.fenqi-center ul li select{width:60%;  border:1px solid #ccc !important; border-radius:5px; padding-left:5px; color:#999;}
+.fenqi-bottom{background:#fff; padding-bottom:10px;}
+.fenqi-bottom .sail{with:100%; height:40px; line-height:40px; font-size:16px; color:#BF4408; text-align:center; background:#FDF1B7;}
+.fenqi-bottom .xiadan{padding:0 2%; font-size:16px; color:#666;}
+.fenqi-bottom .xiadan .left p{padding-top:5px;}
+.fenqi-bottom .xiadan .price{color:#FA5A0C;}
+.fenqi-bottom .xiadan .left em{color:#2AAE07;}
+.fenqi-bottom .xiadan .left i{color:#2AAE07; font-size:12px;}
+.fenqi-bottom .xiadan .right input{width:120px; height:38px; background:#FE6407; color:#fff; border-radius:5px; margin-top:15px;}

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>期待乐-首页</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/qidaile.js"></script>
+		<style type="text/css">
+			#top {
+				height:48px;
+			}
+			#content {
+				width: 100%;
+				height: auto;
+				position: absolute;
+				top:50%;
+				bottom: 0px;
+				background: #CCCCCC;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+			<h1 class="mui-title">商家</h1>
+		</header>
+		<div id="content">
+			<form class="mui-input-group" id="footer">
+				<div class="mui-input-row" id="product_title">
+					
+				</div>
+				<div class="mui-input-row">
+					<label>售价</label>
+					<input type="text" id="sellprice" class="mui-input-clear" value="0">
+				</div>
+				<div class="mui-input-row">
+					<label>首付</label>
+					<input type="text" id="sellprice" class="mui-input-clear" placeholder="请输入首付" value="0">
+				</div>
+				<div class="mui-input-row">
+					<label>分期</label>
+					<select name="months" id="month">
+						<option value="1">1</option>
+						<option value="2">2</option>
+						<option value="3">3</option>
+					</select>
+				</div>
+			</form>
+		</div>
+		<nav class="mui-bar mui-bar-tab" id="footer" style="text-align: center;">
+		<div class="mui-content-padded">
+	        <a class="mui-btn mui-btn-primary mui-btn-block" id="buyBtn">马上分期</a>
+	    </div>
+		</nav>
+		
+	</body>
+	<script>
+		mui.init();
+		(function($){
+			$.plusReady(function(){
+				console.log('hash:'+location.hash);
+				var shopUrl = location.hash;
+				shopUrl = shopUrl.replace('#', '');
+//				var webview = $.openWindow({
+//					id: 'openshop.html',
+//					url: shopUrl,
+//					styles: {
+//						top: '48px',
+//						bottom: '48px'
+//					}
+//				});
+				var wait = null;
+				var webview = plus.webview.create(shopUrl, 'openshop.html', {top:"48px", bottom:"48px"});
+				plus.webview.currentWebview().append(webview);
+				
+				webview.onloading = function() {
+					wait = plus.nativeUI.showWaiting('加载中');
+				}
+				
+				webview.onloaded = function() {
+					if(wait) {
+						wait.close();
+					}
+					shopUrl = webview.getURL();
+					console.log('now url:'+shopUrl);
+				}
+				
+				
+				
+				document.getElementById('buyBtn').addEventListener('tap', function(){
+					QIDAILE.getPrice(shopUrl, webview);
+				});
+				
+				$.back = function() {
+//					for(var key in webview) {
+//						console.log(key+":"+webview[key]);
+//					}
+					var buypop = plus.webview.getWebviewById('buypop.html');
+					if(buypop) {
+						buypop.close();
+						return;
+					}
+					webview.canBack(function(e){
+						
+						
+						if(e.canBack) {
+							console.log('can back');
+							webview.setStyle({
+								top: '48px'
+								
+							});
+							webview.back();
+						}else{
+							console.log('no back');
+							webview.close();
+							$.currentWebview.close();
+						}
+					});
+				}
+				
+				document.getElementById('footer').addEventListener('tap', function(e){
+					console.log('nav tap');
+					e.stopPropagation();
+				});
+				
+				document.getElementById('content').addEventListener('tap', function() {
+//				webview.addEventListener('tap', function() {
+					console.log("body tap");
+					this.style.display = 'none';
+					webview.setStyle({
+						top: '48px'
+					});
+				});
+			});
+		})(mui);
+	</script>
+
+</html>

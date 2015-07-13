@@ -1,0 +1,15 @@
+@charset "utf-8";
+/* CSS Document */
+.allWebsites{width:100%; height:44px; line-height:44px; text-align:center; background:#fe6407; font-size:18px; color:#fff; }
+.allWebSea{position:relative; background:#fff; padding-bottom:20px;}
+.allWebSea input{width:94%; height:40px; margin:20px 2% 0; border:1px solid #ccc; border-radius:5px; padding-left:2%;}
+.allWebSea em{display:block; width:30px; height:30px; line-height:30px; border-left:1px solid #ccc; position:absolute; top:26px; right:3%; padding-left:10px;}
+.allWebSea em img{display:block; margin-top:5px;}
+.kinds1{width:100%;}
+.kinds1 h2{padding-left:20px; font-size:18px; color:#666; line-height:50px; border-bottom:3px solid #f1f1f5;}
+.kinds1 div{margin-top:10px;}
+.kinds1 .kinds1-01{background:#fff;}
+.kinds1 .kinds1-01 ul{padding:10px 2%; width:100%; overflow:hidden;}
+.kinds1 .kinds1-01 li{width:33%; display:inline-block; background:#fff;float:left;  border-bottom:2px solid #f1f1f5;}
+.kinds1 .kinds1-03 li{border-bottom:none;}
+.kinds1-04 {border-right: none;}

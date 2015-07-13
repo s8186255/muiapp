@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>期待乐app首页</title>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no, address=no, email=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link href="../css/mui.min.css" type="text/css" rel="stylesheet">
+    <link href="../css/common.css" type="text/css" rel="stylesheet">
+    <link href="../css/style.css" type="text/css" rel="stylesheet">
+    <script src="../js/mui.min.js"></script>
+	<script src="../js/qidaile.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+    <div class="bd" id="tabBox1-bd" ><!-- 添加id，js用到 -->
+        <!--首页-->
+        <div class="con"><!-- 高度自适应需添加外层 -->
+            <div class="homePage" id="homepage">
+                <!--<div class="banner">
+                    <img src="../images/banner/01.png" width="100%"  /> 
+                </div>-->
+				<div class="mui-slider">
+				  <div class="mui-slider-group">
+				    <div class="mui-slider-item"><a href="/about/random" style="padding: 0 ;" title="随意花"><img src="../images/banner/01.png" width="100%"/> </a></div>
+				    <div class="mui-slider-item"><a href="/about/pocketmoney" style="padding: 0" title="零花钱"><img src="../images/banner/04.png"  width="100%"/></a></div>
+				  </div>
+				  <div class="mui-slider-indicator">
+					<div class="mui-indicator mui-active"></div>
+					<div class="mui-indicator"></div>
+					<div class="mui-indicator"></div>
+				</div>
+				</div>
+                <!--热卖商品-->
+                <div class="product clearfix" id="product">
+                    <p class="hot">热卖商品</p>
+                    <ul id="hotlist">
+	                    	<li class="fl" rel="/product/2717.qi" title="iphone 6">
+	                    		<span><img src="http://qn.cdn.qidaile.cn//all/4/54a0e2cb24962.jpg" width="100%" height="auto" alt=""></span>
+	                    		<h3>iphone 6</h3>
+	                    		<div class="yuegong"><p class="left">月供:</p><p class="right">￥373</p></div>
+	                    	</li>
+	                    	<li class="fr" rel="/product/1943.qi" title="iphone 5">
+	                    		<span><img src="http://qn.cdn.qidaile.cn//all/3/54a0e2e292bf2.jpg" width="100%" height="auto" alt=""></span>
+	                    		<h3>iphone 5</h3>
+	                    		<div class="yuegong"><p class="left">月供:</p><p class="right">￥373</p></div>
+	                    	</li>
+	                    	<li class="fl" class="/product/2719.qi" title="小米4">
+	                    		<span><img src="http://qn.cdn.qidaile.cn//all/5/54a0e3a33545f.jpg" width="100%" height="auto" alt=""></span>
+	                    		<h3>小米4</h3>
+	                    		<div class="yuegong"><p class="left">月供:</p><p class="right">￥201</p></div>
+	                    	</li>
+	                    	<li class="fr" rel="/product/2020.qi" title="魅族4">
+	                    		<span><img src="http://qn.cdn.qidaile.cn//all/6/54a0e40ee71ed.jpg" width="100%" height="auto" alt=""></span>
+	                    		<h3>魅族4</h3>
+	                    		<div class="yuegong"><p class="left">月供:</p><p class="right">￥181</p></div>
+	                    	</li>
+	                    	<li class="fl" rel="/product/2345.qi" title="">
+	                    		<span><img src="http://qn.cdn.qidaile.cn//all/6/54a0e42974aa8.jpg" width="100%" height="auto" alt=""></span>
+	                    		<h3>mac air</h3>
+	                    		<div class="yuegong"><p class="left">月供:</p><p class="right">￥333</p></div>
+	                    	</li>
+	                    	<li class="fr" rel="/product/2524.qi" title="卡西欧自拍神器">
+	                    		<span><img src="http://qn.cdn.qidaile.cn//all/3/54a0e4aff0bd9.jpg" width="100%" height="auto" alt=""></span>
+	                    		<h3>卡西欧自拍神器</h3>
+	                    		<div class="yuegong"><p class="left">月供:</p><p class="right">￥119</p></div>
+	                    	</li>
+                    </ul>
+                </div>
+                <!--热卖品牌-->
+                <div class="hotBrand">
+                    <p class="hot">热卖品牌</p>
+                    <ul>
+                        <li rel="product/search.qi?keyword=" key="苹果" title="品牌:苹果"><img src="../images/style/icon01.jpg" width="100%" height="auto"></li>
+                        <li rel="product/search.qi?keyword=" key="三星" title="品牌:三星"><img src="../images/style/icon02.jpg" width="100%" height="auto"> </li>
+                        <li rel="product/search.qi?keyword=" key="小米" title="品牌:小米"><img src="../images/style/icon03.jpg" width="100%" height="auto"> </li>
+                        <li rel="product/search.qi?keyword=" key="华为" title="品牌:华为"><img src="../images/style/icon04.jpg" width="100%" height="auto"> </li>
+                        <li rel="product/search.qi?keyword=" key="HTC" title="品牌:HTC"><img src="../images/style/icon05.jpg" width="100%" height="auto"> </li>
+                        <li rel="product/search.qi?keyword=" key="联想" title="品牌:联想"><img src="../images/style/icon06.jpg" width="100%" height="auto"> </li>
+                        <li rel="product/search.qi?keyword=" key="华硕" title="品牌:华硕"><img src="../images/style/icon07.jpg" width="100%" height="auto"> </li>
+                        <li rel="product/search.qi?keyword=" key="佳能" title="品牌:佳能"><img src="../images/style/icon08.jpg" width="100%" height="auto"> </li>
+                        <li rel="product/search.qi?keyword=" key="索尼" title="品牌:索尼"><img src="../images/style/icon09.jpg" width="100%" height="auto"> </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+	<script src="../js/main-main.js"></script>
+</body>
+</html>

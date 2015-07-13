@@ -30,7 +30,7 @@
 				</li>
 				<li class="mui-table-view-cell mui-media mui-col-xs-4 mui-col-sm-3">
 					<a href="#" id='multi-record'>
-						<span class="mui-icon mui-icon-email"></span>
+						<span class="mui-icon mui-icon-contact"></span>
 						<div class="mui-media-body">群发语音</div>
 					</a>
 				</li>
@@ -60,24 +60,51 @@
 		mui.init({
 			swipeBack: true //启用右滑关闭功能
 		});
-		openNewPage("multi-voice", "functions/multi-voice.html")
-
-		function openNewPage(tapId, url) {
-			document.getElementById(tapId).addEventListener('tap', function() {
-				//打开关于页面
-				var webview=mui.openWindow({
-					id: "multi-voice",
-					url: url,
-					styles: {
-						top: '45px',
-						bottom: 0,
-						bounce: 'vertical'
-					},
-					extras:{name:'hello'}
+		//添加事件；
+		app.openPage("multi-voice", "multi-voice", "functions/multi-voice.html");
+		app.openPage("multi-record", "multi-record", "functions/multi-record.html");
+		app.openPage("multi-message", "multi-message", "functions/multi-message.html");
+		
+		var app = (function() {
+			var openPage = function(elementID, windowID, url) {
+				document.getElementById(elementID).addEventListener('tap', function() {
+					//打开关于页面
+					mui.openWindow({
+						id: windowID,
+						url: url,
+						styles: {
+							top: '45px',
+							bottom: 0,
+							bounce: 'vertical'
+						},
+						extras: {
+							name: 'hello'
+						}
+					});
 				});
-				console.log(webview.name)
-			});
-		}
+			};
+			return {
+				openPage: openPage
+			}
+		})();
+		 //		function openNewPage(tapId, url) {
+		 //			document.getElementById(tapId).addEventListener('tap', function() {
+		 //				//打开关于页面
+		 //				var webview = mui.openWindow({
+		 //					id: "multi-voice",
+		 //					url: url,
+		 //					styles: {
+		 //						top: '45px',
+		 //						bottom: 0,
+		 //						bounce: 'vertical'
+		 //					},
+		 //					extras: {
+		 //						name: 'hello'
+		 //					}
+		 //				});
+		 //				console.log(webview.name)
+		 //			});
+		 //		}
 	</script>
 
 </html>

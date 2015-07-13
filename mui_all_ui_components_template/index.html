@@ -47,7 +47,7 @@
 				//处理侧滑导航，为了避免和子页面初始化等竞争资源，延迟加载侧滑页面；
 				setTimeout(function() {
 					menu = mui.preload({
-						id: 'index-menu',
+						id: 'index-default-main',
 						url: 'index-menu.html',
 						styles: {
 							left: 0,
@@ -157,12 +157,12 @@
 				if (template) {
 					subWebview = template.children()[0];
 					subWebview.loadURL('examples/info.html');
-					//修改共用父模板的标题
+//					修改共用父模板的标题
 					mui.fire(template, 'updateHeader', {
 						title: '关于',
 						showMenu: false
 					});
-					template.show('slide-in-right', 150);
+					//template.show('slide-in-right', 150);
 				}
 			});
 			 //首页返回键处理
