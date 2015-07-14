@@ -24,35 +24,32 @@
 		</header>
 		<nav class="mui-bar mui-bar-tab">
 			<a id="defaultTab" class="mui-tab-item mui-active" href="functions/multi-voice.html">
-
-									<span class="mui-icon mui-icon-phone"></span>
-					<span class="mui-tab-label">一呼百应</span>
+				<span class="mui-icon mui-icon-phone"></span>
+				<span class="mui-tab-label">一呼百应</span>
 			</a>
 			<a class="mui-tab-item" href="functions/multi-record.html">
-					<span class="mui-icon mui-icon-chatboxes"></span>
-					<span class="mui-tab-label">群发语音</span>
+				<span class="mui-icon mui-icon-chatboxes"></span>
+				<span class="mui-tab-label">群发语音</span>
 			</a>
 			<a class="mui-tab-item" href="functions/multi-message.html">
-					<span class="mui-icon mui-icon-chat"></span>
-					<span class="mui-tab-label">群发短信</span>
+				<span class="mui-icon mui-icon-chat"></span>
+				<span class="mui-tab-label">群发短信</span>
 			</a>
 			<a class="mui-tab-item" href="functions/me.html">
-					<span class="mui-icon mui-icon-person"></span>
-					<span class="mui-tab-label">我的</span>
+				<span class="mui-icon mui-icon-person"></span>
+				<span class="mui-tab-label">我的</span>
 			</a>
 		</nav>
 		<script src="js/mui.min.js"></script>
 		<script type="text/javascript" charset="utf-8">
-			//mui初始化
+			 //mui初始化
 			mui.init();
 			var subpages = ['functions/multi-voice.html', 'functions/multi-record.html', 'functions/multi-message.html', 'functions/me.html'];
 			var subpage_style = {
 				top: '46px',
 				bottom: '50px'
 			};
-			
 			var aniShow = {};
-			
 			 //创建子页面，首个选项卡页面显示，其它均隐藏；
 			mui.plusReady(function() {
 				var self = plus.webview.currentWebview();
@@ -61,9 +58,9 @@
 					var sub = plus.webview.create(subpages[i], subpages[i], subpage_style);
 					if (i > 0) {
 						sub.hide();
-					}else{
+					} else {
 						temp[subpages[i]] = "true";
-						mui.extend(aniShow,temp);
+						mui.extend(aniShow, temp);
 					}
 					self.append(sub);
 				}
@@ -80,13 +77,13 @@
 				//更换标题
 				title.innerHTML = this.querySelector('.mui-tab-label').innerHTML;
 				//显示目标选项卡
-				if(mui.os.ios||aniShow[targetTab]){
+				if (mui.os.ios || aniShow[targetTab]) {
 					plus.webview.show(targetTab);
-				}else{
+				} else {
 					var temp = {};
 					temp[targetTab] = "true";
-					mui.extend(aniShow,temp);
-					plus.webview.show(targetTab,"fade-in",300);
+					mui.extend(aniShow, temp);
+					plus.webview.show(targetTab, "fade-in", 300);
 				}
 				//隐藏当前;
 				plus.webview.hide(activeTab);
@@ -105,10 +102,8 @@
 					defaultTab.classList.add('mui-active');
 				}
 			});
-			
-					var first = null;
-		mui.back = function() {
-
+			var first = null;
+			mui.back = function() {
 				//首次按键，提示‘再按一次退出应用’
 				if (!first) {
 					first = new Date().getTime();
@@ -121,8 +116,7 @@
 						plus.runtime.quit();
 					}
 				}
-
-		};
+			};
 		</script>
 	</body>
 
