@@ -1,0 +1,127 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>Hello H5+</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var ws = null,
+				mubiaoUrl = null;
+			embed = null;
+			var page = 1;
+			var t = "in";
+			 // 扩展API加载完毕，现在可以正常调用扩展API 
+			function plusReady() {
+					ws = plus.webview.currentWebview();
+					mubiaoUrl = ws.mubiaoUrl;
+					loadInfo();
+				}
+				// 判断扩展API是否准备，否则监听"plusready"事件
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+			 // 页面加载后自动打开
+			document.addEventListener("DOMContentLoaded", function() {
+
+			}, false);
+
+
+			 //加载账户信息			 		 
+			function loadInfo() {
+				if (mubiaoUrl == 0) {
+					$('#li_load').hide();
+				}
+
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=msgContent&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&msid=' + mubiaoUrl + '&page=1&jsoncallback=msgContent',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						$("#plist").find("li").remove();
+						if (data != null) {
+							$.each(data, function(index, element) {
+								$('#li_load').hide();
+								$("#plist").append("<li style='font-size: 15px;' onclick='msgShow(" + element.id + ")'>【" + element.see + "】" + "" + element.content + "</span></br><span style='color: #FF7472;'>" + element.addtime + "</span>" + "</li>");
+							});
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,木有信息");
+							$('#li_load').show();
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function refresh() {
+				loadInfo();
+			}
+
+			function submitmsg() {
+				var msgContent = document.getElementById("msgContent").value.trim()
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=submsg&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&message=' + msgContent + '&msid=' + mubiaoUrl + '&jsoncallback=submsg',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						if (data.status == 1) {
+							document.getElementById("msgContent").value = "";
+							loadInfo();
+							plus.ui.alert(data.msg, function() {}, "温馨提示");
+						} else {
+							plus.ui.alert('站内信提交失败！', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+		<style type="text/css">
+			li {
+				padding: 0.7em;
+				margin-top: 8px;
+				background-color: #fff;
+			}
+			li:active {
+				background: #EAEAEA;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="back();"></div>
+			<div class="nvtt">发站内信</div>
+			<div class="refresh" onclick="refresh();"></div>
+		</header>
+		<div id="content" class="scontent" style="margin-bottom:50px;">
+			<ul id="plist" style="list-style:none;margin:0;padding:0;text-align:left;">
+			</ul>
+			<li class="ditem" id="li_load" style="text-align:center;border-style: none;">玩命加载中,请等待~</li>
+			<li class="ditem" id="li_more" onclick="more()" style="display:none;border-style: none;font-siz:12px;height: 22px;"> 点击加载更多订单>></li>
+
+			<li class="ditem" id="li_load" style="text-align:center;border-style: none;background-color: #FFC8B4;">请在下方输入短信内容：</li>
+			<li class="ditem" id="li_load" style="text-align:center;border-style: none;">
+				<textarea id="msgContent" style="width: 100%;height:120px;border:1px dashed #FF7472;font-size:15px;-webkit-user-select:auto;" placeholder="请勿回复系统通知消息！ 站内信格式：订单号XXX + 简单说明"></textarea>
+			</li>
+		</div>
+
+		<bottom>
+			<div id='msgTJ' class="msgTJ" onclick="submitmsg();">发送站内信</div>
+		</bottom>
+	</body>
+
+</html>

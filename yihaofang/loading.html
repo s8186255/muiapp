@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>APP初始化页面</title>
+    <link rel="stylesheet" href="css/Jingle.css">
+    <link rel="stylesheet" href="css/bao.css">
+</head>
+
+<body>
+	<div id="section_container">
+	<style TYPE="text/css">
+		#more_article iframe {width :100%;position: absolute;z-index: -1;height: 100%;}
+		#baofooter{position:absolute;bottom:0px;z-index: 999;border-top: 1px solid #DDDDDD;}
+		.zindex{z-index:-2}
+	</style>
+	
+	<section id="loading_section" class="active" data-scroll="true">	
+	<article id="waiting" class="active" >
+		<div style="margin: 0 auto;width: 100%;">
+			<img src="img/loading.gif" style="margin: 0 auto;width: 100%;"/>
+		</div>
+	</article>
+	
+	<article id="more_article">		
+		<iframe  id="page1" name="page1"	src="welcome.html" hidden="hidden" ></iframe>
+		<iframe  id="page2" name="page2"	src="bao.html"  hidden="hidden" ></iframe>
+		<iframe  id="page3" name="page3"	src="record.html" hidden="hidden"></iframe>
+		<iframe  id="page4" name="page4"	src="ack.html" hidden="hidden"></iframe>
+		<iframe  id="page5" name="page5"	src="login.html" hidden="hidden"></iframe>
+		<iframe  id="page6" name="page6"	src="norecord.html" hidden="hidden"></iframe>
+		<div id="baofooter">
+			<ul id="baonav">
+				<li id="btn1" onclick="fshow('1','1')"><img src='img/1.png'/></li>
+				<li id="btn2" onclick="fshow('2','3')"><img src='img/2.png'/></li>
+				<li id="btn3" onclick="fshow('3','4')"><img src='img/3.png'/></li>
+				<li id="btn4" onclick="fshow('4','5')"><img src='img/4.png'/></li>
+			</ul>
+		</div>
+	</article>
+	</section>	
+	</div>
+ 	<!--预加载图标，防止点击闪烁-->
+	<div style="display: none;">
+		<img src='img/1s.png'/><img src='img/2s.png'/><img src='img/3s.png'/><img src='img/4s.png'/>
+		<img src='img/bed.png'/><img src='img/site.png'/><img src='img/bed.png'/><img src='img/sys.png'/><img src='img/pub.png'/>
+		<img src='img/other.png'/><img src='img/bath.png'/>
+	</div>
+	<script type="text/javascript" src="js/zepto.js"></script>
+	<script type="text/javascript" src="js/iscroll.js"></script>
+	<script type="text/javascript" src="js/template.min.js"></script>
+	<script type="text/javascript" src="js/Jingle.debug.js"></script>
+	<script type="text/javascript" src="js/zepto.touch2mouse.js"></script>
+	<script type="text/javascript" src="js/JChart.debug.js"></script>
+	<script type="text/javascript" src="js/function.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
+	<script type="text/javascript">
+		localStorage.removeItem('server');
+		//localStorage.setItem('server','http://192.168.1.66/yihaobao/server/');
+		//localStorage.setItem('server','http://10.0.1.66/yihaobao/server/');
+		localStorage.setItem('server','http://bao.yihaofang.com/server/');
+		
+		localStorage.removeItem('userver');
+		//localStorage.setItem('userver','http://192.168.1.66/yihaobao/login/');
+		//localStorage.setItem('userver','http://10.0.1.66/yihaobao/login/');
+		localStorage.setItem('userver','http://bao.yihaofang.com/applogin/');
+		
+		document.addEventListener("plusready",function(){		
+			backbutton();							//监控硬件按钮				
+			var s=userDataCondition();		//检查网络环境
+			if(s!=''){J.showToast(s);}
+		},false);
+		
+		$("#loading_section").on('pageinit',function(){	
+			//设置初始按钮
+			if(localStorage['cntButton']){
+				cb=localStorage['cntButton'];
+			}else{
+				localStorage.setItem('cntButton',1);
+				cb=1;
+			}
+			$('#btn'+cb).html("<img src='img/"+cb+"s.png'/>");
+		
+			//设置当前页面
+			if(localStorage['cntPage']){
+				cp=localStorage['cntPage'];
+			}else{
+				localStorage.setItem('cntPage',1);
+				cp=1;
+			}
+			
+			//设置等待时间，可以根据CPU频率进行设置不同的值，对某初始化值进行判断，完整后再加载
+			setTimeout('showIndex()',500);
+		});
+		
+		//显示操作页面
+		function showIndex(){
+			$("#more_article").attr('class','active');
+			$("#waiting").removeAttr('class','active');
+			$('#page'+cp).removeAttr('hidden','hidden');				
+		}
+		
+		function checkToken(){
+			if(window.localStorage.time!=null && window.localStorage.time!=0){
+				var token=window.localStorage.getItem('token');
+				var uname=window.localStorage.getItem('uname');
+				var logtime=window.localStorage.getItem('time');
+				nowstamp =  Date.parse(new Date())/1000;
+				t=nowstamp-logtime;
+				t1=86400;			//1天的秒数86400
+				t2=1209600;		//14天的秒数
+				
+				//进行令牌更新
+				if(t>t1 && t<t2){
+					updateToken(token,uname,logtime);
+					return true;
+				}
+				
+				//登陆超过14天，重新登陆
+				if(t>1209600 ){
+					window.localStorage.removeItem('token');
+					window.localStorage.removeItem('uname');
+					window.localStorage.removeItem('time');
+					return false;
+				}
+				return true;
+			}		
+		}
+		
+		//按钮切换操作
+		//@param bid 被点击buttonID
+		//@param pid 要显示的页面ID
+		function fshow(bid,pid){
+			var b=localStorage['cntButton'];	//当前buttonID
+			var d=0;	//判断页面动画的方向
+			if(b!=bid){
+				
+				//设置显示welcome还是bao
+				if(localStorage['token']!=undefined && bid==1){
+					pid=2;
+				}
+				
+				//设置是否显示记账功能页
+				if(localStorage['token']==undefined && bid==2){
+					pid=6;		//刷新record.html
+				}
+				
+				//如果登陆过，刷新页面
+				if(localStorage['loged']!=undefined){
+					$('#page2').attr('src','bao.html');		//刷新bao.html
+					$('#page3').attr('src','record.html');	//刷新record.html
+				}
+				
+				//处理按钮
+				localStorage.setItem('cntButton',bid);		//保存被按的按钮值
+				$('#btn'+b).html("<img src='img/"+b+".png'/>");
+				$('#btn'+bid).html("<img src='img/"+bid+"s.png'/>");
+				
+				//处理显示方向
+				d=(bid>b)?0:1;
+				
+				//处理页面显示
+				var p=localStorage['cntPage'];	        //保存正在显示的页面
+				localStorage.setItem('cntPage',pid); 	//保存将要显示的页面
+
+				//子窗口返回到最上层，防止页面无法返回
+				if(localStorage['stat']!=1){
+					reloadPage(p);		//重载页面
+					localStorage.setItem('stat','1');
+				}
+				//alert('动作后:'+localStorage['stat']);
+				$('#page'+pid).css('z-index','99');
+				$('#page'+p).css('z-index','-1');
+				
+				//动画显示页面切换
+				if(!d){
+					$('#page'+pid).css('left','-360px').removeAttr('hidden').animate({left:'0px'},250,function(){
+						$('#page'+p).attr('hidden','hidden');
+					});					
+				}else{
+					$('#page'+pid).css('left','360px').removeAttr('hidden').animate({left:'0px'},250,function(){
+						$('#page'+p).attr('hidden','hidden');
+					});
+				}								
+			}			
+		}
+		
+	function reloadPage(pid){
+		if(pid==1){
+			$('#page'+pid).attr('src','welcome.html');
+		}
+			
+		if(pid==2){
+			$('#page'+pid).attr('src','bao.html');
+		}
+			
+		if(pid==3){
+			$('#page'+pid).attr('src','record.html');
+		}
+			
+		if(pid==4){
+			$('#page'+pid).attr('src','ack.html');
+		}
+			
+		if(pid==5){
+			$('#page'+pid).attr('src','login.html');
+		}
+		
+		if(pid==6){
+			$('#page'+pid).attr('src','norecord.html');
+		}
+	}
+	</script>
+</body>
+</html>

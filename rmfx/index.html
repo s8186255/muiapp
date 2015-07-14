@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="misapplication-tap-highlight" content="no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现-淘宝购物返利</title>
+		<script type="text/javascript" src="js/common.js"></script>
+		<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript">
+			function isLogin(id, wa, ns, url) {
+				if (localStorage.getItem("rm_uid")) {
+					clicked(id, wa, ns, url);
+				} else {
+					clicked('page/webview_login.html', true, false, url, id.substr(5, 50));
+					//clicked('page/webview_3login.html', true, false, 'http://www.rmfanx.com/app/api.php?a=tb&type=wap&action=http%3A%2F%2Fwww.rmfanx.com%2Fapp%2F3login.php');
+				}
+			}
+
+			function isLogin_lx(id, wa, ns, url) {
+				if (localStorage.getItem("rm_uid")) {
+					clicked(id, wa, ns, url + '&unid=' + localStorage.getItem("rm_uid"));
+				} else {
+					clicked('page/webview_login.html', true, false, url, url);
+				}
+			}
+
+			function weixinload() {
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=weixin&jsoncallback=weixin',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						if (data.status == 1) {
+							document.getElementById("swiper-wrapper").innerHTML = data.div;
+							var mySwiper = new Swiper('.swiper-container', {
+								pagination: '.pagination',
+								paginationClickable: true,
+								autoplayDisableOninteraction: false,
+								loop: true,
+								autoplay: 5000
+							})
+							var d0 = new Date().getDate();
+							var d1 = localStorage.getItem("new_zuigeili");
+							var d2 = localStorage.getItem("new_99");
+							var d3 = localStorage.getItem("new_zhuanti");
+							if (data.new_zuigeili > 0 && d0 != d1) {
+								new_zuigeili.style.display = "block";
+								new_zuigeili.innerHTML = data.new_zuigeili;
+							}
+							if (data.new_zhe > 0 && d0 != d2) {
+								new_99.style.display = "block";
+								new_99.innerHTML = data.new_zhe;
+							}
+							if (data.new_zt > 0 && d0 != d3) {
+								new_zhuanti.style.display = "block";
+								new_zhuanti.innerHTML = data.new_zt;
+							}
+							localStorage.setItem("href", data.href);
+							localStorage.setItem("title", data.title);
+							localStorage.setItem("content", data.content);
+							localStorage.setItem("inv_qianzhui", data.inv_qianzhui)
+							localStorage.setItem("inv_yaoqingren", data.inv_yaoqingren);
+							localStorage.setItem("inv_beiyaoqingren", data.inv_beiyaoqingren);
+							localStorage.setItem("inv_yaoqingrendanwei", data.inv_yaoqingrendanwei);
+							localStorage.setItem("inv_beiyaoqingrendanwei", data.inv_beiyaoqingrendanwei);
+							localStorage.setItem("iosUrl", data.iosUrl);
+							localStorage.setItem("androidUrl", data.androidUrl);
+							localStorage.setItem("invUrl", data.invUrl);
+						} else {
+							localStorage.setItem("href", "http://www.rmfanx.com/app/inv.php");
+							localStorage.setItem("title", "一款不再剁手的网购神奇,购物省钱、分享挣钱！");
+							localStorage.setItem("contents", "注册立送1元，淘宝、天猫、京东等通通有返利，最高90%");
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+			var ws = null;
+			 // 检测更新
+			var checkUrl = "http://www.rmfanx.com/app/update/getVer.php";
+
+			function checkUpdate() {
+					var wgtVer = '';
+					plus.runtime.getProperty(plus.runtime.appid, function(wgtinfo) {
+						wgtVer = wgtinfo.version;
+					});
+					var xhr = new XMLHttpRequest();
+					xhr.onreadystatechange = function() {
+						switch (xhr.readyState) {
+							case 4:
+								plus.nativeUI.closeWaiting();
+								if (xhr.status == 200) {
+									var newVer = xhr.responseText;
+									if (wgtVer && newVer && (wgtVer != newVer)) {
+										downWgt(); // 下载升级包
+									} else {}
+								} else {}
+								break;
+							default:
+								break;
+						}
+					}
+					xhr.open('GET', checkUrl);
+					xhr.send();
+				}
+				// 下载wgt文件
+			var wgtUrl = "http://www.rmfanx.com/app/update/H522034E0.wgt";
+
+			function downWgt() {
+					//plus.nativeUI.showWaiting("下载wgt文件...");
+					plus.downloader.createDownload(wgtUrl, {
+						filename: "_doc/update/"
+					}, function(d, status) {
+						if (status == 200) {
+							//console.log("下载wgt成功：" + d.filename);
+							installWgt(d.filename); // 安装wgt包
+						} else {
+							//console.log("下载wgt失败！");
+							//plus.nativeUI.alert("下载更新失败！");
+						}
+						//plus.nativeUI.closeWaiting();
+					}).start();
+				}
+				// 更新应用资源
+
+			function installWgt(path) {
+				//plus.nativeUI.showWaiting("正在安装更新...");
+				plus.runtime.install(path, {}, function() {
+					//plus.nativeUI.closeWaiting();
+					//console.log("安装wgt文件成功！");
+					//plus.nativeUI.alert("更新成功！", function() {
+					//	plus.runtime.restart();
+					//},"亲，又有新功能啦！");
+					plus.runtime.restart();
+				}, function(e) {
+					//plus.nativeUI.closeWaiting();
+					//console.log("安装wgt文件失败[" + e.code + "]：" + e.message);
+					//plus.nativeUI.alert("安装更新失败！");
+				});
+			}
+
+			function plusReady() {
+					//plus.runtime.setBadgeNumber(0);
+					clickMsg();
+					checkUpdate();
+					ws = plus.webview.currentWebview();
+					localStorage.setItem("clientid", plus.push.getClientInfo().clientid);
+					document.addEventListener("resume", onAppReume, false);
+					weixinload();
+				}
+				//加载账户信息
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+
+			function clickMsg() {
+					plus.push.addEventListener("click", function(msg) {
+						// 提示点击的内容
+						plus.nativeUI.alert(msg.content + '透传测试');
+						// 处理其它数据
+						pushMsg(msg); //message中的内容  title为应用名  用于主屏幕显示
+						
+					}, false);
+					// 监听在线消息事件
+					plus.push.addEventListener("receive", function(msg) {
+						//plus.runtime.setBadgeNumber(0);
+						if (msg.aps) { // Apple APNS message
+							receiveMsg(msg); //为消息内容 json格式数据, 用于处理消息响应
+						}
+					}, false);
+				}
+				//处理推送消息
+
+			function receiveMsg(msg) {
+				plus.nativeUI.alert("1title: " + msg.title);
+				plus.nativeUI.alert("1content: " + msg.content);
+				if (msg.payload) {
+					if (typeof(msg.payload) == "string") {
+						plus.nativeUI.alert("1payload(String): " + msg.payload);
+					} else {
+						plus.nativeUI.alert("1payload(JSON): " + JSON.stringify(msg.payload));
+					}
+				} else {
+					plus.nativeUI.alert("1payload: undefined");
+				}
+				if (msg.aps) {
+					plus.nativeUI.alert("1aps: " + JSON.stringify(msg.aps));
+				}
+				//clearAllPush(); 清除推送消息
+			}
+
+			function pushMsg(msg) {
+					plus.nativeUI.alert("2title: " + msg.title);
+					plus.nativeUI.alert("2content: " + msg.content);
+					if (msg.payload) {
+						if (typeof(msg.payload) == "string") {
+							plus.nativeUI.alert("2payload(String): " + msg.payload);
+						} else {
+							plus.nativeUI.alert("2payload(JSON): " + JSON.stringify(msg.payload));
+						}
+					} else {
+						plus.nativeUI.alert("2payload: undefined");
+					}
+					if (msg.aps) {
+						plus.nativeUI.alert("2aps: " + JSON.stringify(msg.aps));
+					}
+					clearAllPush();
+				}
+				/**
+				 * 清空所有推动消息
+				 */
+
+			function clearAllPush() {
+				plus.push.clear();
+			}
+
+			function onAppReume() {
+					//weixinload();
+					ws.reload();
+				}
+				/**
+				 * 请求‘透传数据’推送消息
+				 */
+			var pushServer = "http://demo.dcloud.net.cn/helloh5/push/";
+			/**
+			 * 请求‘透传数据’推送消息
+			 */
+			function requireTranMsg() {
+				alert(localStorage.getItem("clientid"));
+				var url = pushServer + 'tranPush.php?appid=' + encodeURIComponent(plus.runtime.appid);
+				url += ('&cid=' + encodeURIComponent(plus.push.getClientInfo().clientid));
+				url += ('&title=' + encodeURIComponent('Hello H5+'));
+				url += ('&content=' + encodeURIComponent('带透传数据推送通知，可通过plus.push API获取数据并进行业务逻辑处理！'));
+				url += ('&payload=' + encodeURIComponent('{title:"Hello H5+ Test",content:"test content",payload:{id:"1234567890"}}'));
+				url += ('&version=' + encodeURIComponent(plus.runtime.version));
+				plus.runtime.openURL(url);
+			}
+
+			function clearCash() {
+				localStorage.clear();
+				plus.ui.alert("缓存清除成功", function() {}, "温馨提示");
+			}
+
+			function i_clicked(id, b) {
+				var myDate = new Date();
+				if (id == 'page/webview_geiliList.html') {
+					new_zuigeili.style.display = "none";
+					clicked('page/webview_geiliList.html', true);
+					localStorage.setItem("new_zuigeili", myDate.getDate());
+				} else if (id == 'page/webview_buy.html') {
+					new_99.style.display = "none";
+					clicked('page/webview_buy.html', true);
+					localStorage.setItem("new_99", myDate.getDate());
+				} else if (id == 'page/webview_zhuanti.html') {
+					new_zhuanti.style.display = "none";
+					clicked('page/webview_zhuanti.html', true);
+					localStorage.setItem("new_zhuanti", myDate.getDate());
+				}
+			}
+		</script>
+		<link rel="stylesheet" href="css/idangerous.swiper.css">
+		<link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+	</head>
+
+	<body>
+		<header>
+			<div class="nvtt_index_left" >人脉返现</div>
+			<div class="nvtt_index_right" onclick="isLogin('page/webview_tao.html',true,false,'http://www.rmfanx.com/plugin.php?mod=wap');"></div>
+		</header>
+		<div id="Content" class="indexContent">
+			<div class="swiper-container" id='swiper-container'>
+				<div id="swiper-wrapper" class="swiper-wrapper">
+					<div class='swiper-slide'>
+						<img src='img/top1.png' style="width: 100%;height: 120px;" />
+					</div>
+				</div>
+				<div class="pagination"></div>
+			</div>
+
+			<div id="index-top4" class="index-top4" onclick="i_clicked('page/webview_geiliList.html',true);">
+				<img src="img/zuigeili.png" style="border-radius: 5px;" width="100%" />
+				<div id="new_zuigeili" class="index-num">0</div>
+			</div>
+			<div class="index-top4" onclick="i_clicked('page/webview_buy.html',true);">
+				<img src="img/99.png" style="border-radius: 5px;" width="100%" />
+				<div id="new_99" class="index-num">0</div>
+			</div>
+			<div class="index-top4" onclick="clicked('page/webview_tao.html',true);">
+				<img src="img/taopd.png" style="border-radius: 5px;" width="100%" />
+			</div>
+			<div class="index-top4" onclick="i_clicked('page/webview_zhuanti.html',true);">
+				<img src="img/zhuanchang.png" style="border-radius: 5px;" width="100%" />
+				<div id="new_zhuanti" class="index-num">0</div>
+			</div>
+			<div class="index-top4" onclick="clicked('page/webview_mall.html',true);">
+				<img src="img/mall.png" style="border-radius: 5px;" width="100%" />
+			</div>
+			<div class="index-top4" onclick="isLogin_lx('page/webview_info.html',true,false,'http://s.click.taobao.com/t?e=m%3D2%26s%3DLh8tpWgbYyccQipKwQzePCperVdZeJviEViQ0P1Vf2kguMN8XjClAtH9zx7Cceatz7e0%2BjQ12igvjxjVNaraU5fupTBfNuvxC8dSqyZsMTzCIZ5ub5r%2FJX7uq6sLYIqu0Q7QOybCaQy9AmARIwX9K9E0MBlxnM%2FDnaYpFBIfC%2F2orLd93QuCUMYOae24fhW0');">
+				<img src="img/lvxing.png" style="border-radius: 5px;" width="100%" />
+			</div>
+			<div class="index-bottom5" onclick="isLogin('page/webview_user.html',true);">我的账户</div>
+			<div class="index-bottom5" onclick="clicked('page/webview_inv.html', true);">邀请有奖</div>
+		</div>
+		<script src="js/idangerous.swiper-2.1.min.js"></script>
+		<script>
+		</script>
+	</body>
+
+</html>

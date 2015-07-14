@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>More</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="lib/mui/mui.css">
+		<link rel="stylesheet" href="css/app.css">
+		<style type="text/css">
+		</style>
+	</head>
+
+	<body style="background-color: #ffffff;">
+		<ul id="menus" class="mui-table-view">
+			<li class="mui-table-view-cell">
+				<a index="1" app-event="clickMenu" class="app-btn" href="javascript:void(0)">
+					<span class="mui-icon mui-icon-plus-filled"></span>Ask a Question
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a index="2" app-event="clickMenu" class="app-btn" href="javascript:void(0)">
+					<span class="mui-icon mui-icon-refresh"></span>Reload
+				</a>
+			</li>
+			<div class="mui-table-view-divider app-mini-divider"></div>
+			<li class="mui-table-view-cell">
+				<a index="0" app-event="clickMenu" class="app-btn" href="javascript:void(0)"><span class="mui-icon mui-icon-undo"></span>Cancel
+				</a>
+			</li>
+		</ul> 
+	</body>
+	<script src="lib/mui/mui.js"></script>
+	<script src="lib/framework/z-app.js"></script>
+	<script>
+		App.go({
+			events : {
+				keys : {
+					back : function(e) {
+						App.notifyOpener({index:-1});
+					}
+				},
+				custom : {
+					clickMenu : function(e){
+						var tgt = e.target;
+						App.notifyOpener({index:tgt.getAttribute('index')});
+					}
+				}
+			}
+		});
+	</script>
+</html>

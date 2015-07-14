@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>更多菜单</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../lib/mui/mui.css">
+		<link rel="stylesheet" href="../../css/app.css">
+		<style type="text/css">
+		</style>
+	</head>
+
+	<body style="background-color: #ffffff;">
+		<ul id="menus" class="mui-table-view">
+		</ul> 
+	</body>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js"></script>
+	<script src="../../lib/mustache/mustache.min.js"></script>
+	<script id="menus" type="text/template">
+		{{#records}}
+		<li class="mui-table-view-cell">
+			<a app-event="fireMenu" class="app-btn" href="javascript:void(0)" data-value='{{value}}' data-text='{{text}}'>
+				<span class="mui-icon mui-icon-location"></span>{{text}}
+			</a>
+		</li>
+		{{/records}}
+	</script>
+	<script>
+		App.go({
+			events : {
+				custom : {
+					settings : function(e) {
+						var detail = e.detail;
+						//这里可以是url,也可以是传json数据
+						var url = detail.url;
+						var menus = detail.menus;
+						if(url){
+							App.handleTemplate({
+								beforeAjax : function(tpl){
+									tpl.ajax.url = url;
+								},
+							});
+						} else if(menus){
+							App.handleTemplate({
+								beforeAjax : function(tpl){
+									tpl.ajax.result = {
+										data : menus
+									};
+								},
+							});
+						}
+						if (typeof detail.notifyTo != 'undefined') {
+							App.notifyTo = detail.notifyTo;	
+						}
+					},
+					fireMenu : function(e) {
+						var tgt = e.target;
+						if (typeof tgt == 'undefined') {
+							return;
+						}
+						
+						var menuid = tgt.getAttribute('data-value');
+						var text = tgt.getAttribute('data-text');
+						// 通知opener页面menu被点击的事件
+						var notifyTo = App.notifyTo || plus.webview.currentWebview().notifyTo;
+						App.notifyOpener(notifyTo, {menu : { value : menuid, text: text }});
+					},
+				}
+			},
+			template : {
+				render : function(tpl) {
+					if (!tpl.ajax.result || typeof tpl.ajax.result == 'undefined') {
+						return Mustache.render(tpl.html, {});
+					}
+					// HTTP请求返回的数据
+					var records = tpl.ajax.result.data;
+					App.each(records, function(i,v){
+						v.index = parseInt(i);
+					});
+					var model = {
+						records : records
+					};
+					// 使用'大胡子'模板引擎来渲染
+					var output = Mustache.render(tpl.html, model);
+					return output;
+				}
+			},
+		});
+	</script>
+</html>

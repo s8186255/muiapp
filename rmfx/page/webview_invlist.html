@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var page = 1;
+			var t = 1;
+			 //加载账户信息
+			function plusReady() {
+				plus.nativeUI.showWaiting("数据加载中~");
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=invlist&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&page=' + page + '&jsoncallback=invlist',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						$("#plist").find("li").remove();
+						if (data.length>0) {
+							$.each(data, function(index, element) {
+								$('#li_load').hide();
+								$("#plist").append("<li style='font-size: 15px;'><span style='color: #FF7472;'>" + element.datetime + "</span>&nbsp;成功邀请<span style='color: #FF7472;'>【" + element.ddusername+'***' + "】</span>获得<span style='color: #FF7472;'>【" + element.yaoqingren +localStorage.getItem("inv_yaoqingrendanwei")+"奖励】</span>&nbsp;&nbsp;<span class='price-buy' style='font-size: 15px;'>&nbsp;"+element.status+ "&nbsp;</span></li>");
+							});
+							$('#li_more').show();
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,您还木有邀请好友~");
+							$('#li_load').show();
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function refresh() {
+				page = 1;
+				plusReady();
+			}
+
+			function more() {
+				plus.nativeUI.showWaiting("数据加载中~");
+				$('#li_more').html("玩命加载中,请等待~");
+				page++;
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=invlist&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&page=' + page + '&jsoncallback=invlist',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						if (data.length>0) {
+							$.each(data, function(index, element) {
+								$('#li_load').hide();
+								$("#plist").append("<li style='font-size: 15px;'><span style='color: #FF7472;'>" + element.datetime + "</span>&nbsp;成功邀请<span style='color: #FF7472;'>【" + element.ddusername+'***' + "】</span>获得<span style='color: #FF7472;'>【" + element.yaoqingren +localStorage.getItem("inv_yaoqingrendanwei")+"奖励】</span>&nbsp;&nbsp;<span class='price-buy' style='font-size: 15px;'>&nbsp;"+element.status+ "&nbsp;</span></li>");
+							});
+							$('#li_more').html(" 点击查看更多好友>>");
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,没有了!");
+							$('#li_load').show();
+							$('#li_more').hide();
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			//加载账户信息
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+		<style type="text/css">
+			li {
+				padding: 0.7em;
+				margin-top: 3px;
+				background-color: #fff;
+			}
+			li:active {
+				background: #EAEAEA;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="back();"></div>
+			<div class="nvtt">邀请名单</div>
+			<div class="refresh" onclick="refresh();"></div>
+		</header>
+		<div id="content" class="scontent" style="margin-bottom:50px;" >
+			<ul id="plist" style="list-style:none;margin:0;padding:0;text-align:left;">
+			</ul>
+			<li class="ditem" id="li_load" style="text-align:center;border-style: none;" >玩命加载中,请等待~</li>
+			<li class="ditem" id="li_more" onclick="more()" style="display:none;border-style: none;font-siz:12px;height: 22px;"> 点击查看更多好友>></li>
+		</div>
+	</body>
+
+</html>

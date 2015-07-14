@@ -1,0 +1,226 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="misapplication-tap-highlight" content="no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var page = 1;
+			var t = 1;
+			var cid = 0;
+			var height =0;
+			var keyword = '';
+			function loadType() {
+				var typeStr = "";
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=zhecid&jsoncallback=gType',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						$.each(data, function(index, element) {
+							typeStr += "<li class='ditem_gType'  onclick='changeType(" + element.id + ")' >" + element.title + "</li>";
+						});
+						document.getElementById("dlist_gType").style.width = (data.length * 80) + 'px';
+						$("#dlist_gType").html(typeStr);
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function loadData() {
+				plus.nativeUI.showWaiting("商品整理中~");
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=zhidemai&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") +'&q='+ keyword + '&page=' + page + '&cid='+cid+'&jsoncallback=zhidemai',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						$("#testUl").find("li").remove();
+						if (data.length > 0) {
+							$.each(data, function(index, element) {
+								$('#li_load').hide();
+								$("#testUl").append("<li class='ditem_zhe' onclick=" + "isLogin('webview_info.html',true,false,'" + element.click_url + "')" + ">" + 
+								"<div class='goods-li'>" + "<img src='" + element.pic_url + "_300x300.jpg' width='100%' height= /></br>" + 
+								"<div class='goods-title' style='height: 22px;padding-top: 3px;'>" + 
+								"<span class='zhe-text'>" + element.zhe + "/折</span>" + element.baoyou + 
+								"<span class='title-text'>" + element.title + "</span>" + "</div>" + 
+								"<div class='goods-buy'>" + 
+								"<div class='price-left'><img class='"+element.credit+"' />￥" + element.promotion_price + 
+								"&nbsp;<span class='price-yuanjia'>" + element.price + "</span></div>" + 
+								"<div class='price-right'>&nbsp;&nbsp;" + 
+								"<span class='price-buy'>&nbsp;有返利&nbsp;</span></div>" +  
+								"</div>" + "</div>" + "</li>");
+							});
+							$('#li_more').show();
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,没有了!");
+							$('#li_load').show();
+							$('#li_more').hide();
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+			
+			function plusReady() {
+				loadType();
+				loadData();
+			}
+			
+			function showDiv() {
+				qrcode1.style.display = "block";
+			}
+
+			function closediv() {
+				qrcode1.style.display = "none";
+			}
+			
+			function search() {
+				if (tao_key.value.length <= 0) {
+					plus.ui.alert('您还没有输入关键字!', function() {}, "温馨提示");
+					return;
+				}
+				keyword = tao_key.value;
+				cid = 0;
+				page = 1;
+				loadData();
+				qrcode1.style.display = "none";
+			}
+
+			//加载账户信息
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+			
+			function changeType(t_cid) {
+				$('#li_more').html(" 点击查看更多商品>>");
+				page=1;
+				cid = t_cid;
+				keyword = '';
+				loadData();
+			}
+			
+			function more() {
+				plus.nativeUI.showWaiting("商品整理中~");
+				$('#li_more').html("玩命加载中,请等待~");
+				page++;
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=zhidemai&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&q='+ keyword + '&page=' + page + '&cid='+cid+'&jsoncallback=zhidemai',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						if (data.length > 0) {
+							$.each(data, function(index, element) {
+								$('#li_load').hide();
+								$("#testUl").append("<li class='ditem_zhe' onclick=" + "isLogin('webview_info.html',true,false,'" + element.click_url + "')" + ">" + 
+								"<div class='goods-li'>" + "<img src='" + element.pic_url + "_300x300.jpg' width='100%' /></br>" + 
+								"<div class='goods-title' style='height: 22px;padding-top: 3px;'>" + 
+								"<span class='zhe-text'>" + element.zhe + "/折</span>" + element.baoyou + 
+								"<span class='title-text'>" + element.title + "</span>" + "</div>" + 
+								"<div class='goods-buy'>" + 
+								"<div class='price-left'><img class='"+element.credit+"' />￥" + element.promotion_price + 
+								"&nbsp;<span class='price-yuanjia'>" + element.price + "</span></div>" + 
+								"<div class='price-right'>&nbsp;&nbsp;" + 
+								"<span class='price-buy'>&nbsp;有返利&nbsp;</span></div>" +  
+								"</div>" + "</div>" + "</li>");
+								$('#li_more').html(" 点击查看更多商品>>");
+							});
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,没有了!");
+							$('#li_load').show();
+							$('#li_more').hide();
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+			
+			function isLogin(id, wa, ns, url) {
+				if (localStorage.getItem("rm_uid")) {
+					clicked(id, wa, ns, url);
+				} else {
+					clicked('webview_login.html', true, false, url, url);
+				}
+			}
+			function goback() {
+				if (qrcode1.style.display == "block") {
+					qrcode1.style.display = "none";
+				} else {
+					back();
+				}
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="goback();"></div>
+			<div class="nvtt">9块9(值得买)</div>
+			<div class="search" onclick="showDiv();"></div>
+		</header>
+		<goodsType>
+			<div class="dlist_gType" id="dlist_gType"></div>
+		</goodsType>
+		<div id="zglContent" class="zglContent">
+			<ul class="dlist_zhe" id="testUl">
+			</ul>
+			<li class="ditem" id="li_load" style="text-align: center;">
+				玩命加载中,请等待~
+			</li>
+			<li class="ditem" id="li_more" onclick="more()" style="display:none;border-style: none;font-siz:12px;height: 22px;"> 点击查看更多商品>></li>
+		
+		</div>
+
+		<!--totop>
+			<div id='to_top' class="totop" onclick="toTop()"></div>
+		</totop-->
+		
+		<div id="qrcode1" class="qrcode">
+			<div style="border-radius:5px;float:left;background: #fff;margin-top: 120px;">
+				<div style="border-top-left-radius:5px;border-top-right-radius:5px;float: left; width:99%; font-size: 18px;padding-left: 1%; padding-top: 5px;padding-bottom: 5px; background: #FF5452;color: #FFFFFF;text-align: center;line-height: 32px;">
+					【值得买】商品查找</div>
+				<div style="float: left; width:100%;margin-top: 25px;">
+					<input id="tao_key" class="input_userEdit" style="width: 80%;height: 30px;font-size: 18px;" type="text" placeholder="请输入关键字,如:靴子" />
+				</div>
+				<div class="inv-left" onclick="search();">查找</div>
+				<div class="inv-right" onclick="closediv();">取消</div>
+			</div>
+		</div>
+	</body>
+
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>登录</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="lib/mui/mui.css">
+		<link rel="stylesheet" href="css/app.css">
+		<style>
+			body {
+				background: white;
+			}
+			.app-primary {
+				background-color: rgba(24,103,194,0.81);
+				color: white;
+			}
+			.app-form {
+				padding: 40px 32px 0px 32px;
+				background: white;
+			}
+			.app-form input {
+				display: block;
+				width: 100%;
+				margin: 0 auto;
+				outline: none;
+				padding-top: 26px;
+				padding-bottom: 26px;
+				border: none;
+				border-bottom: 1px solid #eee;
+				border-radius: 0px;
+				background: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="app-bar mui-bar mui-bar-nav app-no-shadow">
+			<h1 class="mui-title">Sign in</h1>
+			<span app-event="signup" class="mui-btn mui-pull-right app-background-orange app-no-border" >Sign up</span>
+		</header>
+		<div class="mui-content">
+			<form class="app-form" onsubmit="return false;">
+				<center>
+					<img id="head" width="50%" src="img/logo.png" style="border-radius: 5%;"/>
+				</center>
+				<br />
+				<div class="app-input-row">
+					<label></label>
+					<input id='loginName' type="text" class="mui-input-clear" placeholder="Account">
+				</div>
+				<div class="app-input-row">
+					<label></label>
+					<input id="loginPwd" type="password" class="mui-input-clear" placeholder="Password">
+				</div>
+				<br />
+				<br />
+				<div class="app-input-row">
+					<button app-event="login" class="mui-btn mui-btn-block app-no-border app-background-blue" >Sign in</button>
+				</div>
+			</form>
+		</div>
+	</body>
+	<script src="lib/mui/mui.js"></script>
+	<script src="lib/framework/z-app.js"></script>
+	<script>
+	
+		App.go({
+			deviceReady : function(){
+				plus.webview.currentWebview().setStyle({popGesture : 'none'});
+			},
+			events : {
+				view : {
+					beforeShow : function(){
+						var loginName = plus.storage.getItem('loginName');
+						if (typeof loginName != 'undefined') {
+							var ln = document.getElementById('loginName');
+							ln.value = loginName;
+						}
+						
+						var lp = document.getElementById('loginPwd');
+						lp.value = '';
+					},
+				},
+				keys : {
+					back : function(e) {
+						if (!App.first) {
+							App.first = new Date().getTime();
+							mui.toast('再按一次退出应用');
+							setTimeout(function() {
+								App.first = null;
+							}, 1000);
+						} else {
+							if (new Date().getTime() - first < 1000) {
+								plus.runtime.quit();
+							}
+						}
+					}
+				},
+				device : {
+					pause : function(e) {
+						var lp = document.getElementById('loginPwd');
+						lp.value = '';
+					},
+					resume : function(e){
+						var lp = document.getElementById('loginPwd');
+						lp.value = '';
+					}
+				},
+				custom : {
+					login : function(e) {
+						// 检查输入合法性
+						var ln = document.getElementById('loginName');
+						var lp = document.getElementById('loginPwd');
+						if (ln.value == '') {
+							mui.toast('account required');
+							ln.focus();
+							return false;
+						}
+						if (lp.value == '') {
+							alert('password required');
+							lp.focus();
+							return false;
+						}
+						var data = { type : 'oa', login_name : ln.value, login_pwd : lp.value };
+						App.httpClient().ajax('POST', "/api/user/login", data, function(resp){
+							mui.toast('sign in success');
+							var appidkey = resp.cookieKey;
+							var appid = resp[appidkey];
+							var user = resp.loginUser;
+							App.user = user;
+							plus.storage.setItem('appidkey', appidkey);
+							plus.storage.setItem("user", JSON.stringify(user));
+							plus.storage.setItem(appidkey, ""+appid);
+							var baseUrl = App.opts.init.http.base;
+							plus.navigator.setCookie(baseUrl, appidkey+'='+appid+'; path=/');
+							var d = { success: true, appid: appid, user: user };
+							
+							// 通知打开当前页面的那个页面,登录成功了
+							App.notifyOpener(d);
+							
+							// 隐藏当前页面
+							plus.webview.currentWebview().hide('auto', 150);
+						}, function(xhr, type, statusText){
+							mui.toast("Account or Password error");
+						});
+					},
+					signup : function(e) {
+						App.open('/signup.html', {
+							onNotify : function(e) {
+								var detail = e.detail;
+								document.getElementById('loginName').value = detail.loginName;
+							}
+						});
+					}
+				}
+			},
+			appReady : function() {
+			},
+		});
+	</script>
+</html>

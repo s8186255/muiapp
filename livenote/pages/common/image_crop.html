@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Image Crop</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../lib/mui/mui.css">
+		<link rel="stylesheet" href="../../css/app.css">
+		<style>
+			body {
+				background: white;
+			}
+			.app-primary {
+				background-color: rgba(24,103,194,0.81);
+				color: white;
+			}
+			.app-form {
+				padding: 20px 10px 20px 10px;
+				background: white;
+			}
+			
+			.img-div{
+				position:relative;
+				
+			}
+			.img-cover{
+				opacity:0.6; 
+				background-color:#000; 
+				position:absolute;
+				z-index:1;
+			}
+			
+			#cover-center{
+				position:absolute;
+				z-index:1;
+				width:200px; 
+				height:200px;
+				top:0;
+				left:0;
+				border: 1px dotted #ffff33;
+			}
+			#cover-top{
+				width: 100%;
+				top:0;
+				left:0;
+			}
+			#cover-left{
+				height: 200px;
+				left:0;
+			}
+			#cover-right{
+				height: 200px;
+				right: 0;
+			}
+			#cover-bottom{
+				width: 100%;
+				bottom: 0;
+			}
+			#resize{
+				position:absolute; 
+				left:168px; 
+				top:168px; 
+				z-index:5;
+				width: 0;
+			    height: 0;
+			    border-bottom: 30px solid rgba(204,51,51,0.8);
+			    border-left: 30px solid transparent;
+			}
+			#resize-x{
+				position:absolute; 
+				right:0px; 
+				top : 35%; 
+				z-index:5;
+				width: 32px;
+				height: 30%;
+				background: red;
+				opacity: .5;
+				border-radius: 10%;
+			}
+			
+			#resize-y{
+				position:absolute; 
+				bottom:0px; 
+				left : 35%; 
+				z-index:5;
+				height: 32px;
+				width: 30%;
+				background: red;
+				opacity: .5;
+				border-radius: 10%;
+			}
+			
+		</style>
+	</head>
+
+	<body>
+		<header class="app-bar mui-bar mui-bar-nav app-no-shadow">
+			<button id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left app-bar-btn"></button>
+			<button app-event="changephoto" class="mui-btn mui-btn-primary  mui-pull-right ">Save</button>
+			<h1 class="mui-title">Image Crop</h1>
+		</header>
+		<div class="mui-content" >
+			<form class="app-form" onsubmit="return false;" >
+				<div class="app-input-row">
+					<div class="img-div" id="img-div">
+						<div class="img-cover" id="cover-top"></div>
+				        <div class="img-cover" id="cover-left"></div>
+				        <div  id="cover-center">
+				        	<div id="resize"></div>
+				        	<div id="resize-x"></div>
+				        	<div id="resize-y"></div>
+				        </div>
+				        <div class="img-cover" id="cover-right"></div>
+				        <div class="img-cover" id="cover-bottom"></div>
+						<img id="img" src="../../img/avata.png" style="width: 100%;vertical-align: middle;" />
+					</div>
+					
+				</div>
+			</form>
+		</div>
+	</body>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js"></script>
+	<script>
+		var upload={};
+		App.go({
+			deviceReady : function() {
+				var styles = plus.webview.currentWebview().getStyle();
+				var data = styles.data || {};
+				App.uploadUrl = data.uploadUrl;
+				App.path = data.path;
+			},
+			events : {
+				keys : {
+					back : function(e) {
+						mui.back();
+					}
+				},
+				gesture : {
+					swiperight : function(e) {
+						mui.back();
+					}
+				},
+				custom : {
+					changephoto : function(e) {
+						if (typeof App.uploadUrl == 'undefined' || !App.uploadUrl || App.uploadUrl == '') {
+							mui.alert('uploadUrl required!');
+							return;
+						}
+						App.showWaiting();
+						
+						//创建上传任务
+						var appidkey = plus.storage.getItem('appidkey');
+						var appid;
+						if (appidkey) {
+							appid = plus.storage.getItem(appidkey);
+						}
+						var url = App.opts.init.http.base+App.uploadUrl+"?"+appidkey+"="+appid;
+						var task = plus.uploader.createUpload(url,{method:'POST', blocksize:0,retry:1},function(t, status){
+							plus.nativeUI.closeWaiting();
+							if(status==200){
+								plus.nativeUI.toast('success!');
+								var resp = JSON.parse(t.responseText);
+								App.notifyOpener(resp);
+								mui.back();
+							}else{
+								plus.nativeUI.toast('failed!');
+							}
+						});
+						
+						//设置上传文件
+						var path = plus.webview.currentWebview().getStyle().path;
+						var index=path.lastIndexOf('/');
+						var name=path.substring(index+1);
+
+						task.addFile(path, {key:name?name:"image"})
+						
+						task.addData("position", upload.srcwidth+","+upload.srcheight+","+upload.coverwidth+","+upload.coverheight+","+upload.x+","+upload.y);
+						//console.log(upload.srcwidth+","+upload.srcheight+","+upload.coverwidth+","+upload.coverheight+","+upload.x+","+upload.y);
+						
+						//开始上传
+						task.start();
+					}
+				}
+			},
+			appReady : function() {
+				var img = document.getElementById("img");
+				img.onload = function(){
+					initImg(this);
+				}
+				img.src = App.path;
+			},
+		});
+		
+		//切小头像用 
+		function initImg(img){
+			var width=img.width;//图片宽度
+			var height=img.height;//图片高度
+			var iwh=Math.min(width,height);
+			
+			//复初始传到后台的参数
+			upload.srcwidth=width;
+			upload.srcheight=height;
+			upload.coverwidth=100;
+			upload.coverheight=100;
+			upload.x=0;
+			upload.y=0;
+
+			calposition(0,0);
+			
+			var self={};
+			document.getElementById("cover-center").ontouchstart=function(e){
+				var e=e||event;
+				try{e.preventDefault();}catch(o){e.returnValue = false;}
+				try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+				
+				
+				e=e.touches ? e.touches[0] : e;
+				self.x=e.clientX-this.offsetLeft;
+				self.y=e.clientY-this.offsetTop;
+				
+				//self.x=e.clientX;
+				//self.y=e.clientY;
+
+				this.ontouchmove=function(e){
+					
+					var e=e||event;
+					
+					try{e.preventDefault();}catch(o){e.returnValue = false;}
+					try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+					
+					e=e.touches ? e.touches[0] : e;
+					var l=e.clientX-self.x;
+					var t=e.clientY-self.y;
+					
+					l=Math.max(l,0);
+					t=Math.max(t,0);
+					
+					l=Math.min(l,width-this.offsetWidth);
+					t=Math.min(t,height-this.offsetHeight);
+					
+					//console.log(l+","+t);
+					upload.x=l;
+					upload.y=t;
+					calposition(l,t);
+				}
+			}
+
+			document.getElementById("cover-center").ontouchend=function(e){
+				try{e.preventDefault();}catch(o){e.returnValue = false;}
+				try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+				this.ontouchmove=null;
+			}
+			
+			document.getElementById("resize").ontouchstart=function(e){
+				var e=e||event;
+				
+				try{e.preventDefault();}catch(o){e.returnValue = false;}
+				try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+				
+				e=e.touches ? e.touches[0] : e;
+				self.x=e.clientX-this.offsetLeft;
+				self.y=e.clientY-this.offsetTop;
+				this.ontouchmove=function(e){
+					var e=e||event;
+					try{e.preventDefault();}catch(o){e.returnValue = false;}
+					try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+					
+					e=e.touches ? e.touches[0] : e;
+					
+					var l=e.clientX-self.x;
+					var t=e.clientY-self.y;
+					
+					l=Math.max(t,l);
+					l=l>iwh-32?iwh-32:l;
+					resizeCover(l);
+				}
+			}
+		
+			document.getElementById("resize").ontouchend=function(e){
+				try{e.preventDefault();}catch(o){e.returnValue = false;}
+				try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+				this.ontouchmove=null;
+			}
+			
+			document.getElementById("resize-x").ontouchstart=function(e){
+				var e=e||event;
+				
+				try{e.preventDefault();}catch(o){e.returnValue = false;}
+				try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+				
+				e = e.touches ? e.touches[0] : e;
+				self.x = e.clientX - this.offsetLeft;
+				this.ontouchmove=function(e){
+					var e=e||event;
+					try{e.preventDefault();}catch(o){e.returnValue = false;}
+					try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+					
+					e = e.touches ? e.touches[0] : e;
+					
+					var l = e.clientX - self.x;
+					l = l>width-32?width-32:l;
+					resizeCover(l, 'x');
+				}
+			}
+		
+			document.getElementById("resize-x").ontouchend=function(e){
+				try{e.preventDefault();}catch(o){e.returnValue = false;}
+				try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+				this.ontouchmove=null;
+			}
+			
+			document.getElementById("resize-y").ontouchstart=function(e){
+				var e=e||event;
+				
+				try{e.preventDefault();}catch(o){e.returnValue = false;}
+				try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+				
+				e=e.touches ? e.touches[0] : e;
+//				self.x=e.clientX-this.offsetLeft;
+				self.y=e.clientY-this.offsetTop;
+				this.ontouchmove=function(e){
+					var e=e||event;
+					try{e.preventDefault();}catch(o){e.returnValue = false;}
+					try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+					
+					e=e.touches ? e.touches[0] : e;
+					
+//					var l=e.clientX-self.x;
+					var t=e.clientY-self.y;
+					
+//					l=Math.max(t,l);
+					t=t>height-32?height-32:t;
+					resizeCover(t,'y');
+				}
+			}
+		
+			document.getElementById("resize-y").ontouchend=function(e){
+				try{e.preventDefault();}catch(o){e.returnValue = false;}
+				try{e.stopPropagation();}catch(o){e.cancelBubble = true;}
+				this.ontouchmove=null;
+			}
+		}
+		//计算cover大小
+		function resizeCover(l, direction){
+			direction = direction || "all";
+			var resize=document.getElementById("resize");
+			var cover=document.getElementById("cover-center");
+			
+			if (direction == 'x') {
+				resize.style.left=l+'px';
+				cover.style.width=(l+32)+'px';
+				upload.coverwidth=l+32;
+			} else if (direction == 'y') {
+				resize.style.top=l+'px';
+				cover.style.height=(l+32)+'px';
+				upload.coverheight=l+32;
+			} else {
+				resize.style.top=l+'px';
+				resize.style.left=l+'px';
+				
+				cover.style.width=(l+32)+'px';
+				cover.style.height=(l+32)+'px';
+				
+				upload.coverwidth=l+32;
+				upload.coverheight=l+32;
+			}
+			
+			calposition(cover.offsetLeft,cover.offsetTop);
+		}
+	
+		//计算遮照位置
+		function calposition(l,t){ 
+			
+			var cover=document.getElementById("cover-center");
+			cover.style.left=l+"px";
+			cover.style.top=t+"px";
+
+			//计算上面距形
+			var covertop=document.getElementById("cover-top");
+			covertop.style.height=t+"px";
+			
+			//计算左面距形
+			var coverleft=document.getElementById("cover-left");
+			coverleft.style.top=t+'px';
+			coverleft.style.width=l+"px";
+			coverleft.style.height=cover.offsetHeight+"px";
+			
+			//计算右面矩形
+			var coverright=document.getElementById("cover-right");
+			coverright.style.top=t+'px';
+			coverright.style.left=(l+cover.offsetWidth)+"px";
+			coverright.style.height=cover.offsetHeight+"px";
+			
+			//计算下面矩形
+			var coverbottom=document.getElementById("cover-bottom");
+			coverbottom.style.top=(t+cover.offsetHeight)+"px";
+
+		}
+
+		
+	</script>
+</html>

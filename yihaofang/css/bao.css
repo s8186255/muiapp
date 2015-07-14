@@ -1,0 +1,85 @@
+/*等待页面样式*/
+.waiting{width: 100%;height: 400px;background: #FBD850;background: url(../img/loading.gif) no-repeat;}
+input:focus{outline:none}
+select:focus{outline:none}
+
+/*底部导航样式*/
+#baonav{list-style: none;}
+#baonav li{float:left;width: 25%;border: 0px solid #FFF;}
+#baonav li img{margin: 0 auto;padding: 0 auto;width: 100%;	}
+
+/*编辑窗口标准样式*/
+.feditheader{width:95%; margin:0 auto; text-align:center;margin-top:15px;font-size: 16px;color: #666;}
+.feditheader span{margin:0 auto;margin-left: 3px;margin-right: 3px;color: #F33;}
+.feditcon{width:95%; margin:0 auto; text-align:center;background:#F8F8F8; border:1px solid #C1C1C1; border-radius:5px 5px; font-size:14px; margin-top:15px;margin-bottom:20px;color:#000000;}
+.feditcon table{width:90%;margin: 0 auto;margin-top: 30px;margin-bottom: 30px;}
+.feditcon table tr{text-align: center;}
+.feditcon table tr td{height: 45px;line-height: 45px;text-align: center;}
+.fbuttoncon{width:95%; margin:0 auto; text-align:center;}
+.fbtn{width:80%; height:45px; background:#E64346; border-radius:3px 3px; font-size:24px; color:#FFFFFF;}
+
+/*其他容器样式*/
+#ajaxcon{padding:0 auto;}   	
+#ajaxcon p{width:100%;padding:15px 0px 15px 0px;background: #ABCDED;}
+.rinfo{background:#FF99AA;padding:5px 10px 5px 10px;margin:5px 0px 5px 10px;}
+.nosystemadd{width: 100%;margin: 0 auto;text-align: center;margin-top: 5px;}
+.nosystemadd button{height:40px;width: 100%; background:#E64346;border-radius:0px 0px; font-size:20px; color:#FFFFFF;}
+
+/*fuu 通用样式*/
+.fheader{width: 95%;height:101px;margin: 0 auto;text-align: center;border: 1px solid #DCDDDD;background: #F8F8F8;}
+.fheader table{width: 100%;margin: 0 auto;text-align: center;}
+.fheader ul{list-style: none;}
+.fheader ul li{font-size: 14px;}
+.ffee{text-align: center;}
+.ffee h2{font-size: 40px; color: #963333;font-weight: bold;}
+.ffee p{font-size: 10px; color:#999999;}
+.finfo ul li{margin: 0 auto;width: 95%;margin:4px 0px 0px 0px ;background: #e07777;color:#FFF;text-align: center;padding:5px 0px 5px 0px;}
+.fact{height: 100%;}
+.fact li{width:30px;height:50px;margin:0px 5px 0px 5px;border-bottom: 1px solid #DCDDDD;}
+.fact img{width:30px;height:30px;margin-top:10px;opacity: 0.1;}
+		
+.fbody{width: 95%;margin: 0 auto;}
+.ftitle{width:100%; height: 42px; line-height:42px;margin:0 auto;margin-top:10px;}
+.ftitle img{margin: 0 auto;float: left;width:40px;margin-top:2px;}
+.ftitle h4{margin: 0 auto;float:right;margin-top: 12px;margin-left:10px;color:#AAA}
+.ftitle span{margin: 0 auto;float:right;font-size:12px; color:#4C4D4C;margin-top:2px;color:#AAA;}
+	
+.flist{list-style: none;width: 100%;}
+.flist li{width: 100%; height: 50px; line-height:50px; float:left; text-align: center; margin:5px auto;}
+	
+.detail{width: 85%; height: 52px; line-height:52px; float:right; text-align: center;  border: 1px solid #E2E2E2; background: #F8F8F8;}
+.detail .z{width:60%}
+.detail .y{width:40%}
+	
+.item{width: 100%; height: 52px; line-height:52px; float:right; text-align: center;  border: 1px solid #E2E2E2; background: #F8F8F8;}
+.item .z{width:55%}
+.item .y{width:35%}
+	
+.ficon{color: #EE7621; float:right; margin-right:10px;margin-top: 20px;}
+.ficon img{width:8px;height:13px}
+.favg{font-size: 14px; color: #AAAAAA; float:left; margin:0 auto;margin:2px 0px 0px 5px;}
+.fname{font-size: 16px; color: #000000; float:left; margin:0 auto;margin-left:10px;font-weight: bold;color:#666;}
+.fsum{font-size: 16px; color: #EE7621; float:right; margin-right:10px;}
+	
+#sitetitle{ border-bottom: 1px solid #E43D40;}
+#systitle{ border-bottom: 1px solid #EE7621;}
+#bedtitle{ border-bottom: 1px solid #CB1F10;}
+#pubtitle{ border-bottom: 1px solid #97BF33;}
+#bathtitle{ border-bottom: 1px solid #F63D99;}
+#othertitle{ border-bottom: 1px solid #52B297;}
+	
+.rec{width: 2%; height: 52px; line-height:52px; float:right; text-align: center;}
+.site{background: #E43D40;}
+.bed{background: #CB1F10;}
+.sys{background: #EE7621;}
+.pub{background: #97BF33;}
+.bath{background: #F63D99;}
+.other{background: #52B297;}
+.z{float:left}
+.y{float:right}
+.fhidden{display: none;}
+.sy{font-size: 20px;}
+.acticn{width:30px;height:30px;margin-top:10px;opacity: 0.1;}
+.finput{width: 75%;margin: 0 auto;height: 30px;border: 1px solid red;padding-left: 10px;}
+.clear{height:1px; margin-top:-1px;clear: both;overflow:hidden;}
+.fpadding{width: 100%;height: 58px;background: #FFFFFF;overflow:hidden;}

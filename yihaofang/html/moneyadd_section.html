@@ -1,0 +1,193 @@
+<style TYPE="text/css">
+#macon table{margin-top:15px;margin-bottom: 15px;}
+#macon table tr td:nth-child(1){width: 28%;text-align: center;color:#BBB;}
+#macon table tr td:nth-child(2){width: 72%;text-align: center;}
+#macalendar{width:100%;float: left;margin:0 auto;background: #E88E8F;}
+</style>
+
+<section id="moneyadd_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">新增花销详情</h1>
+    </header>
+	
+    <article id="mawaiting_article"  class="active">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+    <article id="moneyadd_article" data-scroll="true">     	
+    	<div style="width: 100%;margin: 0 auto;">		
+			<div class="feditcon" id="macon">
+				<table>
+					<tr>
+						<td>消费金额</td>
+						<td><input type="number" class="finput" id="macost" name="macost" placeholder="0.00"></td>
+					</tr>
+					
+					
+					<tr>
+						<td>具体项目</td>
+						<td><input type="text" class="finput" id="maname" name="maname" placeholder="花费名称..." ></td>
+					</tr>
+					<tr>
+						<td>费用类型</td>
+						<td>
+							<select name="macat" id="macat"></select>
+						</td>
+					</tr>
+					<tr>
+						<td>支付方式</td>
+						<td>
+							<select name="mapay" id="mapay"></select>
+						</td>
+					</tr>
+					<tr>
+						<td>装修进度</td>
+						<td>
+							<select name="majd" id="majd"></select>
+						</td>
+					</tr>
+					<tr>
+						<td>消费日期</td>
+						<td>
+							<button class="button" id="macalendar"></button>
+        					<div id="calendar_demo" style="margin:10px;"></div>
+						</td>
+					</tr>					
+					<tr>
+						<td>备注信息</td>
+						<td><input type="text" class="finput" id="mamemo" name="mamemo" placeholder="备注..."></td>
+					</tr>
+				</table>
+				<input type="hidden" name="mayear" id="mayear" value="" />
+				<input type="hidden" name="mamonth" id="mamonth" value="" />
+				<input type="hidden" name="maday" id="maday" value="" />
+			</div>	
+			<div class="fbuttoncon">
+				<button id="moneyadd" class="fbtn">添加花费</button>
+			</div>
+		</div>
+
+    </article>
+</section>
+<script type="text/javascript">
+		$("#moneyadd_section").on('pageshow',function(){
+			setSonParam();	
+		}); 
+		
+		$("#moneyadd_section").on('pageinit',function(){
+			//alert(window.location.href);
+			//设置当前的年月日
+			var myDate = new Date();
+			var y=myDate.getFullYear();
+			var m=myDate.getMonth()+1;
+			var d=myDate.getDate();
+			 $('#macalendar').text(y+'-'+m+'-'+d);
+			
+			$("#mayear").val(y);
+			$("#mamonth").val(m);
+			$("#maday").val(d);
+			
+			if(localStorage['token']!=undefined){
+				var maurl=localStorage['server']+'money.php?t='+localStorage['token']+'&u='+localStorage['uname']+'&a=malist&callback=?';
+				//alert(maurl);
+				$.getJSON(maurl,function(data){
+					if(data==undefined){
+						J.showToast('服务器无响应，请重试!');
+						window.history.go(-1);
+					}else{
+						var d=eval(data);
+						$.each(d['jd'], function(k,v) {   
+							$('#majd').append('<option value="'+k+'">'+v+'</option>');                                                         
+						});
+						//alert(d['mcat']['1']);
+						$.each(d['mcat'], function(k,v) {   
+							$('#macat').append('<option value="'+k+'">'+v+'</option>');                                                         
+						});
+						
+						$.each(d['mpay'], function(k,v) {   
+							$('#mapay').append('<option value="'+k+'">'+v+'</option>');                                                         
+						});
+					}
+				}); 
+			}
+			
+			$("#moneyadd_article").attr('class','active');
+			$("#mawaiting_article").removeAttr('class');
+			
+			$("#moneyadd").click(function(){
+				$("#mawaiting_article").attr('class','active');
+				$("#moneyadd_article").removeAttr('class');
+				
+				//alert('im here');
+				var cost=$('#macost').val();
+				var  name=$('#maname').val();
+				var mact=$("#macat  option:selected").val();
+				var mpay=$("#mapay  option:selected").val();
+				var jd=$("#majd option:selected").val();
+				var memo=$("#mamemo").val();
+				var year=$("#mayear").val();
+				var month=$("#mamonth").val();
+				var day=$("#maday").val();
+				if(cost==''){
+					J.showToast('请输入花费','error');
+					return false;
+				}
+				
+				if(name==''){
+					J.showToast('请输入费用名称','error');
+					return false;
+				}
+				
+				var maurl=localStorage['server']+'money.php?t='+localStorage['token']+'&u='+localStorage['uname'];
+				maurl+='&d[cost]='+cost+'&d[name]='+name+'&d[mc_id]='+mact+'&d[mp_id]='+mpay+'&d[jd_id]='+jd;							
+				if(memo!=''){maurl+='&d[info]='+memo;}
+				maurl+='&d[year]='+year+'&d[month]='+month+'&d[day]='+day;
+				maurl+='&a=add&callback=?';
+				
+				$.getJSON(maurl,function(data){
+					showAccount();
+					var myDate = new Date();
+					var y=myDate.getFullYear();
+					var m=myDate.getMonth()+1;		
+					showRecord(y,m);
+					
+					$("#mawaiting_article").removeAttr('class');
+					$("#moneyadd_article").attr('class','active');
+					window.history.go(-1);
+				}); 		
+			});		
+		}); 
+		
+		$('#macalendar').click(function(){
+			//获取当前时间的年月日
+			//	alert(myDate.getFullYear()+'-'+(myDate.getMonth()+1)+'-'+myDate.getDate());
+			var myDate = new Date();
+			var y=myDate.getFullYear();
+			var m=myDate.getMonth();
+			var d=myDate.getDate();
+            J.popup({
+                html : '<div id="popup_calendar"></div>',
+                pos : 'center',
+                backgroundOpacity : 0.4,
+                showCloseBtn : false,
+                onShow : function(){
+                    new J.Calendar('#popup_calendar',{
+                        date : new Date(y,m,d),
+                        onSelect:function(date){
+                            $('#macalendar').text(date);
+                            //设置年月日的值
+                            var arr=date.split("-");
+                            $("#mayear").val(parseInt(arr[0]));
+							$("#mamonth").val(parseInt(arr[1]));
+							$("#maday").val(parseInt(arr[2]));
+                            
+                            J.closePopup();
+                        }
+                    });
+                }
+            });
+        });
+</script>

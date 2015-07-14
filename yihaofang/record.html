@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>1号记账宝</title>
+    <link rel="stylesheet" href="css/Jingle.css">
+    <link rel="stylesheet" href="css/bao.css">
+</head>
+
+<body>
+<div id="section_container">
+<style type="text/css">
+  	#rcdhead{width: 95%;margin:0 auto; margin-top: 5px; border: 1px solid #DCDDDD; background: #F8F8F8;}
+  	#rcdinfo{width: 100%; height:25px; line-height:25px;font-size: 10px; }
+  	#rcdinfo .z{margin-left:10px;}
+  	#rcdinfo .y{margin-right:10px;}
+  	#rcdsum{width: 100%; text-align: center;height: 50px;line-height: 50px;}
+  	#rcdsum h2{font-size: 40px; color: #963333;font-weight: bold;margin-top:0px;}
+  	#rcdreport{width: 100%; text-align:center; margin:0 auto; background: #E5E5E5;}
+  	#rcdreport ul{list-style:none; height:35px; line-height:35px;}
+  	#rcdreport ul li{margin: 0 auto; width:25%;float:left;height:35px; line-height:35px;font-size: 10px; border-right:1px solid #DCDDDD;}
+  	
+  	#newrecord{width: 95%; margin:0 auto;height:40px; line-height:40px; text-align:center; margin:0 auto; margin-top:5px; background: #E64346;}
+  	#newrecord button{height:40px;width: 80%; background:#E64346; border-radius:0px 0px; font-size:20px; color:#FFFFFF;}
+ 	
+  	#rcdbody{width: 95%;margin:0 auto;}
+  	#rcdbheader{width:100%; height: 40px; line-height:40px; float:left; margin:0 auto; margin-top:15px; border-bottom: 1px solid #EE7621;}
+  	#rcdbheader .y{margin:3px auto; font-size:10px; color:#4C4D4C;}
+  	#rcdbheader .z{width: 200px;}
+  	 #rcdbheader .z{color:#EE7621; font-size: 14px;}
+  	
+  	#rcdmain{list-style: none;width: 100%;}
+  	#rcdmain li {margin:0 auto;width:100%;float: left;height: 50px; line-height:50px;margin-top: 5px;}
+  	#rcdmain li a{color:#000000;}
+  	
+  	#rcdmain li .z{width: 15%;}
+  	#rcdmain li .y{width: 85%;}
+  	#rcdmain li .y .z{width: 60%;}
+  	#rcdmain li .y .y{width: 40%;}
+  	
+  	#fmonth{margin:0 auto; background: #EE7621;border: none;border-radius:0px 0px;width: 175px;height:40px;color: #FFFFFF;}
+  	#monsum{color:#EE7621;}
+  	
+  	#rcdwaiting{width:100% ;margin: 0 auto;text-align: center;}
+
+  	.rcdfirst{background: #E5E5E5;}
+  	.rcddate{font-size:10px; height: 50px; line-height:50px;color:#4C4D4C;text-align:center;border-right:3px solid #DCDDDD;}
+  	.rcddate span{font-size:24px;color:#EE7621;}
+  	.rcdname{float: left; margin:-6px 10px}
+  	.rcdway{font-size: 8px; float: left; margin:-25px 10px}
+  	.rcdmoney{font-size: 16px; color: #EE7621; float:right;}
+  	.rcdmoney img{width: 10px;margin: 0 auto;margin-right:10px ;margin-left: 10px;}
+</style>
+<section id="record_section" class="active">			
+	 <header>
+		<h1 class="title">装修账本</h1>	
+		<nav class="right">
+		</nav>
+	</header>
+	<article id="norecord_article" data-scroll="true" >
+		您还未登陆，无法使用记账功能
+	</article>
+	
+	 
+	<article id="rwaiting_article"  class="active"  >
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+	<article id="record_article" data-scroll="true" >
+		<div id="scrollcon" style="padding: 5px 0px 10px 0px;">
+			<div id="rcdhead">
+				<div id="rcdinfo">
+					<div class="z">总花费(元)</div>
+					<div class="y">建账日期:</div>
+				</div>
+				<div id="rcdsum">
+					<h2>0</h2>
+				</div>
+				<div id="rcdreport">
+					<ul>
+					  <li id="feez">主料：0</li>
+					  <li id="feef">辅料：0</li>
+					  <li id="feeg">人工：0</li>
+					  <li id="fees">系统：0</li>
+					</ul>		
+				</div>
+			</div>
+			
+			<div class="clear"></div>
+			
+			<div id="newrecord">
+			  <a data-target="section" href="#moneyadd_section"><button>新记一笔</button></a>
+			</div>
+			
+			<div id="norecord">
+				
+			</div>
+			<div id="rcdbody">
+				<div id="rcdbheader">
+					<div class="z">
+							<select name="fmonth" id="fmonth">
+							</select>
+
+					</div>
+					<div class="y">当月花费￥<span id="monsum"></span>元</div>
+				</div>
+				<div id="rcdwaiting" class="fhidden">
+					<img src="./img/loading.gif" width="100%">
+				</div>
+				<ul id="rcdmain"></ul>
+				<div id="rcdresult"></div>
+			</div>
+			<div class="clear"></div>
+			<div class="fpadding"></div>
+		</div>
+	</article>	
+</section>
+</div>
+	<script type="text/javascript" src="js/zepto.js"></script>
+	<script type="text/javascript" src="js/iscroll.js"></script>
+	<script type="text/javascript" src="js/template.min.js"></script>
+	<script type="text/javascript" src="js/Jingle.debug.js"></script>
+	<script type="text/javascript" src="js/zepto.touch2mouse.js"></script>
+	<script type="text/javascript" src="js/JChart.debug.js"></script>
+	<script type="text/javascript" src="js/function.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
+
+	<script type="text/javascript">
+	document.addEventListener("plusready",function(){			
+	},false);	
+		
+	$("#record_section").on('pageshow',function(){
+		setFatherParam();
+	});
+		
+	$("#record_section").on('pageinit',function(){
+			//设置目录深度，响应按钮
+		window.localStorage.setItem('stat','1');
+				
+		if(localStorage['token'] !=undefined){
+			showAccount();			//获取头部信息(总花费及各分项花费)	
+			$("#record_article").attr('class','active');
+			$("#rwaiting_article").removeAttr('class');			
+		}
+		
+		//按月刷新内容
+		$("#fmonth").change(function(){
+			var fdate=$("#fmonth  option:selected").val();
+			var arr=fdate.split("-");
+			var m=arr[1];
+			var y=arr[0];
+			showRecord(y,m);
+		});
+	});
+	
+	function showAccount(){
+		var mhurl=localStorage['server']+'money.php?t='+localStorage['token']+'&u='+localStorage['uname']+'&a=alist&callback=?';
+		$.getJSON(mhurl,function(data){
+			var mh=eval(data);
+			if(mh==false){
+				$("#rcdsum h2").html('￥0');
+				$("#rcdinfo .y").html('');
+				$("#feez").html('主材:￥0');
+				$("#feef").html('辅材:￥0');
+				$("#feeg").html('人工:￥0');
+				$("#fees").html('系统:￥0');
+				$("#rcdbody").addClass('fhidden');
+			}else{
+				$("#rcdbody").removeClass('fhidden');
+				$("#rcdsum h2").html('￥'+allNum(mh['cost'],3,','));
+				$("#rcdinfo .y").html('建帐日期:'+mh['time']);
+				$("#feez").html('主材:￥'+allNum(mh['fee_z'],3,','));
+				$("#feef").html('辅材:￥'+allNum(mh['fee_f'],3,','));
+				$("#feeg").html('人工:￥'+allNum(mh['fee_g'],3,','));
+				$("#fees").html('系统:￥'+allNum(mh['fee_s'],3,','));
+				
+				//输出所有记录期间的月份
+				var ms='';
+				var myDate = new Date();
+				var y=myDate.getFullYear();
+				var m=myDate.getMonth()+1;
+				if(mh['minm']!=0 && mh['miny']!=0 && mh['maxm']!=0 && mh['maxy']!=0  ){
+					//alert(mh['miny']+'-'+mh['minm']+':'+mh['maxy']+'-'+mh['maxm']);
+					var nm= parseInt(mh['minm']);
+					var ny=parseInt(mh['miny']);
+					var xm=parseInt(mh['maxm']);
+					var xy=parseInt(mh['maxy']);
+					
+					var ycount=xy-ny;
+					if(ycount>0){
+						//1.把最小年当年的月份都遍历出来
+						for (var i=nm;i<=12;i++){
+							ms+='<option value="'+ny+'-'+i+'">'+ny+'年'+i+'月消费记录&nabla;</option>';
+						}
+						
+						//2.把中段的年份遍历出来
+						ycount-=1;		//去除最小年计数					
+						if(ycount>0){
+							for(var j=1;j<=ycount;j++){
+								for (var i=1;i<=12;i++){
+									ms+='<option value="'+(ny+j)+'-'+i+'">'+(ny+j)+'年'+i+'月消费记录&nabla;</option>';
+								}
+							}
+						}
+						
+						//3.把尾端的年份遍历出来
+						for (var i=1;i<=xm;i++){
+							if(i==m && y==xy){
+								ms+='<option value="'+xy+'-'+i+'" selected>'+xy+'年'+i+'月消费记录&nabla;</option>';
+							}else{
+								ms+='<option value="'+xy+'-'+i+'">'+y+'年'+i+'月消费记录&nabla;</option>';
+							}
+						}
+				
+					}else{
+						//没有年份跨度的记录
+						for (var i=nm;i<=xm;i++){
+							if(i==xm && y==xy){
+								ms+='<option value="'+ny+'-'+i+'" selected>'+ny+'年'+i+'月消费记录&nabla;</option>';
+							}else{
+								ms+='<option value="'+ny+'-'+i+'">'+y+'年'+i+'月消费记录&nabla;</option>';
+							}
+						}
+					}
+				}else{
+					ms+='<option value="'+y+'-'+m+'">'+y+'年'+m+'月消费记录&nabla;</option>';
+				}
+				//alert(ms);g
+				$("#fmonth").html(ms);
+				
+				showRecord(xy,xm);		//获取最大月
+			}
+		});	
+	}
+	
+	function showRecord(y,m){
+			$("#rcdmain").attr('class','fhidden');
+			$("#rcdwaiting").removeAttr('class');
+		//获取本月的费用收入
+			var murl=localStorage['server']+'money.php?t='+localStorage['token']+'&u='+localStorage['uname']+'&y='+y+'&m='+m+'&a=list&callback=?';
+			$.getJSON(murl,function(data){
+				if(data==undefined){
+					J.showToast('系统错误，请重试','error top');
+				}else{
+					var r=eval(data);
+					if(r==undefined){
+						var txt='当月没有花钱哦';
+						$('#rcdresult').html(txt);
+					}else{				
+						var txt='';
+						var sum=0;
+						$.each(r, function(k,v){
+							$.each(v, function(kk,vv){
+								if(kk==0){
+									txt+='<li class="rcdfirst"><a data-target="section" href="#moneyedit_section?id='+vv[4]+'"><div class="z rcddate"><p><span>'+k+'</span>&nbsp;日</p></div>'
+								}else{
+									txt+='<li><a data-target="section" href="#moneyedit_section?id='+vv[4]+'"><div class="z rcddate"></div>';
+								}					
+								txt+='<div class="y"><div class="z"><p class="rcdname">'+vv[2]+' > '+fsubstr(vv[0],8)+'</p>';
+								txt+='<p class="rcdway">'+y+'-'+m+'-'+k+'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+vv[3]+'</p></div>';
+								txt+='<div class="y" class="rcddate"><p class="rcdmoney">￥'+allNum(vv[1],3,',')+'<img src="img/an-ts.png"></p></div></div></a></li>';
+								sum+= parseInt(vv[1]);
+							});
+						});	
+						
+						$("#monsum").html(allNum(sum,3,','));
+						$('#rcdmain').html(txt);
+						
+						$("#rcdmain").removeAttr('class');
+						$("#rcdwaiting").attr('class','fhidden');
+					
+						$("#record_article").show();
+						J.Scroll('#record_article',{vScroll:true,vScrollbar : false});					
+					}
+				}
+			});
+	}
+	</script>
+</body>
+</html>

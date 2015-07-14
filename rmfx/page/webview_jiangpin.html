@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var page = 1;
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+
+			function plusReady() {
+				$('#li_load').hide();
+				allJiang(1);
+			}
+
+			function myJiang(p) {
+				showDiv.style.display = "none";
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=myJiang&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&page=' + p + '&jsoncallback=myJiang',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						if (p == 1) {
+							$("#plist").find("li").remove();
+							$('#li_load').hide();
+						}
+						if (data.length > 0) {
+							$.each(data, function(index, element) {
+								if (element.zhong == "1") {
+									$("#plist").append("<li style='font-size: 15px;height:40px;' ><div class = 'jiangInfo-left-Y'></div><div class= 'jiangInfo-right'>" + element.addTime + "</br>" + element.title + "</div></li>");
+								} else {
+									$("#plist").append("<li style='font-size: 15px;height:40px;' ><div class = 'jiangInfo-left-N'></div><div class= 'jiangInfo-right'>" + element.addTime + "</br>" + element.title + "</div></li>");
+								}
+							});
+							$('#li_more').show();
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,木有了");
+							$('#li_load').show();
+							$('#li_more').hide();
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function allJiang(p) {
+				showDiv.style.display = "none";
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=jiangpin&jsoncallback=allJiang',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						if (p == 1) {
+							$("#plist").find("li").remove();
+							$('#li_load').hide();
+						}
+						if (data.length > 0) {
+							$.each(data, function(index, element) {
+								if (element.level > 0) {
+									$("#plist").append("<li style='font-size: 15px;height:40px;' ><div class = 'jiangpin-left-Y'></div><div class= 'jiangInfo-right'><span style='color: #FF7472;font-weight: bold;'>" + element.levelName + "：" + element.name + "</span>&nbsp;&nbsp;</br><span style='color: #888;'>活动时间：" + element.bdate + " ~ " + element.edate + "</span></div></li>");
+								} else {
+									$("#plist").append("<li style='font-size: 15px;height:40px;' ><div class = 'jiangpin-left-N'></div><div class= 'jiangInfo-right'><span style='color: #FF7472;font-weight: bold;'>" + element.levelName + "：" + element.name + "</span>&nbsp;&nbsp;</br><span style='color: #888;'>活动时间：" + element.bdate + " ~ " + element.edate + "</span></div></li>");
+								}
+							});
+							//$('#li_more').show();
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,木有了");
+							$('#li_load').show();
+							$('#li_more').hide();
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function more() {
+				page++;
+				if (t == 'out') {
+					myJiang(page);
+				} else {
+					allJiang(page);
+				}
+			}
+			var t = "in";
+
+			function orderList(type) {
+				if (type == 'in') {
+					t = 'in';
+					$('#li_more').hide();
+					document.getElementById("order_taobao").className = "order_taobao";
+					document.getElementById("order_mall").className = "order_mall";
+					allJiang(1);
+				} else if (type == 'out') {
+					t = "out";
+					document.getElementById("order_mall").className = "order_taobao";
+					document.getElementById("order_taobao").className = "order_mall";
+					myJiang(1);
+				}
+			}
+
+			function qr() {
+				if (showDiv.style.display == "block") {
+					showDiv.style.display = "none";
+				} else {
+					showDiv.style.display = "block";
+				}
+			}
+			var ws = null;
+
+			function goback() {
+				ws = plus.webview.getWebviewById("webview_shake.html");
+				ws.evalJS("shake_reload()");
+				back();
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+		<style type="text/css">
+			li {
+				padding: 0.7em;
+				margin-top: 8px;
+				background-color: #fff;
+			}
+			li:active {
+				background: #EAEAEA;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="goback();"></div>
+			<div class="nvtt">奖品清单</div>
+			<div class="jiangpinHelp" onclick=""></div>
+		</header>
+		<div id="content" class="scontent " style="margin-bottom:50px;">
+			<ul id="plist" style="list-style:none;margin:0;padding:0;"></ul>
+			<li class="ditem" id="li_load" style="text-align:center;border-style: none; "></li>
+			<li class="ditem" id="li_more" onclick="more() " style="display:none;border-style: none;font-siz:12px;height: 22px; "> 点击查看更多>></li>
+		</div>
+
+		<bottom>
+			<div id='order_taobao' class="order_taobao" onclick="orderList('in');">奖品清单</div>
+			<div id='order_mall' class="order_mall" onclick="orderList('out');">我的手气</div>
+		</bottom>
+
+		<div id="showDiv" class="showDiv">
+			<div style="border-radius:5px;background: #FF5452;width: 94%;margin-left:3%;color: #fff; float:left;margin-top:100px;">
+				<div id="divtitle" style="float: left; border-bottom: dashed 1px #cBcBcB; width:100%;font-size: 18px;line-height: 45px;"></div>
+				<div id="divresult" style="float: left; border-bottom: dashed 1px #cBcBcB; width:100%;height:55px;line-height: 55px; font-size: 18px;"></div>
+				<div style="float: left; width:100%;font-size: 15px;line-height: 20px;">
+					<div id="divcontent" style="margin-left:5%;width:90%;text-align:left;margin-top:10px;color: #eee;"></div>
+				</div>
+				<div style="float: left; width:100%;margin-top: 20px;">
+					<div class='showJiang' onclick="myJiang(1);">&nbsp;查看我的中奖记录&nbsp;</div>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

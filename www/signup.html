@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Sign up</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="lib/mui/mui.css">
+		<link rel="stylesheet" href="css/app.css">
+		<style>
+			body {
+				background: white;
+			}
+			.app-primary {
+				background-color: rgba(24,103,194,0.81);
+				color: white;
+			}
+			.app-form {
+				padding: 40px 32px 0px 32px;
+				background: white;
+			}
+			.app-form input {
+				display: block;
+				width: 100%;
+				margin: 0 auto;
+				outline: none;
+				padding-top: 26px;
+				padding-bottom: 26px;
+				border: none;
+				border-bottom: 1px solid #eee;
+				border-radius: 0px;
+				background: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="app-bar mui-bar mui-bar-nav app-no-shadow">
+			<button id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left app-bar-btn"></button>
+			<h1 class="mui-title">Sign up</h1>
+			<button app-event="reset" class="mui-icon mui-icon-refreshempty mui-pull-right app-bar-btn"></button>
+		</header>
+		<div class="mui-content">
+			<form class="app-form" onsubmit="return false;">
+				<div class="app-input-row">
+					<label></label>
+					<input id='loginName' type="text" class="mui-input-clear" placeholder="Account">
+				</div>
+				<div class="app-input-row">
+					<label></label>
+					<input id='loginPwd' type="password" class="mui-input-clear" placeholder="Password">
+				</div>
+				<div class="app-input-row">
+					<label></label>
+					<input id="confirmPwd" type="password" class="mui-input-clear" placeholder="Confirm Password">
+				</div>
+				<br />
+				<br />
+				<div class="app-input-row">
+					<button app-event="signup" class="mui-btn mui-btn-block app-no-border app-background-orange">Sign up</button>
+				</div>
+			</form>
+		</div>
+	</body>
+	<script src="lib/mui/mui.js"></script>
+	<script src="lib/framework/z-app.js"></script>
+	<script>
+		App.go({
+			events : {
+				view : {
+					beforeShow : function(){
+						App.opts.events.custom.reset({});
+					},
+				},
+				keys : {
+					back : function(e) {
+						mui.back();
+					}
+				},
+				device : {
+					pause : function(e) {
+						App.opts.events.custom.reset({});
+					},
+					resume : function(e){
+						App.opts.events.custom.reset({});
+					}
+				},
+				gesture : {
+					swiperight : function(e) {
+						mui.back();
+					}
+				},
+				custom : {
+					reset : function(e) {
+						document.getElementsByClassName('app-form')[0].reset();
+					},
+					signup : function(e) {
+						// 检查输入合法性
+						var ln = document.getElementById('loginName');
+						var lp = document.getElementById('loginPwd');
+						var cp = document.getElementById('confirmPwd');
+						if (ln.value == '') {
+							mui.toast('Account required');
+							ln.focus();
+							return false;
+						}
+						if (lp.value == '') {
+							mui.toast('Password required');
+							lp.focus();
+							return false;
+						}
+						if (cp.value == '') {
+							alert('Confirm Password required');
+							cp.focus();
+							return false;
+						}
+						if (cp.value != lp.value) {
+							alert('Password not match');
+							cp.focus();
+							return false;
+						}
+						
+						var data = { login_name : ln.value, login_pwd : lp.value };
+						App.httpClient().ajax('POST', "/api/user/signup", data, function(resp){
+							mui.toast('sign up success');
+							// 通知打开当前页面的那个页面
+							App.notifyOpener(resp);
+							// 关闭当前页面
+							mui.back();
+						}, function(xhr, type, statusText){
+							mui.toast("sign up failed!"+statusText);
+						});
+					},
+				}
+			},
+			appReady : function() {
+			},
+		});
+	</script>
+</html>

@@ -1,0 +1,37 @@
+<style TYPE="text/css">
+
+</style>
+
+<section id="sysdetail_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">系统详情修改</h1>
+    </header>
+    
+    <article id="ydwaiting_article" class="active" >
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+    <article id="sysdetail_article" data-scroll="true">
+		<div style="width: 100%;margin: 0 auto;">
+		</div>
+    </article>
+    
+    <footer style="background: #fff;">
+    	<button id="detailedit">确认修改</button>
+    </footer>
+</section>
+<script type="text/javascript">
+	$("#sysdetail_section").on('pageshow',function(){
+		setSonParam();
+	});
+
+	$("#sysdetail_section").on('pageinit',function(){
+		//加载数据
+		var pid=localStorage['pid'];
+		var id=getID();	
+		J.showToast(id+';PID为'+pid);
+	});
+</script>

@@ -1,0 +1,108 @@
+<style TYPE="text/css">
+#racon table tr td:nth-child(1){width: 25%;text-align: center;color:#BBB;}
+#racon table tr td:nth-child(2){width: 75%;text-align: center;}
+#racon table tr td:nth-child(2) .z{width: 75%;text-align: center;color:#BBB;}
+#racon table tr td:nth-child(2) .y{width: 25%;text-align: center;color:#BBB;}
+</style>
+
+<section id="roomadd_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">添加房间</h1>
+    </header>
+    <article id="rawaiting_article" class="active" >
+		<img src="./img/loading.gif" width="100%">
+	</article>
+    <article id="roomadd_article" data-scroll="true">   	
+		 <div style="width: 100%;margin: 0 auto;">		
+			<div class="feditcon" id="racon">			
+			<table>
+				<tr>
+					<td>房间类型</td>
+					<td><select name="ratype" id="ratype"></select></td>
+				</tr>
+				<tr>
+					<td>面积</td>
+					<td>
+							<div class="z"><input type="number" class="finput" id="ramj" placeholder="请输入房间面积..."/></div>
+							<div class="y">平方米</div>
+					</td>
+				</tr>
+				<tr>
+					<td>周长</td>
+					<td>
+							<div class="z"><input type="number" class="finput" id="razc" placeholder="请输入房间周长..."/></div>
+							<div class="y">米</div>
+					</td>
+				</tr>
+				<tr>
+					<td>高度</td>
+					<td>
+							<div class="z"><input type="number" class="finput" id="ragd" placeholder="房间高度(通常3米)..."/></div>
+							<div class="y">米</div>
+					</td>
+				</tr>
+			</table>
+			</div>					
+			<div class="fbuttoncon">
+				<button id="roomadd" class="fbtn">添加房间</button>
+			</div>
+		</div>
+    </article>
+</section>
+<script type="text/javascript">
+	$("#roomadd_section").on('pageshow',function(){
+		setSonParam();
+	});
+	
+	$("#roomadd_section").on('pageinit',function(){
+		//加载数据
+		var rcat=getID();
+		var pid=localStorage['pid'];
+		var token=localStorage['token'];
+		var user=localStorage['uname'];
+		var raurl=localStorage['server']+'room.php?t='+token+'&u='+user+'&a=ralist&id='+pid+'&cat='+rcat+'&callback=?';
+		//alert(raurl);
+		$.getJSON(raurl,function(data){
+			if(data != undefined){
+				var r=eval(data);
+				var txt='';
+				$.each(r, function(k,v) {
+					txt+='<option value="'+k+'">'+v+'</option>';				                                    
+				});
+				$('#ratype').html(txt);   
+				$("#rawaiting_article").removeAttr('class');
+				$("#roomadd_article").attr('class','active');
+			}else{
+				J.showToast('系统出错','error top');
+				window.history.go(-1);	
+			}
+		});
+		
+		$("#roomadd").click(function(){
+			$("#rawaiting_article").attr('class','active');
+			$("#roomadd_article").removeAttr('class');
+			var pid=localStorage['pid'];
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var mj=$("#ramj").val();
+			var zc=$("#razc").val();
+			var gd=$("#ragd").val();
+			var rtype=$("#ratype  option:selected").val();
+			var raurl=localStorage['server']+'room.php?t='+token+'&u='+user+'&a=add&id='+pid+'&d[mj]='+mj+'&d[zc]='+zc+'&d[height]='+gd+'&d[rtype_id]='+rtype+'&callback=?';
+			//alert(raurl);
+			$.getJSON(raurl,function(data){
+				$("#ramj").val('');
+				$("#razc").val('');
+				$("#ragd").val('');				
+				showPlan(localStorage['pid']);
+				showSites();
+				window.history.go(-1);	
+				$("#rawaiting_article").removeAttr('class');
+				$("#roomadd_article").attr('class','active');
+			});		
+		});
+	});
+</script>

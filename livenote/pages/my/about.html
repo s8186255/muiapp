@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>About</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../lib/mui/mui.css">
+		<link rel="stylesheet" href="../../css/app.css">
+		<style>
+			body {
+				background: white;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="app-bar mui-bar mui-bar-nav app-no-shadow">
+			<button id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left app-bar-btn"></button>
+			<h1 class="mui-title">About</h1>
+		</header>
+		<div class="mui-content" style="background:white; padding-top:90px;">
+			<center>
+				<img src="../../img/logo.png" width="80%" />
+				<br />
+				<br />
+				<h4>Live Note</h4>
+			</center>
+			<br/>
+			<div style="margin-left: 60px;" id="appVersion">
+			</div>
+			<div style="margin-left: 60px;" id="osVersion">				
+			</div> 			
+		</div>
+	</body>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js"></script>
+	<script>
+		App.go({
+			deviceReady : function() {
+				var zipVersion = plus.storage.getItem('update_version') ; 
+				var runtimeVersion = plus.runtime.version ; 
+				var appVerStr =  'APP Version：'+ runtimeVersion ;
+				if(zipVersion) appVerStr = appVerStr + '[' + zipVersion + ']' ; 
+				var osVerStr =  'SDK Version：'+plus.runtime.innerVersion ;
+				document.getElementById("appVersion").innerHTML = appVerStr ; 
+				document.getElementById('osVersion').innerHTML = osVerStr;
+			},
+			events : {
+				keys : {
+					back : function(e) {
+						mui.back();
+					}
+				},
+				gesture : {
+					swiperight : function(e) {
+						mui.back();
+					}
+				},
+				custom : {
+				}
+			},
+			appReady : function() {
+			},
+		});
+	</script>
+</html>

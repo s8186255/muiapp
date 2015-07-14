@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link href="../../lib/mui/mui.css" rel="stylesheet">
+		<link href="../../css/app.css" rel="stylesheet">
+		<style>
+			.app-primary{
+				background-color: rgba(24,103,194,0.81);
+				color: white;
+				border: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header id="headers" class="app-bar mui-bar mui-bar-nav app-no-shadow">
+			<button id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left app-bar-btn"></button>
+			<!--<button id="search" class="mui-icon mui-icon-search mui-pull-right app-bar-btn"></button>-->
+			<!--<button id="right-btn" app-event='toggleButton' class="mui-icon mui-pull-right app-bar-btn"></button>-->
+			<h1 id="title" class="mui-title"></h1>
+		</header>
+		<div class='mui-content'></div>
+	</body>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js"></script>
+	<script> 
+	// FIXME 被多个子页面共用的话, 如果其中有一个子页面开启了下拉刷新,则会导致其他子页面也会有下拉刷新效果
+		App.go({
+			events : {
+				view : {
+					loaded : function(e) {
+						var styles = plus.webview.currentWebview().getStyle();
+						App.opts.events.view.beforeShow({ detail : styles });					
+					},
+					hide : function(e) {
+						if (App.categoryView) {
+							App.categoryView.hide();
+						}
+						App.notifyChildren('hide', e.detail);
+					},
+					beforeShow : function(e) {
+						if (App.categoryView) {
+							App.categoryView.show();
+						}
+						App.notifyChildren('beforeShow', e.detail);
+						var detail = e.detail;
+						if (detail.title) {
+							document.getElementById('title').innerHTML = detail.title;							
+						}
+					},
+					show : function(e) { 
+//						alert('show parent');
+						App.notifyChildren('show');
+					}
+				},
+				keys : {
+					back : function(e) {
+						mui.back();
+					}
+				},
+				custom : {
+					settings : function(e) {
+						var detail = e.detail;
+						if (detail.title) {
+							document.getElementById('title').innerHTML = detail.title;
+						}
+						
+						if (detail.categories) {
+							var cateOpts = detail.categories;
+							var cUrl = '/pages/common/category.html';
+							var cid = cateOpts.id || cUrl;
+							var categoryView = plus.webview.getWebviewById(cid);
+							
+							if (cateOpts.close == true){
+								if (categoryView) {
+									categoryView.close();
+								}
+							} else if(typeof cateOpts.go != 'undefined'){
+								if (categoryView) {
+									mui.fire(categoryView, 'go', { direction : cateOpts.go });
+								}
+							} else {
+								// 创建分类页面
+								if (categoryView) {
+									// 设置分类页面加载数据的URL地址
+									mui.fire(categoryView, 'settings', cateOpts);
+									categoryView.show();
+								} else {
+									categoryView = App.createWebview(cUrl, cUrl, {
+										height : '48px',
+										left : '48px',
+										right : '48px',
+										scrollIndicator : 'none',
+									});
+									plus.webview.currentWebview().append(categoryView);
+									categoryView.addEventListener('loaded', function(e){
+										categoryView.removeEventListener('loaded');
+										// 设置分类页面加载数据的URL地址
+										mui.fire(categoryView, 'settings', cateOpts);
+										categoryView.show();
+									});
+								}
+							}
+							App.categoryView = categoryView;
+						}
+						
+						if (detail.buttons) {
+							var headerDom = document.getElementsByTagName('header')[0];
+							if(detail.buttons.hide == true) {
+								var btns = headerDom.getElementsByTagName('button');
+								App.each(btns, function(i,btn){
+									if (btn.getAttribute('id') == 'back') {
+									} else {
+										headerDom.removeChild(btn);
+									}
+								});
+							} else if (detail.buttons.data) {
+								var btns = headerDom.getElementsByTagName('button');
+								App.each(btns, function(i,btn){
+									if (btn.getAttribute('id') == 'back') {
+									} else {
+										headerDom.removeChild(btn);
+									}
+								});
+								App.each(detail.buttons.data, function(i,btnData){
+									var btn = document.createElement('button');
+									btn.setAttribute('id', btnData.id);
+									btn.setAttribute('app-event', 'onBtnClick');
+									btn.setAttribute('data', JSON.stringify(btnData))
+									if (btnData.icon) {
+										btn.classList.add('app-bar-btn');
+										btn.classList.add('mui-icon');
+										btn.classList.add(btnData.icon);	
+									} else if(btnData.text) {
+										//mui-btn mui-btn-primary mui-pull-right
+										btn.classList.add('mui-btn');
+//										btn.classList.add('mui-btn-grey');
+										btn.classList.add(btnData.class);
+										btn.innerHTML = btnData.text;
+									}
+									
+									if (btnData.left == true) {
+										btn.classList.add('mui-pull-left');
+									} else {
+										btn.classList.add('mui-pull-right');
+									}
+									headerDom.appendChild(btn);
+								});
+							}
+							
+							App.onBtnNotify = detail.buttons.onNotify;
+						}
+					},
+					onBtnClick : function(e) {
+						var tgt = e.target;
+						var data = tgt.getAttribute('data');
+						data = JSON.parse(data);
+						App.notifyChildren(App.onBtnNotify, data);
+					}
+				},
+			},
+			deviceReady : function(e) {
+			}
+		});
+	</script>
+</html>

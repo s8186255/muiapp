@@ -1,0 +1,27 @@
+<style TYPE="text/css">
+</style>
+
+<section id="mconfig_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">账本配置</h1>
+    </header>
+	
+    <article id="mcwaiting_article">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+    <article id="mconfig_article" data-scroll="true"  class="active"> 
+    	 <div class="scrollcon" style="padding: 0px 0px 30px 0px;">
+    	 	<p>选择账本</p>
+    	 	<p>设置比较方案</p>
+		 </div>	 	
+    </article>
+</section>
+<script type="text/javascript">
+	$("#mconfig_section").on('pageshow',function(){
+		setSonParam();
+	});
+</script>

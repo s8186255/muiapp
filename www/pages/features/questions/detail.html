@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Question Detail</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../../lib/mui/mui.css" />
+		<link rel="stylesheet" href="../../../css/app.css" />
+	</head>
+
+	<body>
+		<nav class="mui-bar mui-bar-tab app-bottom-bar app-no-border app-no-shadow" >
+			<button app-event="answer" class="mui-btn app-btn app-primary app-no-border">Answer</button>
+		</nav>
+		<div class="mui-content has-app-bottom-bar">
+			<!--下拉刷新容器-->
+			<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul id="question" class="mui-table-view app-card app-no-margin-bottom" style="padding:10px; padding-bottom:3px; border-bottom:1px solid #f1f1f1">
+						loading...
+					</ul>
+					<ul id="answers" class="mui-table-view app-card" style="background:#fafafa">
+					</ul>
+ 				</div>
+			</div>
+		</div>
+	</body>
+	<script id="question" url="/api/questions/get" type="text/template">
+		<li class="mui-table-view-cell">
+			<a style="padding:0px;" app-event="openDetail" href="javascript:void(0)">
+				<div class="app-card-body app-card-p app-no-border">
+					<span class="app-color-blue">Ask:&nbsp;&nbsp;</span>
+					{{data.description}}
+					<br />
+					{{#data.images.resize}}
+					<div style="padding: 10px 0;">
+						<img app-event="viewImage" src="{{base}}/{{localPath}}" width="100%" />
+					</div>
+					{{/data.images.resize}}
+				</div>
+				<div class="app-card-bottom">
+					<div>Tags:&nbsp;&nbsp;{{#data.tags}}{{text}}&nbsp;{{/data.tags}}</div>
+					<div class="app-card-tags">
+						{{data.createAtFmt}}
+					</div>
+					<!--<div class="app-card-count">17 Answered</div>-->
+					<div class="mui-clearfix"></div>
+				</div>
+			</a>
+		</li>
+	</script>
+	<script id="answers" url="/api/questions/answers" type="text/template">
+	{{#data}}
+		<li class="mui-table-view-cell" style="border-bottom: 1px solid #f1f1f1;">
+			<a style="padding:0px;" app-event="openDetail" href="javascript:void(0)">
+				<div class="app-card-head" style="padding-bottom:2px">
+					<img class="mui-media-object mui-pull-left {{creator.id}}_avatar" height="50px" style="border-radius: 50%;" src="../../../img/head.png" />
+					{{creator.name}}
+				</div>
+				<div class="app-card-body app-card-p app-no-border" style="padding-top:0px; padding-left: 63px;">
+					{{description}}
+				</div>
+				<div class="app-card-bottom" style="padding-top:0px; padding-left: 63px;">
+					<div class="app-card-tags">
+						{{createAtFmt}}
+					</div>
+					<div class="mui-clearfix"></div>
+				</div>
+			</a>
+		</li>
+	{{/data}}
+	</script>
+	<script src="../../../lib/mui/mui.js"></script>
+	<script src="../../../lib/framework/z-app.js"></script>
+	<script src="../../../lib/mustache/mustache.min.js"></script>
+	<script src="../../../lib/framework/utils.js"></script>
+	<script src="../../../lib/framework/results.js"></script> 
+	<script>
+		App.go({
+			init : {
+				pullRefresh : {
+					// 开启下拉刷新
+					down : {
+						beforeDefined : function(tpl) {
+							App.resetLoadMore();
+							App.pageNo = 1;
+						}
+					},
+					// 上拉加载更多
+					up : {
+						contentmore : '&nbsp;',
+						beforeAjax : function(tpl) {
+							if (tpl.id == 'question') {
+								tpl.ajax.stop = true;
+							}
+						},
+						hasMore : function (tpl) {
+							var result = tpl.ajax.result;
+							var hasMore = App.pageNo <= result.pageCount;
+							if (!hasMore) {
+								mui.toast('no more');
+							}
+							return hasMore;
+						}
+					},
+				},
+			},
+			deviceReady : function(){
+				App.pageNo = 1;
+				App.pageSize = 20;
+				var questionId = plus.webview.currentWebview().getStyle().questionId;
+				App.questionId = questionId;
+			},
+			events : {
+				keys : {
+					back : function(e) {
+						mui.back();
+					}
+				},
+				// 自定义事件
+				custom : {
+					viewImage : function(e){
+						var tgt = e.target;
+						var path = tgt.getAttribute('src');
+						App.openWindow("/pages/common/view-img.html", {
+							styles: {
+								scrollIndicator:'none',
+								scalable:true,
+								bounce:"all",
+								path : path  
+							}
+						})
+					},
+					answer : function(e) {
+						App.openWindow("/pages/features/questions/answer.html", { 
+							title : "Answer",
+							layout : '/pages/common/page_layout.html',
+							styles : { 
+								top : '48px',
+								questionId : App.questionId
+							},
+							onNotify : function(e) {
+								App.pullRefresh.down.callback();
+							}
+						});
+					}
+				}
+			},
+			// 模板渲染
+			template : {
+				// 定义模板的参数,比如分页参数等
+				defined : function(tpl) {
+					App.userids = [];
+					tpl.ajax.url = tpl.ajax.url + "?questionId="+App.questionId;
+					if (tpl.id == 'question') {
+						return;
+					}
+					tpl.ajax.options.data.pageNo = App.pageNo;
+					tpl.ajax.options.data.pageSize = App.pageSize;
+				},
+				// 渲染模板
+				render : function(tpl) {
+					if (!tpl.ajax.result || typeof tpl.ajax.result == 'undefined') {
+						return;
+					}
+					var data = tpl.ajax.result.data;
+					if (tpl.id != 'question') {
+						App.pageNo++;	
+						// 记住用户ID,用于后面的头像获取
+						App.each(data, function(i,v){
+							if (typeof v.creator == 'undefined' || !v.creator) {
+								return;
+							}
+							
+							var uid = v.creator.id;
+							if (App.contains(App.userids, uid)) {
+							} else {
+								App.userids.push(uid);
+							}
+						});
+						if (!data) { 
+							if (tpl.pullRefresh.down) {
+								return "<center>no answers</center>";	
+							} 
+							return "&nbsp;";
+						}
+					}
+					
+					// 准备好你的数据模型
+					console.log(JSON.stringify(data.images));
+					var model = {
+						data : data,
+						base : App.opts.init.http.base
+					};
+					// 使用'大胡子'模板引擎来渲染
+					var output = Mustache.render(tpl.html, model);
+					return output;
+				},
+				complete : function(tpl) {
+					if (tpl.id == 'question') {
+						return;
+					}
+					// 处理头像图片
+					App.each(App.userids, function(i,uid){
+						var doms = document.getElementsByClassName(uid+"_avatar");
+						App.each(doms, function(i,d){
+							App.httpClient().ajax('GET', '/api/user/avatars', {cache:false, loading:false, data:{user_id:uid}}, function(result) {
+								var thumbs = result.thumb; 
+								if (thumbs) { 
+									var img = thumbs[thumbs.length-1];
+									var src = App.opts.init.http.base+'/'+img.localPath;
+									App.each(doms, function(i,d){
+										d.src = src;												
+									});
+								} 
+							});
+						});
+					});
+				}
+			},
+			appReady : function() {
+			}
+		});
+	</script>
+</html>

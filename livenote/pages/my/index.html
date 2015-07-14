@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>My</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../lib/mui/mui.css">
+		<link rel="stylesheet" href="../../css/app.css">
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div id="my-detail">
+				
+			</div>
+		</div>
+	</body>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js"></script>
+	<script src="../../lib/mustache/mustache.min.js"></script>
+	<script id="my-detail" url="/api/user/profile" type="text/template">
+		<div class="mui-table-view-divider"></div>
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell">
+				<a app-event="editAvatar" style="padding:0px;" href="javascript:void(0)" class="mui-navigate-right">
+					<div class="app-card-head">
+						<img id="head" class="mui-media-object mui-pull-left" style="border-radius:5px;" src="../../img/head.png" />
+						{{name}}
+					</div>
+				</a>
+			</li>
+		</ul>
+		
+		<div class="mui-clearfix"></div>
+		<ul class="mui-table-view">
+			<li class="mui-table-view-divider"></li>
+			<li class="mui-table-view-cell">
+				<a data="{{loginName}}" href="javascript:void(0)">
+					<span class="iconfont icon-gerenziliao app-color-blue"></span>
+					Account<span class="mui-badge mui-badge-inverted app-detail-font">{{loginName}}</span>
+	    		</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a title="Edit Name" app-event="open" data="{{name}}" url="/pages/my/change_name.html" href="javascript:void(0)" class="mui-navigate-right">
+					<span class="iconfont icon-gerenziliao app-color-red"></span>
+					Name<span class="mui-badge mui-badge-inverted app-detail-font">{{name}}</span>
+	    		</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a title="Edit Password" app-event="open" relogin="true" url="/pages/my/change_pwd.html" href="javascript:void(0)" class="mui-navigate-right">
+					<span class="iconfont icon-mima app-color-yellow"></span>
+					Password<span class="mui-badge mui-badge-inverted app-detail-font">********</span>
+	    		</a>
+			</li>
+			<li class="mui-table-view-cell"> 
+				<a title="Edit E-Mail" app-event="open" data="{{email}}" url="/pages/my/change_email.html" href="javascript:void(0)" class="mui-navigate-right">
+					<span class="mui-icon mui-icon-email-filled app-color-green"></span>
+					E-Mail<span class="mui-badge mui-badge-inverted app-detail-font">{{email}}</span>
+	    		</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a title="Edit Cell Phone Number" app-event="open" data="{{mobile}}" url="/pages/my/change_mobile.html" href="javascript:void(0)" class="mui-navigate-right">
+					<span class="iconfont icon-shouji app-color-orange"></span>
+					Cell Phone<span class="mui-badge mui-badge-inverted app-detail-font">{{mobile}}</span>
+	    		</a>
+			</li>
+			
+			<li class="mui-table-view-divider"></li>
+			<li class="mui-table-view-cell">
+				<a title="Share" app-event="open" url="/pages/my/share.html" href="javascript:void(0)" class="mui-navigate-right">
+					<span class="iconfont icon-share-filled app-color-red"></span>
+					Share
+	    		</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a app-event="open" url="/pages/my/about.html" href="javascript:void(0)" class="mui-navigate-right">
+		      		<span class="mui-icon mui-icon-info app-color-light-orange"></span>
+		      		About
+	    		</a>
+			</li>
+			<li class="mui-table-view-divider"></li>
+			<li class="mui-table-view-cell">
+				<a app-event="clearCache" href="javascript:void(0)" class="mui-navigate-right">
+					<span class="mui-icon mui-icon-trash app-color-purple"></span>
+					Clear Cache<!--<span id="cache-length" class='mui-badge mui-badge-danger'>{{cacheLength}}</span>-->
+	    		</a>
+			</li>
+			<!--<li class="mui-table-view-cell">
+				<a app-event="openWindow" title="Game" url="/pages/features/game/index.html" href="javascript:void(0)" class="mui-navigate-right">
+					<span class="iconfont icon-xin-filled app-color-red" style="font-size: 20px;"></span>
+					Game
+	    		</a>
+			</li>-->
+			<li class="mui-table-view-divider"></li>
+		</ul>
+		<div class="mui-content-padded">
+			<button app-event="logout" class="mui-btn mui-btn-block mui-btn-danger" style="border:none;">Logout</button>
+		</div>
+	</script>
+	<script>
+		App.go({
+			loginRequired : true,
+			deviceReady : function(d){
+				App.user = JSON.parse(plus.storage.getItem('user'));
+				App.avatar = {};
+			},
+			events: {
+				view : {
+					beforeShow : function(){
+						if (App.ready == true) {
+							settings();
+						}
+					},
+					show : function(e) {
+					}
+				},
+				custom : {
+					editAvatar : function(e){
+						plus.nativeUI.actionSheet( {
+								cancel:"Cancel",
+								buttons:[{title:"Camera"},{title:"Photo"},{title:"View"}]
+							}, 
+							function(e){
+								if(e.index == 1) {
+									var cmr = plus.camera.getCamera();
+									var res = cmr.supportedImageResolutions[0];
+									var fmt = cmr.supportedImageFormats[0];
+									App.showWaiting(); 
+									cmr.captureImage(
+										function(path){
+												plus.nativeUI.closeWaiting();
+												plus.io.resolveLocalFileSystemURL(path, function (entry) {
+												var path = entry.toLocalURL();
+												App.openWindow("/pages/my/change_photo.html", { 
+													title : "Modify Avatrar", 
+													styles: {
+														path : path 
+													},
+													onNotify : function(e) {
+														reloadAvatar();
+													}
+												});
+											}, function (e) {
+												plus.nativeUI.toast("error：" + e.message);
+											} );  
+										},
+										function(error) {
+											plus.nativeUI.closeWaiting();
+										},
+										{
+											filename: '_doc/camera/',
+											resolution:res,
+											format:fmt
+										}
+									);
+								}else if(e.index==2){
+									plus.gallery.pick(function(path){
+								        App.openWindow("/pages/my/change_photo.html", { 
+											title : "Modify Avatrar", 
+											styles: {
+												path : path 
+											},
+											onNotify : function(e) {
+												reloadAvatar();
+											}
+										});
+								    },function(error){
+								    });
+								}else if(e.index==3){
+									var path = App.avatar.cut; 
+									App.openWindow("/pages/common/view-img.html", {
+										styles: {
+											scrollIndicator:'none',
+											scalable:true,
+											bounce:"all",
+											path : path  
+										}
+									})
+								}
+							}
+						);
+					},
+					clearCache : function(e){
+						plus.nativeUI.confirm( "Do you really want to clear?", function(e){
+							if (e.index==0) {
+								var l = plus.storage.getLength();
+								var suser = plus.storage.getItem('user');
+								var sappkey = plus.storage.getItem('appidkey');
+								var sappid = plus.storage.getItem(sappkey);
+								var httpOpts = plus.storage.getItem('http_opts');
+								var loginOpts = plus.storage.getItem('login_opts');
+								var interOpts = plus.storage.getItem('interceptor_opts');
+								plus.storage.clear();
+								plus.storage.setItem('appidkey', sappkey);
+								plus.storage.setItem("user", suser);
+								plus.storage.setItem(sappkey, sappid);
+								plus.storage.setItem('http_opts', httpOpts);
+								plus.storage.setItem('login_opts', loginOpts);
+								plus.storage.setItem('interceptor_opts', interOpts);
+								if (l-6 <= 0) {
+									mui.toast('Nothing need to cleared');
+								} else {
+									mui.toast('('+(l-6)+') has been cleared!');
+									App.handleTemplate({
+										reload : true
+									});
+								}
+							}
+						}, "Clear Cache", ["Yes","No"] );
+					},
+					openWindow : function(e){ 
+						var target = e.target;
+						var url = target.getAttribute('url');
+						var title = target.getAttribute('title');
+						App.openWindow(url, { 
+							title : title,
+							layout : '/pages/common/page_layout.html',
+							styles : {
+								top : '48px'
+							}
+						});
+					},
+					open : function(e){ 
+						var target = e.target;
+						var url = target.getAttribute('url');
+						var title = target.getAttribute('title');
+						var data = target.getAttribute('data');
+						var relogin = target.getAttribute('relogin');
+						App.openWindow(url, { 
+							title : title, 
+							styles: {
+								data : data 
+							},
+							onNotify : function(e) {
+								if (relogin == 'true'){
+									App.opts.events.custom._logout({});
+									return;
+								}
+								App.handleTemplate({reload:true});
+							}
+						});
+					},
+					_logout : function(e){
+						App.showWaiting();
+						plus.storage.removeItem('user');
+						var appidkey = plus.storage.getItem('appidkey');
+						if (appidkey) {
+							plus.storage.removeItem(appidkey);
+							plus.storage.removeItem('appidkey');
+						}
+						// 登录页面显示当前用户名
+						var loginName = App.user.loginName;
+						plus.storage.setItem('loginName', loginName);
+						plus.navigator.removeAllCookie();
+						plus.nativeUI.closeWaiting();
+						plus.runtime.restart();
+					},
+					logout : function(e) {
+						//退出登录
+						plus.nativeUI.confirm( "Do you really want to logout?", function(e){
+							if (e.index==0) {
+								App.opts.events.custom._logout({});
+							}
+						}, "Logout", ["Yes","No"] );
+					},
+					reload : function(e) {
+						plus.webview.currentWebview().reload(true);
+					}
+				}
+			},
+			template : {
+				defined : function(tpl) {
+				},
+				render : function(tpl) {
+					var model = tpl.ajax.result;
+					plus.storage.setItem('user', JSON.stringify(model)); 
+					var output = Mustache.render(tpl.html, model);
+					return output;
+				},
+				complete : function(tpl) {
+					reloadAvatar();
+				}
+			},
+			appReady : function(){
+				App.ready = true;
+				settings();
+			}
+		});
+		
+		function reloadAvatar() {
+			App.httpClient().ajax('GET', '/api/user/avatars', {cache:false}, function(result) {
+				var thumbs = result.thumb; 
+				if (thumbs) { 
+					var img = thumbs[thumbs.length-1];
+					var src = App.opts.init.http.base+'/'+img.localPath;
+//					console.log(src);
+					document.getElementById('head').src = src;
+					App.avatar.thumb = src;
+				}
+				var cuts = result.cut; 
+				if (cuts) { 
+					var img = cuts[cuts.length-1];
+					var src = App.opts.init.http.base+'/'+img.localPath;
+//					console.log(src);
+					App.avatar.cut = src;
+				}
+			});
+		}
+		
+		function settings() {
+			App.notifyParent('settings', {
+				buttons : {
+					hide : true,
+				}
+			})
+		}
+		
+	</script>
+</html>

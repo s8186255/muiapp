@@ -1,0 +1,104 @@
+<style TYPE="text/css">
+	.artlist{width: 100%; float:left; font-family:Microsoft YaHei; color:#000000;}
+	.artimg{width: 20%;  line-height:100px; float:left; margin-left:10px;}
+	.artimg img{width: 100%;}
+	.artdesc{width: 70%; float:left;margin-left: 10px;}
+	.artdesc p{float:left; margin-top: 5px; font-size:12px; color:#999999;}
+	.artdesc h5{width: 70%; float:left; margin: 0 auto; margin-top: 18px; color:#003366;}
+	</style>
+<section id="article_section" class="active" data-scroll="true">
+	<header>
+		<nav class="left">
+			<a href="#" data-icon="undo" data-target="back"></a>
+		</nav>
+		<h1 class="title">装修知识</h1>
+		<nav class="right">
+		      
+		</nav>
+	</header>
+	<article id="article_article" class="active" data-scroll="true">
+		<div class="scrollWrapper">
+			<ul>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>		
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+				<li>1234</li>
+				<li>3333</li>
+			</ul>
+			
+		<div class="artlist">
+			<div class="artimg">
+				<img src="img/tuan04-01.png">
+			</div>
+	
+			<div class="artdesc"style="">
+				<h5 >提前学习装修知识</h5>
+				<p >冰箱与其他家电的位置</p>
+				<p>冰箱上不易摆放其他电器，从风水的角度来讲，各种电器发射的电磁等气流...</p>
+			</div>
+		</div>
+		<div class="clear"></div>
+	
+		
+		</div>
+	</article>
+	</section>
+<script type="text/javascript">
+	$("#article_section").on('pageshow',function(){
+		setSonParam();
+	});
+	
+		J.Refresh({
+            selector : '#article_article',
+            type : 'pullUp',
+            pullText : '你敢往下拉么...',
+            releaseText : '什么时候你才愿意放手？',
+            refreshTip : '最后一次拉的人：<span style="color:#e222a5">骚年</span>',
+            callback : function(){
+                var scroll = this;
+                setTimeout(function () {
+                    $('#down_refresh_article ul.list li').text('嗯哈，长大后我就成了你~');
+                    scroll.refresh();
+                    J.showToast('更新成功','success');
+                }, 2000);
+            }
+        });
+
+	document.addEventListener("plusready",function(){
+	},false);
+	
+	$("#more_section").on('pageinit',function(){
+		//设置目录深度，响应按钮
+		window.localStorage.setItem('stat','1');
+
+	}); 
+</script>

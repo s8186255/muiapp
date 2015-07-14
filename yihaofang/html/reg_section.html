@@ -1,0 +1,127 @@
+<style TYPE="text/css">
+</style>
+
+<section id="reg_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">注册新用户</h1>
+    </header>
+    <article id="regwaiting_article">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+    <article id="reg_article" data-scroll="true"  class="active"> 
+    	 <div class="scrollcon" style="padding: 0px 0px 30px 0px;">
+    	 	<div class='fbody' style="text-align: center;width: 95%;">
+    	 		<img src="img/logo.png" style="width: 50%;margin-top:20px;">
+    	 		<iframe  width="100%" height="260px" id="regframe" src="http://bao.yihaofang.com/applogin/reg.php"></iframe>
+    	 	</div>
+    	 	
+    	 	 <div style="width: 80%;margin: 0 auto;text-align: center;">
+				<button id="reguser" class="fbtn"><input type="hidden"  id="reguser" value="" />注册新用户</button>				
+			</div>
+		 </div>	 	
+    </article>
+</section>
+<script type="text/javascript">
+	document.addEventListener("plusready",function(){
+	},false);
+	
+	$("#reg_section").on('pageshow',function(){
+		setSonParam();
+	});
+
+	$("#reg_section").on('pageinit',function(){		
+		//$("#regframe").attr('src',localStorage['userver']+'reg.php');
+		
+		//登陆检查
+		$("#reguser").click(function(){
+			var regframe=$(window.frames["regframe"].document);
+			var regname=regframe.find('#regname').val();
+			var regpass=regframe.find('#regpass').val();
+			var repass=regframe.find('#repass').val();
+			var email=regframe.find('#regemail').val();
+			
+			//检测用户输入是否输入用户名
+			if(regname==''){
+				J.showToast('请输入用户名','error');
+				return false;
+			}
+			
+			//检测用户输入是否输入用户名
+			if(email==''){
+				J.showToast('请输入您的邮箱','error');
+				return false;
+			}
+			
+			//检测用户是否输入密码
+			if(regpass==''){
+				J.showToast('请输入密码','error');
+				return false;
+			}
+			
+			//检测用户是否输入密码
+			if(regpass!=repass){
+				J.showToast('您的密码输入有误','error');
+				return false;
+			}
+			
+			//判断用户输入是否正确，必须输入用户名和密码
+			regframe.find("#appreg").click();
+			
+			//1.加载动画，关闭iframe
+			$("#regwaiting_article").addClass("active");
+			$("#reg_article").removeClass();
+			//10秒钟后超时,重新登陆
+			checkReg(10);					
+		});
+		
+	}); 
+	
+	//用户登陆信息侦听函数
+	//判断用户登陆iframe中是否存在正确的返回值
+	function checkReg(limit){
+		if(limit>0){
+			limit--;
+			var token=$(window.frames["regframe"].document).find("#token").val();
+			var uname=$(window.frames["regframe"].document).find("#uname").val();
+			var time=$(window.frames["regframe"].document).find("#time").val();
+			var loged=$(window.frames["regframe"].document).find("#loged").val();
+			if(loged==1){
+				if(typeof(token)!='undefined' && typeof(uname)!='undefined' && typeof(time)!='undefined'){
+						//3.保存本地令牌及guid				
+						window.localStorage.setItem('token',token);
+						window.localStorage.setItem('uname',uname);
+						window.localStorage.setItem('time',time);
+						
+						//登陆标志，跳转后页面显示提示(用户友好行为，用于显示提示用户的信息)
+						window.localStorage.setItem('loged',1);
+
+						//4.跳转页面
+						$("#regwaiting_article").removeClass();
+						$("#reg_article").addClass("active");
+						
+
+						$("#login_article").removeClass();
+						$("#loged_article").addClass("active");
+						location.href="loading.html";						
+					}else{
+						var regerror=$(window.frames["regframe"].document).find("#error").val();					
+						$("#regwaiting_article").removeClass();
+						$("#reg_article").addClass("active");
+						window.history.go(-1);
+						J.showToast(regerror,'error');
+					}
+							
+			}else{
+				setTimeout('checkReg('+limit+')',1000);
+			}
+					
+		}else{
+			$("#regwaiting_article").removeClass();
+			$("#reg_article").addClass("active");
+			J.showToast('服务器超时，请重试','error top');
+		}				
+	}
+</script>

@@ -1,0 +1,732 @@
+* {
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-user-select: none;
+	outline: none;
+	/* 去掉浏览器默认的点击高亮效果 */
+	-webkit-tap-highlight-color: transparent; 
+}
+body {
+	-webkit-overflow-scrolling: touch;
+	background-color: #efeff4;
+	position: inherit !important;
+}
+
+::-webkit-input-placeholder{
+    color:    #a9a9a9;
+}
+
+.content {
+	background-color: inherit !important;
+	position: inherit !important;
+}
+.bar {
+	height: 50px;
+	line-height: 50px;
+	opacity: .9;
+	border: none !important;
+}
+.bar-footer {
+	border: none !important;
+}
+.app-bar { 
+	height: 48px!important;
+	font-size: 18px !important;
+}
+.mui-bar .mui-title {
+	line-height: 47px !important;
+	font-size: 18px !important;
+	/*right: auto !important;
+	left: 49px !important;*/
+}
+.app-bar .mui-title {
+	line-height: 47px !important;
+	/*right: auto !important;
+	left: 49px !important;*/
+	font-size: 18px !important;
+	font-weight: lighter !important;
+}
+.app-bar .mui-icon {
+	font-size: 26px !important; 
+}
+/*.mui-table-view-cell .mui-icon,*/
+.table-view-cell .icon,
+.mui-icon:active {
+	/*color: #007aff;*/
+}
+.mui-icon {
+}
+.mui-table-view {
+	background-image: none;
+}
+.mui-table-view:before {
+	height: 0px;
+}
+.mui-table-view:after {
+	height: 0px;
+}
+.mui-content-padded {
+	padding: 0px;
+}
+.mui-table-view-chevron .mui-table-view-cell {
+	padding-right: 50px!important;
+}
+.mui-table-view-chevron .mui-table-view-cell > a:not(.mui-btn) {
+	margin-right: -50px!important;
+}
+.mui-table-view-cell:after {
+	background-color: #EEEEEE !important;
+}
+.mui-search .mui-placeholder {
+	background-color: #EFEFF4;
+}
+.mui-grid-view.mui-grid-9 {
+	background-color: #FFFFFF;
+}
+.mui-grid-view.mui-grid-9 .mui-table-view-cell {
+	padding: 12px 16px 12px 26px;
+	margin: 0 -1px -1px 0;
+	vertical-align: top;
+	border-top: none;
+	border-bottom: 1px solid #f7f7f7;
+	border-left: none;
+	border-right: 1px solid #f7f7f7;
+}
+.mui-slider-title {
+	opacity: .8;
+}
+/*.mui-table-view-cell.mui-collapse{
+	padding-bottom: 11px;
+}*/
+
+.mui-table-view-cell.mui-collapse.mui-active {
+	/*padding-bottom: 11px;*/
+}
+.mui-table-view-cell {
+	/*padding: 13px 15px;*/
+}
+.mui-table-view-cell:after {
+	/*left:0px;*/
+}
+.mui-table-view-cell.mui-collapse .mui-table-view .mui-table-view-cell:after {
+	/*left:25px;*/
+}
+.mui-table-view-cell.mui-collapse .mui-table-view .mui-table-view-cell {
+	/*padding-left:20px;*/
+	/*font-weight: lighter;*/
+}
+.mui-table-view-cell:after.mui-active {
+	/*height: 0px!important;*/
+}
+.mui-table-view-cell.mui-active {
+	background-color: #fbfbfb !important;
+	/*font-weight: bold;*/
+}
+.mui-table-view-cell.mui-active > .mui-slider-cell > .mui-slider-left ~ .mui-slider-handle,
+.mui-table-view-cell.mui-active > .mui-slider-cell > .mui-slider-right ~ .mui-slider-handle {
+	background-color: #f7f7f7 !important;
+}
+.mui-grid-view.mui-grid-9 .mui-table-view-cell.mui-active {
+	background-color: #f7f7f7 !important;
+}
+.mui-table-view-cell > a:not(.mui-btn).mui-active {
+	background-color: #f7f7f7 !important;
+}
+.mui-table-view-cell.mui-collapse.mui-active {
+	/*background-color: #fff !important;*/
+}
+.mui-table-view-divider {
+	background-color: #efeff4;
+	padding-top: 12px;
+	padding-bottom: 5px;
+	background-image: none;
+	font-size: 12px;
+}
+.app-mini-divider {
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+.mui-table-view-divider:first-child {
+	/*padding-top:5px;*/
+}
+.mui-table-view-divider:before {
+	height: 0px;
+}
+.mui-table-view-divider:after {
+	height: 0px;
+}
+.app-no-background {
+	background-image: none;
+}
+.app-no-margin-top {
+	margin-top: 0 !important;
+}
+.app-no-margin-bottom {
+	margin-bottom: 0 !important;
+}
+.app-no-margin-right {
+	margin-right: 0 !important;
+}
+.app-no-padding {
+	padding: 0 !important;
+}
+.app-no-border {
+	border: none !important;
+}
+.app-no-radius {
+	border-radius: 0 !important;
+}
+.app-input-bottom {
+	margin-top: -15px;
+}
+.app-no-shadow {
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+}
+.app-full-height {
+	height: 100%;
+}
+.app-content-padded {
+	padding-left: 5px;
+	padding-right: 5px;
+}
+.app-align-center {
+	text-align: center;
+}
+.form-field {
+	/*text-align: center !important;*/
+}
+.mui-bar-tab {
+	height: 55px;
+}
+.mui-bar-tab .mui-tab-item .mui-icon {
+	width: 33px;/*34px*/
+	height: 33px;
+	font-size: 33px;
+}
+.mui-badge {
+	#background: red;
+	color: #fff;
+}
+.mui-tab-item .mui-badge {
+	color: #fff;
+	background: red;
+	opacity: .8;
+	position: absolute;
+	top: 3px;
+	right: -8px;
+}
+.app-index-header {
+	height: 48px;
+	background-color: #F7F7F7; 
+	/*background-image: -webkit-gradient(linear,0% 0%, 0% 100%, from(#111111), to(#000000));*/
+	text-shadow: none!important;
+	-webkit-box-shadow: none!important; 
+}
+.app-index-header .mui-table-view .mui-media-object {
+	height: 38px;
+	width: 38px;
+	max-width: 38px;
+	max-height: 38px;
+}
+.app-index-header .mui-table-view-cell {
+	padding: 8px 10px 4px 10px;
+}
+.app-header-personal-info {
+	float: left;
+	background: none;
+	font-size: 16px;
+	/*color:white;*/
+}
+.app-header-personal-info p {
+	/*margin-top: 3px;*/
+	/*color: white;*/
+	margin-top: -1px;
+}
+.app-header-right {
+	float: right;
+	/*margin-top: 0px !important;*/
+	/*padding: 0px !important;*/
+	/*background: red;*/
+	
+	height: 100%;
+	/*margin-right: -10px;*/
+}
+.app-bar-btn:hover, .app-bar-btn:active {
+	background-color: inherit;
+}
+.app-bar-btn {
+	padding: 0px 10px 0px 10px !important;
+	border: none !important;
+	background-color: inherit;
+	top: 0px!important;
+	height: 100%;
+	border-radius: 0px;
+	line-height: normal !important;
+}
+.app-bar-btn-divider {
+	width: 1px !important;
+	padding: 0px !important; 
+	border: none!important;
+	height: 22px;
+	background: #efefef;/*efeff4*/
+	margin: 15px 0 0 0;
+} 
+.app-search-btn {
+}
+.app-menu-btn {
+	/*padding-right:20px !important;*/
+} 
+.mui-popover {
+	top: 0px;
+	left: auto;
+	right: 0px;
+	border-radius: 0px;
+	width: 150px;
+}
+/*.mui-popover:before {
+	position: absolute;
+	top: -15px;
+	left: auto;
+	right: 0px;
+	width: 0;
+	height: 0;
+	margin-left: -8px;
+	content: '';
+	border-right: 0px;
+	border-bottom: 15px solid #F7F7F7;
+	border-left: 15px solid transparent;
+} */
+/*.mui-popover .mui-table-view {
+	max-height: 300px;
+	margin-bottom: 0;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	background-color: #F7F7F7;
+	background-image: none;
+	border-radius: 0px;
+}*/
+
+/* 详情页 */
+.app-detail-logo {
+	max-width: 100px !important;
+	width: 100px !important;
+	height: 100px !important;
+}
+.app-detail-font{
+	font-size:17px !important;
+}
+.mui-table-view-cell.app-detail-font{
+	color:#929292;
+}
+.mui-badge.app-detail-font{
+	color:#333;
+}
+
+.app-detail-p {
+	padding: 8px 0 0 0;
+  	color: #333;
+}
+.app-detail-gray {
+	color: #929292;
+}
+ .mui-table-view .mui-collapse .mui-navigate-right{
+ 	color:#929292;
+ }
+.app-col-xs-1 {
+	width: 100%;
+}
+.app-col-xs-2 {
+	width: 50%;
+}
+.app-col-xs-3 {
+	width: 33.33333333%;
+}
+.app-col-xs-4 {
+	width: 25%;
+}
+.app-col-xs-5 {
+	width: 20%;
+}
+.app-col-xs-6 {
+	width: 16.66666667%;
+}
+.app-col-xs-7 {
+	width: 14.28571429%;
+}
+.app-col-xs-8 {
+	width: 12.5%;
+}
+.app-col-xs-9 {
+	width: 11.11111111%;
+}
+.app-col-xs-10 {
+	width: 10%;
+}
+
+
+/*多行文本框*/
+.mui-multi-row {
+  overflow: hidden;
+  clear: left;
+  position: relative;
+}
+
+.mui-multi-row:last-child,
+.mui-multi-row label + textarea {
+  background-image: none;
+}
+
+.mui-input-group .mui-multi-row:after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 15px;
+  height: 1px;
+  content: '';
+  background-color: #c8c7cc;
+  -webkit-transform: scaleY(.5);
+          transform: scaleY(.5);
+}
+
+.mui-multi-row label {
+  width: 100%;
+  padding: 10px 15px;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  line-height: 1.1;
+  float: left;
+}
+
+.mui-multi-row  label ~ textarea {
+  padding-left: 15px;
+  margin-bottom: 0;
+  border: 0;
+}
+.mui-input-row .wd-icon-speech,.mui-multi-row  .wd-icon-speech{
+	position: absolute;
+	top: 5px;
+	right: 1px;
+	width: 38px;
+	height: 38px;
+	font-size: 24px;
+	color: #999;
+	text-align: center;
+}
+.mui-multi-row .multi-sel-txt{
+	margin-top: 38px;
+	min-height: 30px;
+	white-space: normal;
+	word-wrap: break-word;
+	padding: 0 15px;
+	margin-bottom: 5px;
+}
+.mui-multi-row  select{
+	  padding: 0px;
+	  border: 0;
+	  -webkit-appearance:none;
+	  position: absolute;
+	  top:38px;
+	  bottom: 0px;
+	  -webkit-tap-highlight-color: transparent;
+	  -webkit-user-select: text;
+	  opacity: 0;
+}
+.wd-icon-speech{
+	display: none;
+}
+/*搜索条件显示*/
+.search-c{
+	padding: 10px 20px 10px 20px;
+	vertical-align: middle;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 2;
+	background: #fff;
+	display: none;
+}
+.search-c .search-txt{
+	display: inline-block;
+	padding: 3px 6px;
+	font-size: 12px;
+	line-height: 1;
+	color: #333;
+	background-color: rgba(0,0,0,.15);
+	border-radius: 100px;
+	vertical-align: middle;
+	margin-right: 2px;
+}
+.search-c .search-txt .mui-icon{
+	vertical-align: middle;
+}
+
+
+/*自定义字体图标*/
+
+@font-face {
+	font-family: "iconfont";
+	font-style: normal;
+  	font-weight: normal;
+  	src:url('iconfont.ttf') format('truetype'); /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+}
+
+.iconfont {
+  font-family:"iconfont" !important;
+  font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0.2px;
+  display: inline-block;
+  font-size: 24px;
+  font-weight: normal;
+  line-height: 1;
+  text-decoration: none;
+}
+.icon-yinyue:before { content: "\e60f"; }
+.icon-yingyong:before { content: "\e613"; }
+.icon-fangkuai:before { content: "\e615"; }
+.icon-share-filled:before { content: "\e601"; }
+.icon-yiyaoxiang:before { content: "\e616"; }
+.icon-zuoji:before { content: "\e602"; }
+.icon-richeng:before { content: "\e603"; }
+.icon-huaxue:before { content: "\e617"; }
+.icon-zuiai:before { content: "\e618"; }
+.icon-huihua:before { content: "\e619"; }
+.icon-gerenziliao:before { content: "\e604"; }
+.icon-shalou:before { content: "\e634"; }
+.icon-paobu:before { content: "\e635"; }
+.icon-weixing:before { content: "\e636"; }
+.icon-gangwei:before { content: "\e605"; }
+.icon-yiwen:before { content: "\e61c"; }
+.icon-xin-empty:before { content: "\e61a"; }
+.icon-weijifen:before { content: "\e61b"; }
+.icon-jinrong:before { content: "\e646"; }
+.icon-law:before { content: "\e637"; }
+.icon-liucheng:before { content: "\e606"; }
+.icon-ditu:before { content: "\e61d"; }
+.icon-yiwen-empty:before { content: "\e62b"; }
+.icon-diannao:before { content: "\e638"; }
+.icon-xiezuo:before { content: "\e61e"; }
+.icon-pengyou:before { content: "\e61f"; }
+.icon-jisuan:before { content: "\e620"; }
+.icon-erweima:before { content: "\e609"; }
+.icon-jingji:before { content: "\e621"; }
+.icon-zhimo:before { content: "\e60a"; }
+.icon-mima:before { content: "\e60b"; }
+.icon-nv:before { content: "\e60c"; }
+.icon-nan:before { content: "\e60d"; }
+.icon-xianweijing:before { content: "\e622"; }
+.icon-share:before { content: "\e607"; }
+.icon-zhiye:before { content: "\e639"; }
+.icon-jazz:before { content: "\e623"; }
+.icon-repost:before { content: "\e608"; }
+.icon-gongshi:before { content: "\e624"; }
+.icon-xinwen:before { content: "\e60e"; }
+.icon-dianzan:before { content: "\e625"; }
+.icon-dianying:before { content: "\e626"; }
+.icon-wode:before { content: "\e627"; }
+.icon-bumen:before { content: "\e610"; }
+.icon-yanjiusheng:before { content: "\e628"; }
+.icon-yingyu:before { content: "\e629"; }
+.icon-gongzi:before { content: "\e611"; }
+.icon-jingji1:before { content: "\e63a"; }
+.icon-fangkuai1:before { content: "\e62a"; }
+.icon-huahua:before { content: "\e62c"; }
+.icon-jianshen:before { content: "\e62d"; }
+.icon-xie:before { content: "\e62e"; }
+.icon-tongxunlu:before { content: "\e612"; }
+.icon-haoyou-filled:before { content: "\e632"; }
+.icon-tech:before { content: "\e63b"; }
+.icon-haoyou:before { content: "\e631"; }
+.icon-wode-empty:before { content: "\e633"; }
+.icon-xin-filled:before { content: "\e62f"; }
+.icon-shouji:before { content: "\e614"; }
+.icon-shuben:before { content: "\e630"; }
+.icon-qheeicon:before { content: "\e600"; }
+.icon-aps:before { content: "\e63c"; }
+.icon-english:before { content: "\e63d"; }
+.icon-japanese:before { content: "\e63e"; }
+.icon-latin:before { content: "\e63f"; }
+.icon-mandarin:before { content: "\e640"; }
+.icon-math:before { content: "\e641"; }
+.icon-music:before { content: "\e642"; }
+.icon-philosophy:before { content: "\e643"; }
+.icon-physics:before { content: "\e644"; }
+.icon-spanish:before { content: "\e645"; }
+
+
+/*覆盖mui字体图标的一些样式，保证一致*/
+.mui-bar-tab .mui-tab-item .iconfont ~ .mui-tab-label{
+	display: block;
+	overflow: hidden;
+	font-size: 11px;
+	text-overflow: ellipsis;
+}
+.mui-bar .iconfont {
+	position: relative;
+	z-index: 20;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	font-size: 24px;
+}
+.mui-bar-tab .mui-tab-item .iconfont {
+	top: 3px;
+	width: 24px;
+	height: 24px;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+.mui-bar-tab .mui-tab-item .iconfont {
+	width: 33px;
+	height: 33px;
+	font-size: 33px;
+}
+.app-color-purple{
+	color: #00003D;
+}
+.app-color-red {
+	color: #E72510/*#f18d00*/;
+}
+.app-color-orange {
+	color: #EB6100;
+}
+.app-color-light-orange {
+	color: #F18D00;
+}
+.app-color-yellow {
+	color: #F8B500;
+}
+.app-color-green {
+	color: #ABCD03;
+}
+.app-color-light-blue {
+	color: #00ABE4;
+}
+.app-color-blue {
+	color: #0086D1;
+}
+
+.app-background-purple{
+	background: #00003D;
+	color: #fff;
+}
+.app-background-red {
+	background: #E72510/*#f18d00*/;
+	color: #fff;
+}
+.app-background-orange {
+	background: #EB6100;
+	color: #fff;
+}
+.app-background-light-orange {
+	background: #F18D00;
+}
+.app-background-yellow {
+	background: #F8B500;
+}
+.app-background-green {
+	background: #ABCD03;
+	color: #fff;
+}
+.app-background-light-blue {
+	background: #00ABE4;
+}
+.app-background-blue {
+	background: #0086D1;
+	color: #fff;
+}
+.mui-bar-tab .mui-tab-item.mui-active {
+  color: #0086D1;
+}
+.app-font30{
+	font-size: 30px!important;
+}
+.app-font20{
+	font-size: 20px!important;
+}
+.app-font16{
+	font-size: 16px!important;
+}
+
+.app-card { 
+	color: #222;
+	margin-bottom:10px; 
+}
+.app-card-head {
+	padding: 10px;
+	line-height: 40px;
+	font-size: 16px;
+	color:#888;
+}
+.app-card-body {
+	border-top: 1px solid #f7f7f7;
+	border-bottom: 1px solid #f7f7f7;
+	padding: 10px;
+	padding-top : 5px;
+	padding-bottom : 4px;
+	line-height: 21px;
+}
+.app-card-bottom {
+	padding: 8px 10px 6px 10px;
+	font-size: 12px;
+	color: #888;
+}
+.app-card-tags{
+	float: left;
+}
+.app-card-tags span {
+	background: #0086D1;
+	color: #ffffff;
+}
+.app-card-count{
+	float: right;
+	text-align: right;
+}
+.mui-ellipsis-5 {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  white-space: normal !important;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+}
+.mui-ellipsis-3 {
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  white-space: normal !important;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+.app-card-p {
+  display: -webkit-box;
+  overflow: hidden;
+  word-wrap: break-word;
+  white-space: normal !important;
+  -webkit-box-orient: vertical;
+}
+
+.mui-content.has-app-bottom-bar{
+	padding-bottom: 65px;
+}
+.app-bottom-bar{
+	background: rgba(247,247,247,.7) !important;
+	height: 65px!important;
+	padding:0!important;
+}
+.app-bottom-bar .app-btn{
+	width: 96% !important;
+	margin-left: 2%!important;;
+	height : 100%!important;
+	font-size: 20px !important;
+	padding:6px 0!important;
+}
+.app-primary {
+	background-color: rgba(24,103,194,0.7)!important;;
+	color: white!important;;
+}
+.app-hidden {
+	display: none;
+}

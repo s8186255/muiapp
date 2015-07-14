@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+		<title>健康频道</title>
+
+		<link rel="stylesheet" href="../../lib/mui/0.6.0/css/mui.css" />
+		<link rel="stylesheet" href="../../lib/fontawesome/4.2.0/css/font-awesome.css" />
+		<link rel="stylesheet" href="../common/hc.css" />
+
+		<script type="text/javascript" src="../../lib/mui/0.6.0/js/mui.js"></script>
+		<script type="text/javascript" src="../common/html2dom.js"></script>
+		<script type="text/javascript" src="../common/hc.js"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" id="hcHeader">
+			<a class="mui-icon mui-icon-left-nav mui-pull-left mui-action-back"></a>
+			<h1 class="mui-title"></h1>
+			<a class="mui-icon mui-icon-weibo mui-pull-right" id="hcShare"></a>
+		</header>
+
+		<div style="margin-top: 70px; text-align: center; font-size: 12px; color: #000;">
+			内容加载中...
+			<br />
+			<img src="../common/loading.gif" style="margin-top: 10px;" />
+		</div>
+
+		<iframe class="hcIframeBox" sandbox="allow-same-origin allow-top-navigation allow-scripts"></iframe>
+
+		<script>
+			(function($) {
+
+				var wv = null,
+					ewv = null,
+					shares = null; // 分享服务容器对象
+				$.plusReady(function() {
+					// 获取当前 webview 对象
+					wv = plus.webview.currentWebview();
+					// 设置页面标题
+					document.getElementById('hcHeader').getElementsByClassName('mui-title')[0].innerHTML = wv.title;
+					// 加载页面内容
+					var vh = window.innerHeight,
+						contentBox = document.getElementsByClassName('hcIframeBox')[0];
+					contentBox.style.height = vh + 'px';
+					contentBox.setAttribute('src', wv.href);
+					// iframe 页面加载完毕后，隐藏 loading 提示信息
+					contentBox.onload = function() {
+						this.style.display = 'block';
+					};
+					//					// 加载页面内容
+					//					ewv = plus.webview.create(wv.href, wv.href, {
+					//						top: '48px',
+					//						bottom: '0'
+					//					});
+					//					// 页面内容加载完成后，再将其嵌入到 wv 中（防止出现空白的 ewv）
+					//					ewv.onloaded = function() {
+					//						//						//创建一个遮罩层，阻止用户访问外链网页的超链接
+					//						//						var ewvJS = 'var hcMaskLayer = document.createElement("div");' +
+					//						//							'hcMaskLayer.style.position = "fixed";' +
+					//						//							'hcMaskLayer.style.top = 0;' +
+					//						//							'hcMaskLayer.style.left = 0;' +
+					//						//							'hcMaskLayer.style.zIndex = 9999;' +
+					//						//							'hcMaskLayer.style.width = "100%";' +
+					//						//							'hcMaskLayer.style.height = window.innerHeight + "px";' +
+					//						//							'hcMaskLayer.style.backgroundColor = "transparent";' +
+					//						//							'document.body.appendChild(hcMaskLayer);';
+					//						//						ewv.evalJS(ewvJS);
+					//						wv.append(ewv);
+					//					};
+					// 分享
+					getShareSerivces();
+					document.getElementById('hcShare').style.display = 'block'; // 页面加载完成后，显示分享按钮
+					document.getElementById('hcShare').addEventListener('tap', function(e) {
+						shareAction('sinaweibo');
+					});
+				});
+
+				/**
+				 * 获取本机分享服务
+				 */
+				function getShareSerivces() {
+					plus.share.getServices(function(s) {
+						shares = {};
+						for (var i in s) {
+							var t = s[i];
+							shares[t.id] = t;
+							//							console.log(t.id);
+						}
+					}, function(e) {
+						$.toast('获取分享服务列表失败：' + e.message);
+					});
+				};
+
+				/**
+				 * 分享操作
+				 * @param {String} id: 分享服务标识
+				 */
+				function shareAction(id, ex) {
+					var s = null;
+					if (!id || !(s = shares[id])) {
+						$.toast('无效的分享服务！');
+						return;
+					}
+					if (s.authenticated) {
+						console.log('已授权！');
+						shareMessage(s, ex);
+					} else {
+						console.log('未授权！');
+						s.authorize(function() {
+							shareMessage(s, ex);
+						}, function(e) {
+							$.toast('认证授权失败: ' + e.code + " - " + e.message);
+						});
+					}
+				};
+
+				/**
+				 * 发送分享消息
+				 * @param {plus.share.ShareService} s
+				 */
+				function shareMessage(s, ex) {
+					var sContent = wv.title + ' ' + wv.href,
+						sPics = [wv.src],
+						msg = {
+							//							pictures: sPics, // 获取分享图片（暂无高级接口权限，待申请后再使用图文分享）
+							content: sContent, // 获取分享内容
+							extra: {
+								scene: ex
+							}
+						};
+					s.send(msg, function() {
+						$.toast('分享到 ' + s.description + ' 成功！');
+					}, function(e) {
+						$.toast('分享到 ' + s.description + ' 失败: ' + e.code + ' - ' + e.message);
+						console.log('分享到 ' + s.description + ' 失败: ' + e.code + ' - ' + e.message);
+					});
+				};
+
+			})(mui);
+		</script>
+	</body>
+
+</html>

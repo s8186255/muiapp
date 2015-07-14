@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../js/md5.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var ws = null;
+			tempUrl = null;
+			mubiaoUrl = null;
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+			// 扩展API加载完毕，现在可以正常调用扩展API 
+			function plusReady() {
+				ws = plus.webview.currentWebview();
+				tempUrl = ws.tempUrl;
+				mubiaoUrl = ws.mubiaoUrl;
+			}
+
+			function login3(type) {
+				alert(plus.os.name);
+				var t_url = "";
+				var imei = plus.device.imei;
+				if (plus.os.name.toLowerCase() != "ios") {
+					//if (imei == "" || imei <= 0) {
+					//	plus.ui.alert("非常抱歉，人脉返现不支持在此设备上运行！", function() {}, "温馨提示")
+					//	return;
+					//}
+					t_url = "&par=" + imei;
+				}
+				var uuid = plus.device.uuid;
+				if (type == "tb") {
+					ws = plus.webview.currentWebview();
+					ws.close();
+					clicked('webview_3login.html', true, false, 'http://www.rmfanx.com/app/apiqq.php?a=tb&type=wap&platform=' + plus.os.name + '&clientid=' + localStorage.getItem("clientid") + '&uuid=' + uuid + t_url + '&action=http%3A%2F%2Fwww.rmfanx.com%2Fapp%2F3login.php', mubiaoUrl);
+				} else if (type == "qq") {
+					ws = plus.webview.currentWebview();
+					ws.close();
+					clicked('webview_3login.html', true, false, 'http://www.rmfanx.com/app/apiqq.php?m=weblogin&a=qq&type=wap&platform=' + plus.os.name + '&clientid=' + localStorage.getItem("clientid") + '&uuid=' + uuid + t_url + '&action=http%3A%2F%2Fwww.rmfanx.com%2Fapp%2F3login.php', mubiaoUrl);
+				}
+			}
+
+			function guang() {
+				ws = plus.webview.currentWebview();
+				ws.close();
+				if (mubiaoUrl.length > 0) {
+					if (!isNaN(mubiaoUrl)) {
+						clicked("webview_geilimore.html", true, false, mubiaoUrl);
+					} else if (mubiaoUrl.indexOf("webview") >= 0) {
+						clicked(mubiaoUrl, true);
+					} else if (tempUrl == "专场") {
+						clicked('webview_ztinfo.html', true, false, mubiaoUrl, tempUrl);
+					} else {
+						clicked('webview_info.html', true, false, mubiaoUrl);
+					}
+				} else {
+					plus.nativeUI.toast("亲,登陆成功啦~");
+				}
+			}
+
+			function login() {
+				if (document.getElementById("username").value == "" || document.getElementById("password").value.length < 6) {
+					plus.ui.alert("登录失败,用户名或密码填写不正确!", function() {}, "温馨提示")
+					return;
+				}
+				var uuid = plus.device.uuid;
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=login&platform='+plus.os.name+'&username=' + document.getElementById("username").value + '&password=' + hex_md5(document.getElementById("password").value) + '&uuid=' + uuid + '&clientid=' + localStorage.getItem("clientid") + '&jsoncallback=userlogin',
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						//alert('http://www.rmfanx.com/app/index.php?mod=app&act=login&username=' + document.getElementById("username").value + '&password=' + hex_md5(document.getElementById("password").value) + '&uuid=' + uuid + '&jsoncallback=userlogin');
+						if (data.status == 1) {
+							if (window.localStorage) {
+								localStorage.setItem("rm_uid", data.uid);
+								localStorage.setItem("rm_md5pwd", data.md5pwd);
+								localStorage.setItem("rm_username", data.uname);
+								localStorage.setItem("inv_jine", data.inv_jine);
+								localStorage.setItem("inv_renshu", data.inv_renshu);
+								ws = plus.webview.currentWebview();
+								ws.close();
+								if (mubiaoUrl.length > 0) {
+									if (!isNaN(mubiaoUrl)) {
+										clicked("webview_geilimore.html", true, false, mubiaoUrl);
+									} else if (mubiaoUrl.indexOf("webview") >= 0) {
+										clicked(mubiaoUrl, true);
+									} else {
+										clicked('webview_info.html', true, false, mubiaoUrl.replace(/&k=/, '%26unid%3D' + localStorage.getItem("rm_uid") + '&k=').replace(/dduserid=0/, 'dduserid=' + localStorage.getItem("rm_uid") + '&k=') + '&unid=' + localStorage.getItem("rm_uid"));
+									}
+								} else {
+									plus.nativeUI.toast("亲,登陆成功啦~");
+								}
+							} else {
+								plus.ui.alert("暂不支持本手机型号,请联系在线客服", function() {}, "温馨提示")
+							}
+						} else {
+							plus.ui.alert('登录失败,用户名或密码错误!', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="back();"></div>
+			<div class="nvtt">登录</div>
+			<div class="jiangpinHelp" onclick="clicked('webview_help.html',true,false,'http://www.rmfanx.com/apphelp/index.html');"></div>
+		</header>
+		<div id="content" class="scontent">
+			<input id="username" style="-webkit-user-select:auto;width:90%; margin-top: 1em;height:35px;border: hidden;color: #999;font-size: 18px;" type="text" placeholder="&nbsp;&nbsp;请输入用户名或邮箱" />
+			<input id="password" type="password" style="-webkit-user-select:auto;width:90%; margin-top: 5px;height:35px;border: hidden;color: #999;font-size: 18px;" placeholder="&nbsp;&nbsp;请输入密码" style="color:#bbb;" />
+			<center>
+				<div onclick="login()" style="width:98%;height: 2em;padding-top: 0.6em;margin-top: 10px; background: #ff7472;color: white;font-weight: bold;font-size: 20px;">马上登录</div>
+			</center>
+
+			<div class="zhuce" onclick="login3('tb')"><span style="color: blue;">5秒快速注册</span> </div>
+
+			<center style="margin-top: 70px;">
+				<div>
+					<div style="width:100%;text-align:left;font-size: 14px;float: left;">
+						<div style="float: left;width: 45%;margin-left: 10px;">合作平台，快捷登陆</div>
+						<div style="float: left;width: 45%;text-align:right;"><span style="color: #444444;" onclick="guang()">不登录,先逛逛>></span>
+						</div>
+					</div>
+					<div style="width:100%;text-align: left;margin-top: 10px;float: left;border-top: dashed 1px #cBcBcB;">
+						<div class="taobao" style="margin-top: 10px;float: left;margin-left: 10px;" onclick="login3('tb')"></div>
+						<div class="QQ" style="margin-top: 10px;float: left;" onclick="login3('qq')"></div>
+					</div>
+				</div>
+			</center>
+		</div>
+
+	</body>
+
+</html>

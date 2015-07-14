@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../js/md5.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			function openWebview(url) {
+					plus.webview.create(url).show();
+				}
+				//加载账户信息
+
+			function loadInfo() {
+				plus.nativeUI.showWaiting("数据准备中~");
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=info&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&jsoncallback=userInfo',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						if (data.status == 1) {
+							if (data.default_pwd != "") {
+								document.getElementById("default_pwd").innerHTML = "亲的初始密码为: <span style = 'font-weight: bold;color:blue;' >" + data.default_pwd + "</span>建议修改密码!";
+							}
+							document.getElementById("money").value = data.money +' 元';
+							document.getElementById("tixian").value = data.money;
+							if (data.realname.length > 1) {
+								document.getElementById("realname").readOnly = true;
+								document.getElementById("realname").value = data.realname;
+							}
+							if (data.zfb.length > 5) {
+								document.getElementById("alipay").readOnly = true;
+								document.getElementById("alipay").value = data.zfb;
+							}
+
+						} else {
+							ws = plus.webview.currentWebview();
+							ws.close();
+							plus.ui.alert("登录信息错误,请重新登录!", function() {}, "温馨提示");
+							localStorage.clear();
+							clicked('webview_login.html', true);
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function refresh() {
+				loadInfo();
+			}
+
+			function plusReady() {
+				loadInfo();
+			}
+
+			 //加载账户信息
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+			
+			function checkInfo(){
+				if (document.getElementById("realname").value.trim().length < 2) {
+					plus.ui.alert('亲，您还未完善账户信息，请先完善再提取返利!', '', '温馨提示')
+					ws = plus.webview.currentWebview();
+					ws.close();
+					clicked('webview_userEdit.html', true);
+					return;
+				}
+				if (document.getElementById("alipay").value.trim().length < 6) {
+					plus.ui.alert('亲，您还未完善账户信息，请先完善再提取返利!', '', '温馨提示')
+					ws = plus.webview.currentWebview();
+					ws.close();
+					clicked('webview_userEdit.html', true);
+					return;
+				}
+			}
+
+			function tixian() {
+				if (document.getElementById("alipay").value.trim().length < 6) {
+					plus.ui.alert('亲，您还未完善账户信息，请先完善再提取返利!', '', '温馨提示')
+					ws = plus.webview.currentWebview();
+					ws.close();
+					clicked('webview_userEdit.html', true);
+					return;
+				}
+				/**
+				if (document.getElementById("pwd").value.length < 6) {
+					plus.ui.alert('登录密码错误,请重新输入!', '', '温馨提示')
+					return;
+				}**/
+				if (document.getElementById("tixian").value <= 0) {
+					plus.ui.alert('兑换金额有误, 请重新填写!', '', '温馨提示')
+					return;
+				}
+				plus.nativeUI.showWaiting("数据提交中~");
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=tixian&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&money=' + document.getElementById("tixian").value + '&jsoncallback=tixian',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data1) {
+						plus.nativeUI.closeWaiting();
+						if (data1.status == 1) {
+							plus.ui.alert(data1.msg, function() {}, "温馨提示");
+							plus.webview.currentWebview().close();
+							ws = plus.webview.getWebviewById("page/webview_user.html");
+							ws.evalJS("info_reload()");
+						} else {
+							plus.ui.alert(data1.msg, function() {}, "温馨提示");
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!');
+					}
+				});
+
+			}
+			
+			function clearNoNum(obj)
+		    {
+		        //先把非数字的都替换掉，除了数字和.
+		        obj.value = obj.value.replace(/[^\d.]/g,"");
+		        //必须保证第一个为数字而不是.
+		        obj.value = obj.value.replace(/^\./g,"");
+		        //保证只有出现一个.而没有多个.
+		        obj.value = obj.value.replace(/\.{2,}/g,".");
+		        //保证.只出现一次，而不能出现两次以上
+		        obj.value = obj.value.replace(".","$#$").replace(/\./g,"").replace("$#$",".");
+		    }
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="back();"></div>
+			<div class="nvtt">其他返利提取</div>
+			<div class="refresh" onclick="refresh();"></div>
+		</header>
+		<div id="content" class="scontent">
+			<ul class="dlist" id="dlist">
+				<li class="ditem_userEdit">账户余额*
+					<input id="money" class="input_userEdit" type="text" readOnly="true" style="color:#FF7472;border-style: hidden;" />
+				</li>
+				<li class="ditem-empty"></li>
+				<li class="ditem_userEdit">真实姓名*
+					<input id="realname" onclick="checkInfo()" class="input_userEdit" type="text" readOnly="true" style="border-style: hidden;" placeholder="提取返利时核对信息" />
+				</li>
+				<li class="ditem_userEdit">支付宝帐号*
+					<input id="alipay" onclick="checkInfo()" class="input_userEdit" type="text" readOnly="true" style="border-style: hidden;" placeholder="提取返利的支付宝帐号" />
+				</li>
+				<li class="ditem_userEdit">提现金额*
+					<input id="tixian" class="input_userEdit" type="number" style="color:#FF7472;" onFocus="if (this.value=='') this.value='0.00';" onBlur="this.value=isNaN(parseFloat(this.value))?0.00:parseInt(parseFloat(this.value)*100)/100;" placeholder="红包面额只能为整数" />
+				</li>
+				<!--li class="ditem_userEdit" style="padding: 0.2em; ">登录密码*
+					<input id="pwd" class="input_userEdit" type="password" placeholder="人脉返现登录密码" />
+				</li-->
+				<li class="ditem-empty" id='default_pwd' style="padding: 0.3em; font-size: 14px;color: #ff7472;">
+				</li>
+				<li class="ditem-empty" style="font-size: 14px;color: #ff7472;">
+					亲, 提交前, 请务必确认支付宝帐号是否正确!
+				</li>
+				<center>
+					<div onclick="tixian()" style="width:98%;height: 2em;padding-top: 0.6em;margin-top: 10px;border-radius:5px; background: #ff7472;color: white;font-weight: bold;font-size: 20px;">我要提现</div>
+				</center>
+
+				<li class="ditem-empty" style="font-size: 14px;color: #ff7472;text-align: left;">
+					</br>&nbsp;&nbsp;<strong>温馨提示:</strong>
+					</br>
+					&nbsp;&nbsp;1. 其他返利来源: 商城返利+邀请奖励</br>
+					&nbsp;&nbsp;2. 提交后, 提现将会在24小时内到账</br>
+					&nbsp;&nbsp;3. 若有疑问请联系客服或 <span style="color: blue;" onclick="clicked('webview_help.html', true);">查看帮助>></span>
+				</li>
+			</ul>
+
+		</div>
+
+	</body>
+
+</html>

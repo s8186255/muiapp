@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Subjects</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1, user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../lib/mui/mui.css">
+		<link rel="stylesheet" href="../../css/app.css">
+		<style type="text/css">
+		#list {
+			background-image: none !important;
+			margin-top: -1px !important;
+		} 
+		</style>
+	</head>
+
+	<body style="">
+		<!--下拉刷新容器-->
+		<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+			<div class="mui-scroll">
+			<ul id="list" class="mui-table-view mui-grid-view mui-grid-9 app-no-margin-top">
+				<li class="mui-table-view-cell mui-media mui-col-xs-4">
+					loading...
+					<!--<a title="Questions" app-event="openList" class="app-page-view" href="javascript:void(0)" url="/pages/features/questions/index.html">
+						<span class="mui-icon iconfont icon-weijifen app-color-red"></span>
+						<div class="mui-media-body">Calculus</div>
+					</a>-->
+				</li>
+			</ul>
+		</div>
+		</div>
+	</body>
+	<script id="list" url="/api/tags" type="text/template">
+		{{#records}}
+		<li class="mui-table-view-cell mui-media mui-col-xs-4">
+			<a app-event="chooseTag" value="{{id}}" text="{{text}}" class="app-page-view" href="javascript:void(0)">
+				<span class="mui-icon {{icon}}"></span>
+				<div class="mui-media-body" style="font-size:10px;">{{text}}</div>
+			</a>
+		</li>
+		{{/records}}
+	</script>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js" ></script>
+	<script src="../../lib/mustache/mustache.min.js"></script>
+	<script src="../../lib/framework/utils.js"></script>
+	<script src="../../lib/framework/results.js"></script> 
+	<script>
+		App.go({ 
+			init : {
+				pullRefresh : {
+					down : true
+				}
+			},
+			events : {
+				custom : { 
+					chooseTag : function(e) {
+						var tgt = e.target;
+						var text = tgt.getAttribute('text');
+						var value = tgt.getAttribute('value');
+						App.notifyOpener({ text:text, value:value });
+						mui.back();
+					}
+				}
+			},
+			template : {
+				defined : function(tpl){
+					//不分页
+					tpl.ajax.options.data.pageNo = -1;
+				},
+				render : function(tpl) {
+					if (!tpl.ajax.result || typeof tpl.ajax.result == 'undefined') {
+						return;	
+					}
+					// 使用'大胡子'模板引擎来渲染
+					var model = {
+						records : tpl.ajax.result.data
+					};
+					var output = Mustache.render(tpl.html, model);
+					return output;
+				}
+			},
+			appReady : function(){
+				App.ready = true;
+//				settings();
+			}
+		});
+		
+		function settings(){
+//			App.notifyParent("settings", {
+//				buttons : {
+//					hide : true,
+//		   	    	data : [
+//		   	    		{ 
+//		   	    			id : 'ask',
+//		   	    			text : 'Ask', 
+//		   	    			icon : 'icon-xie', 
+//		   	    			class : ['iconfont'],
+//		   	    		}
+//		   	    	],
+//		   	    	onNotify : 'openAbout'
+//				}
+//			});
+		}
+	</script>
+</html>

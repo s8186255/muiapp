@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>Home</title>
+		<link href="lib/mui/mui.css" rel="stylesheet" />
+		<link href="css/app.css" rel="stylesheet">
+	</head>
+
+	<body>
+		<!-- 头部 --> 
+		<header id='app-header' class="mui-bar mui-bar-nav app-no-shadow app-index-header">
+			<h1 id="title" class="mui-title">Live Note</h1>
+		</header>
+		<!-- 底部 -->
+		<nav id="app-tabs" class="mui-bar mui-bar-tab app-no-shadow">
+			<a id="index" title="Questions" app-event="showTab" class="mui-tab-item mui-active" href="javascript:void(0)">
+				<span class="mui-icon mui-icon-home"></span>
+				<span class="mui-tab-label">Home</span> 
+			</a>
+			<a id="friends" title="Friends" app-event="showTab" class="mui-tab-item" href="javascript:void(0)">
+				<span class="iconfont icon-haoyou"></span>
+				<span class="mui-tab-label">Friends</span> 
+			</a>
+			<a id="addmenu" app-event="showMenu" class="mui-tab-item" href="javascript:void(0)">
+				<span class="iconfont icon-yiwen-empty app-color-orange" style="font-size:36px; line-height: 26px;"></span>
+			</a> 
+			<a id="message" title="Notifications" app-event="showTab" class="mui-tab-item" href="javascript:void(0)">
+				<span class="mui-icon mui-icon-chatbubble" style="font-size:36px; line-height: 31px;"><span id="message_unread" class="mui-badge mui-badge-danger app-hidden">0</span></span>
+				<span class="mui-tab-label">Notifications</span>
+			</a>
+			<a id="my" title="Me" app-event="showTab" class="mui-tab-item" href="javascript:void(0)">
+				<span class="iconfont icon-wode-empty" style="font-size:26px; line-height: 36px;"></span>
+				<span class="mui-tab-label">Me</span>
+			</a>
+		</nav>
+	</body>
+	<script src="lib/mui/mui.js"></script>
+	<script src="lib/framework/z-app.js"></script>
+	<script src="lib/framework/update.js"></script>
+	<script>
+		App.go({
+			loginRequired : true,
+			init : {
+				isMainView : true,//当前页面是否是APP主页面
+//				viewid : 'main-view',//主页面的ID值, 仅当isMainView=true时有效
+				splashscreen : {
+					autoclose : false,
+				},
+				statusBar : {
+					background : '#f7f7f7',//设备顶部状态栏背景颜色
+					highlight : false//设备顶部状态栏文字是否高亮(白色)
+				},
+				http : {
+					base : 'http://shan-gong.com:8081',
+//					base : 'http://10.8.60.8:8081',
+					cache : true, 
+					before : function(e) {
+						// 检查网络
+						if (plus.networkinfo.CONNECTION_NONE === plus.networkinfo.getCurrentType()) {
+							mui.toast("network error");
+							//将当前view的内容变成可点击区域
+//							var view = e.view;
+//							view.setStyle({ reload_url : view.getURL() })
+//							view.loadURL('/pages/common/network_none.html')
+							
+							// 阻止Ajax执行
+							e.preventDefault();
+							return;
+						}
+						// 显示加载中
+						if (e.options.loading == false) {
+							
+						} else {
+							App.showWaiting();
+						}
+					},
+					after : function(xhr, type, statusText) {
+						// 关闭加载中
+						plus.nativeUI.closeWaiting();
+						if (xhr) {
+							var status = xhr.status+"";
+							if ("401" == status) {
+								// 跳转到登陆页面
+								App.open('/login.html', {
+									onNotify : function(e) {
+										App.user = e.detail.user;
+									}
+								});
+							}
+						}
+					}
+				},
+				views : {
+					main : {
+						styles : {
+							top: '48px', 
+							bottom: '55px'
+						},
+						tabs : [
+						    {
+						    	id : 'index',
+						    	url : '/pages/features/questions/index.html',
+						    },
+						    {
+						    	id : 'friends',
+						    	url : '/pages/friends/index.html',
+						    },
+						    {
+						    	id : 'message',
+						    	url : '/pages/message/index.html',
+						    },
+						    {
+						    	id : 'my',
+						    	url : '/pages/my/index.html',
+						    }
+						]
+					},
+					content : {
+						layout : {
+							url : '/pages/common/page_layout.html'
+						},
+						styles : {
+							top: "48px",
+							bottom: "0px",
+							bounce: 'none',
+							popGesture: 'hide'
+						}
+					},
+					list : {
+						layout : {
+							url : '/pages/common/page_layout.html',
+						},
+						styles : {
+							top: "48px",
+							bottom: "0px",
+							bounce: 'none',
+							popGesture: 'hide'
+						}
+					},
+					detail : {
+						layout : {
+							url : '/pages/common/page_layout.html'
+						},
+						styles : {
+							top: "48px",
+							bottom: "0px",
+							bounce: 'none',
+							popGesture: 'hide'
+						}
+					}
+				}
+			},
+			// 拦截器,若当前页面是主页面,则拦截器是全局生效的
+			interceptor : {
+				before : function() {
+					// 若该页面需要登录
+					if (App.opts.loginRequired) {
+						var user = plus.storage.getItem('user');
+						if (user && typeof user != 'undefined') {
+							// 让页面继续往下执行
+							App.continue();
+							return;
+						}
+						plus.navigator.closeSplashscreen();
+						// 否则,若没有登录,则打开登录页面
+						App.open('/login.html', {
+							onNotify : function(e) {
+								App.user = e.detail.user;
+								// 让页面继续往下执行
+								App.continue();
+							}
+						});
+					} else {
+						App.continue();
+					}
+				}
+			},
+			events : {
+				//消息推送事件处理
+				push : {
+					click : function(msg) {
+						plus.navigator.closeSplashscreen();
+						console.log(":::click::pushmsg:::"+JSON.stringify(msg));
+						var payload;
+						if (App.isIOS() == true) {
+							payload = JSON.parse(msg.payload.payload);
+						} else {
+							payload = JSON.parse(msg.payload);
+						}
+						
+						if (payload) {
+						    var type = payload.type;
+							var data = payload.data;
+						    if ("open_window" == type) {
+						        //打开页面
+						        var title = data.title || "";
+						        var url = data.url || "";
+								var opts = {
+									title : title,
+									layout : "/pages/common/page_layout.html",
+									styles : {
+									    top : '48px',
+									    data : data,
+									}
+								}
+								App.openWindow(url, opts);
+						    } else {
+						    	console.log("暂不处理的透传消息类型::"+type);
+						    }
+						}
+					},
+					receive : function(msg) {
+						if (msg.aps) {  // Apple APNS message
+						} else {
+							//TODO 如果是IOS设备,需要创建本地消息显示在通知栏里 
+						}
+						console.log("::pushmsg::receive:::"+JSON.stringify(msg));
+					}
+				},
+				// 设备按键事件处理
+				keys : {
+					// 返回键
+					back : function(e) {
+						if (!App.first) {
+							App.first = new Date().getTime();
+							mui.toast('再按一次退出应用');
+							setTimeout(function() {
+								App.first = null;
+							}, 1000);
+						} else {
+							if (new Date().getTime() - first < 1000) {
+								plus.runtime.quit();
+							}
+						}
+					}
+				},
+				device : {
+					pause : function(e) {
+						//更新
+					},
+					resume : function(e){
+						//更新
+						if (App.opts && App.opts.events && App.opts.events.custom) {
+							console.log('resume::update-version');
+							App.opts.events.custom.updateVersion({});							
+						}
+					}
+				},
+				// 自定义事件
+				custom : {
+					updateVersion : function(e) {
+						updateVersion(e);
+					},
+					updateMessage : function(e) {
+						App.httpClient().ajax('GET', '/api/messages/unread', {cache:false, loading:false}, function(result) {
+							var count = result.unread;
+							var dom = document.getElementById('message_unread');
+							if (count > 0) {
+								dom.innerHTML = count;
+								if (dom.classList.contains('app-hidden')) {
+									dom.classList.remove('app-hidden');
+									try {
+										plus.device.vibrate();
+									}catch(e){
+									}
+									var v = plus.webview.getWebviewById('message');
+									mui.fire(v,'reload',{});
+								}
+							} else {
+								dom.innerHTML = "";
+								dom.classList.add('app-hidden'); 
+							}
+						});
+					},
+					showMenu : function(e) {
+						e.target.classList.remove('mui-active');
+						App.actionSheet({
+							title : 'Quick Link',
+							cancel:"Cancel",
+							buttons:[
+							    { title : "Ask a Question" },
+							    { title : "Reload" }, 
+							],
+							url : "/more.html",//当原生ActionSheet不可用时,会使用URL来代替
+							styles : {
+								height:'100px',
+								bottom:'0px'
+							},
+							onNotify : function(e) {
+								if (e.detail.index == 1) {
+									App.openWindow("/pages/features/questions/ask.html", { 
+										title : "Ask a Question",
+										layout : '/pages/common/page_layout.html',
+										styles : {
+											top : '48px' 
+										},
+										onNotify : function(e) {
+											//刷新
+											var v = plus.webview.getWebviewById('index');
+											v.evalJS("mui.scrollTo(0, 100)");
+											mui.fire(v, "reload", {});
+										}
+									});
+								} else if (e.index == 2) {
+									mui.fire(plus.webview.getWebviewById('index'), 'reload', {});
+								}
+							}
+						});
+					},
+					settings : function(e) {
+						var detail = e.detail;
+						if (detail.title) {
+							document.getElementById('title').innerHTML = detail.title;
+						}
+						
+						if (detail.categories) {
+							var cateOpts = detail.categories;
+							var cUrl = '/pages/common/category.html';
+							var cid = cateOpts.id || cUrl;
+							var categoryView = plus.webview.getWebviewById(cid);
+							
+							if (cateOpts.close == true){
+								if (categoryView) {
+									categoryView.close();
+								}
+							} else if(typeof cateOpts.go != 'undefined'){
+								if (categoryView) {
+									mui.fire(categoryView, 'go', { direction : cateOpts.go });
+								}
+							} else {
+								// 创建分类页面
+								if (categoryView) {
+									// 设置分类页面加载数据的URL地址
+									plus.webview.currentWebview().append(categoryView);
+									if (cateOpts.styles) {
+										categoryView.setStyle(cateOpts.styles);	
+									}
+									mui.fire(categoryView, 'settings', cateOpts);
+									categoryView.show();
+								} else {
+									var _styles = {
+										height : '48px',
+										left : '48px',
+										right : '48px',
+										scrollIndicator : 'none',
+									};
+									if (cateOpts.styles) {
+										_styles.left = cateOpts.styles.left || '48px';	
+										_styles.right = cateOpts.styles.right || '48px';	
+									}
+									
+									categoryView = App.createWebview(cUrl, cid, _styles);
+									plus.webview.currentWebview().append(categoryView);
+									categoryView.addEventListener('loaded', function(e){
+										categoryView.removeEventListener('loaded');
+										// 设置分类页面加载数据的URL地址
+										mui.fire(categoryView, 'settings', cateOpts);
+										categoryView.show();
+									});
+								}
+							}
+							App.categoryView = categoryView;
+						}
+						
+						if (detail.buttons) {
+							var headerDom = document.getElementsByTagName('header')[0];
+							if(detail.buttons.hide == true) {
+								var btns = headerDom.getElementsByTagName('button');
+								App.each(btns, function(i,btn){
+									if (btn.getAttribute('id') == 'back') {
+									} else {
+										headerDom.removeChild(btn);
+									}
+								});
+							} else if (detail.buttons.data) {
+								var btns = headerDom.getElementsByTagName('button');
+								App.each(btns, function(i,btn){
+									if (btn.getAttribute('id') == 'back') {
+									} else {
+										headerDom.removeChild(btn);
+									}
+								});
+								App.each(detail.buttons.data, function(i,btnData){
+									var btn = document.createElement('button');
+									btn.setAttribute('id', btnData.id);
+									btn.setAttribute('app-event', 'onBtnClick');
+									btn.setAttribute('data', JSON.stringify(btnData));
+									if (btnData.class) {
+										if (typeof btnData.class == 'object') {
+											App.each(btnData.class, function(i,c){
+												btn.classList.add(c);
+											});
+										} else if (typeof btnData.class == 'string') {
+											btn.classList.add(btnData.class);
+										}
+									}
+									if (btnData.icon) {
+										btn.classList.add('app-bar-btn');
+										btn.classList.add('mui-icon');
+										btn.classList.add(btnData.icon);	
+									} else if(btnData.text) {
+										btn.classList.add('mui-btn');
+										btn.innerHTML = btnData.text;
+									}
+									if (btnData.left == true) {
+										btn.classList.add('mui-pull-left');
+									} else {
+										btn.classList.add('mui-pull-right');
+									}
+									headerDom.appendChild(btn);
+								});
+							}
+							
+							App.onBtnNotify = detail.buttons.onNotify;
+						}
+					},
+					onBtnClick : function(e) {
+						var tgt = e.target;
+						var data = tgt.getAttribute('data');
+						data = JSON.parse(data);
+						App.notifyChildren(App.onBtnNotify, data);
+					},
+					showMy : function(e) {
+						var tabs = document.getElementById('app-tabs');
+						App.each(tabs.children,function(i,v){
+							v.classList.remove('mui-active');
+						});
+						var myTab = document.getElementById('my');
+						myTab.classList.add("mui-active");
+						App.events.custom.showTab({target : myTab});
+					},
+					showIndex : function(e) {
+						var tabs = document.getElementById('app-tabs');
+						App.each(tabs.children,function(i,v){
+							v.classList.remove('mui-active');
+						});
+						var indexTab = document.getElementById('index');
+						indexTab.classList.add("mui-active");
+						App.events.custom.showTab({target : indexTab});
+					},
+					// 显示Tab内容
+					showTab : function(e) {
+						var tgt = e.target;
+						var viewid = tgt.getAttribute("id");
+						var title = tgt.getAttribute('title');
+						document.getElementById('title').innerHTML = title;
+						App.openTab(viewid);
+					},
+					openSearch : function(e) {
+						App.openContent('/pages/common/search.html',{title:'搜索'});
+					}
+				}
+			},
+			deviceReady: function(){
+				updateVersion({});
+			},
+			appReady : function() {
+				// 默认显示首页
+				var indexTab = document.getElementById('index');
+				App.events.custom.showTab({target : indexTab});
+				
+				//轮询查询消息未读数
+				setInterval(function(){
+					App.opts.events.custom.updateMessage();
+				}, 60*1000);
+				App.opts.events.custom.updateMessage();
+				
+				setTimeout(function(){
+					plus.navigator.closeSplashscreen();
+					// 升级后的功能介绍引导
+					var hasupdate = plus.storage.getItem("isnewversion");
+					if(hasupdate){
+						//打开功能介绍
+						App.openWindow("/pages/common/introduce.html", {
+							anishow:{
+								ani:'zoom-fade-out', speed:300
+							}
+						});
+						plus.storage.setItem("isnewversion","");
+					}
+				}, 2000);
+			}, 
+		});
+		
+		function updateVersion(e) {
+			// 更新版本
+			g_updater.checkUpdate(function(updateData){
+				if(updateData.hasUpdate){
+					plus.storage.setItem("isnewversion","true");
+					mui.toast('更新了版本');
+					setTimeout(function(){
+						if (App.isIOS()) {
+							plus.webview.currentWebview().reload(true);
+							//mui.alert('更新了版本,若使用不正常,请重启APP即可');
+						} else {
+							plus.runtime.restart();
+						}
+					}, 1000);
+					return;
+				}
+			});
+		}
+	</script>
+
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Questions</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../../../lib/mui/mui.css" />
+		<link rel="stylesheet" href="../../../css/app.css" />
+		<style>
+		</style>
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<!--下拉刷新容器-->
+			<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<div id="filter-wrap" class="app-hidden" style="background:#ffffff; color:#222; padding:10px;">
+						Filter: 
+						<span id="filter">
+						</span>
+					</div>
+					<div id="list" class="mui-content-padded">
+						<ul class="mui-table-view app-card">
+							Loading...
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script id="filter" type="text/template2">
+	{{#tags}}
+		<span app-event="removeTag" dataid="{{value}}" class="mui-badge" style="color:#222; font-size:14px;">{{text}}<span class="mui-icon mui-icon-close" style="font-size:18px;"></span></span>
+	{{/tags}}
+	</script>
+	<script id="list" url="/api/questions" type="text/template">
+	{{#records}}
+		<ul class="mui-table-view app-card">
+			<li class="mui-table-view-cell">
+				<a style="padding:0px;" app-event="openDetail" title="{{creator.name}}" url="/pages/features/questions/detail.html" data="{{id}}" href="javascript:void(0)">
+					<div class="app-card-head">
+						<img app-event="tapHead" class="mui-media-object mui-pull-left {{creator.id}}_avatar" height="50px" style="border-radius: 50%;" src="../../../img/head.png" />
+						{{creator.name}} ask:
+					</div>
+					<div class="app-card-body mui-ellipsis-3" style="padding-top:15px; padding-bottom:15px;">{{description}}</div>
+					<div class="app-card-bottom">
+						<div class="app-card-tags">
+							{{#tags}}
+							<span app-event="tapTag" data="{{value}}" class="mui-badge"><span style="font-size:14px;" class="{{icon}}"></span>{{text}}</span>
+							{{/tags}}
+						</div>
+						<!--<div class="app-card-count">{{answered_count}} Answered</div>-->
+						<div class="mui-clearfix"></div>
+					</div>
+				</a>
+			</li>
+		</ul>
+	{{/records}}
+	</script>
+	<script src="../../../lib/mui/mui.js"></script>
+	<script src="../../../lib/framework/z-app.js"></script>
+	<script src="../../../lib/mustache/mustache.min.js"></script>
+	<script src="../../../lib/framework/utils.js"></script>
+	<script src="../../../lib/framework/results.js"></script> 
+	<script>
+		App.go({
+			init : {
+				pullRefresh : {
+					// 开启下拉刷新
+					down : {
+						beforeDefined : function(tpl) {
+							App.pageNo = 1;
+							App.resetLoadMore();
+						}
+					},
+					// 上拉加载更多
+					up : {
+						contentnomore : '&nbsp;',
+						hasMore : function (tpl) {
+							var result = tpl.ajax.result;
+							var hasMore = App.pageNo <= result.pageCount;
+							if (!hasMore) {
+								mui.toast('no more');
+							}
+							return hasMore;
+						}
+					},
+				},
+			},
+			deviceReady : function(e) {
+				App.pageNo = 1;
+				App.pageSize = 20;
+				App.tags = null;
+			},
+			events : {
+				view : {
+					beforeShow : function() {
+						if (App.ready == true) {
+							settings();
+						}
+					}
+				},
+//				keys : {
+//					back : function(e) {
+//						mui.back();
+//					}
+//				},
+				// 自定义事件
+				custom : {
+					openCategory : function(e) {
+						var url = "/pages/features/index.html";
+						App.openList(url,{
+							title : 'Tags',
+							onNotify : function(e) {
+								document.getElementById('list').innerHTML = "loading...";
+								var tag = e.detail;
+								App.tags = tag.value;
+								App.pageNo = 1;
+								App.handleTemplate({reload:true});
+								
+								var wrap = document.getElementById('filter-wrap');
+								wrap.classList.remove('app-hidden');
+								//渲染
+								var filter = document.scripts['filter'];
+								var html = filter.innerHTML;
+								var model = {
+									tags : [tag]
+								};
+								// 使用'大胡子'模板引擎来渲染
+								var output = Mustache.render(html, model);
+								document.getElementById('filter').innerHTML = output;
+							}
+						});
+					},
+					removeTag : function(e) {
+						document.getElementById('list').innerHTML = "loading...";
+						
+						var tgt = e.target;
+						var wrap = document.getElementById('filter-wrap');
+						wrap.classList.add('app-hidden');
+						document.getElementById('filter').innerHTML = "";
+						App.pageNo = 1;
+						App.tags = null;
+						App.handleTemplate({reload:true})
+					},
+					tapHead : function(e) {
+//						alert('tap head');
+					},
+					//打开详细信息
+					openDetail : function(e) {
+						var tgt = e.target;
+						var data = tgt.getAttribute('data');
+						var title = tgt.getAttribute('title');
+						var detailUrl = tgt.getAttribute('url');
+						var opts = {
+							title : title || 'Question Detail',
+							reload : true,
+							styles : {
+								questionId : data, 
+							}
+						}
+						App.openDetail(detailUrl, opts);
+					},
+					tapTag : function(e) {
+					},
+					reload : function(e) {
+						App.pullRefresh.down.callback();
+					}
+				}
+			},
+			// 模板渲染
+			template : {
+				// 定义模板的参数,比如分页参数等
+				defined : function(tpl) {
+					App.userids = [];
+					tpl.ajax.options.data.pageNo = App.pageNo;
+					tpl.ajax.options.data.pageSize = App.pageSize;
+					if(App.tags && App.tags != null) {
+						tpl.ajax.options.data.tagId = App.tags;
+					}
+				},
+				// 渲染模板
+				render : function(tpl) {
+					if (!tpl.ajax.result || typeof tpl.ajax.result == 'undefined') {
+						return;
+					}
+					
+					var data = tpl.ajax.result.data;
+					if (!data) {
+						if (tpl.pullRefresh.down) {
+							return "<center>no data</center>";	
+						} 
+						return "&nbsp;";
+					}
+					App.pageNo++;
+					
+					// 记住用户ID,用于后面的头像获取
+					App.each(data, function(i,v){
+						if (typeof v.creator == 'undefined' || !v.creator) {
+							return;
+						}
+						var uid = v.creator.id;
+						if (App.contains(App.userids, uid)) {
+						} else {
+							App.userids.push(uid);
+						}
+					});
+					
+					// 渲染模型
+					var model = {
+						records : data,
+					};
+					// 使用'大胡子'模板引擎来渲染
+					var output = Mustache.render(tpl.html, model);
+					return output;
+				},
+				complete : function(tpl) {
+					// 处理头像图片
+					App.each(App.userids, function(i,uid){
+						var doms = document.getElementsByClassName(uid+"_avatar");
+						App.each(doms, function(i,d){
+							App.httpClient().ajax('GET', '/api/user/avatars', {cache:false, loading:false, data:{user_id:uid}}, function(result) {
+								var thumbs = result.thumb; 
+								if (thumbs) { 
+									var img = thumbs[thumbs.length-1];
+									var src = App.opts.init.http.base+'/'+img.localPath;
+									App.each(doms, function(i,d){
+										d.src = src;												
+									});
+								} 
+							});
+						});
+					});
+				}
+			},
+			appReady : function() {
+				App.ready = true;
+				settings();
+			}
+		});
+		function settings() {
+			App.notifyParent("settings", {
+					buttons : {
+			   	    	data : [
+			   	    		{ 
+			   	    			id : 'category',
+			   	    			icon : 'mui-icon-bars', 
+			   	    			class : ['mui-icon','app-color-blue'],
+			   	    		}
+			   	    	],
+			   	    	onNotify : 'openCategory'
+					}
+				});
+		}
+	</script>
+</html>

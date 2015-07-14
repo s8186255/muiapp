@@ -1,0 +1,245 @@
+<style TYPE="text/css">
+#mecon table{margin-top:15px;margin-bottom: 15px;}
+#mecon table tr td:nth-child(1){width: 28%;text-align: center;color:#BBB;}
+#mecon table tr td:nth-child(2){width: 72%;text-align: center;}
+#mecalendar{width:100%;float: left;margin:0 auto;background: #E88E8F;}
+
+#moneyedit{width: 40%;margin-left:10px ;}
+#moneydel{width: 40%;margin-right:10px ;background: #BBBBBB;}
+</style>
+
+<section id="moneyedit_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">编辑花销详情</h1>
+    </header>
+	
+    <article id="mewaiting_article" class="active">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+    <article id="moneyedit_article" data-scroll="true">     	
+    	<div style="width: 100%;margin: 0 auto;">		
+			<div style="width: 100%;margin: 0 auto;">		
+			<div class="feditcon" id="mecon">
+				<table>
+					<tr>
+						<td>消费金额</td>
+						<td><input type="number" class="finput" id="mecost" name="mecost"></td>
+					</tr>
+					<tr>
+						<td>具体项目</td>
+						<td><input type="text" class="finput" id="mename" name="mename"></td>
+					</tr>
+					<tr>
+						<td>费用类型</td>
+						<td>
+							<select name="mecat" id="mecat"></select>
+						</td>
+					</tr>
+					<tr>
+						<td>支付方式</td>
+						<td>
+							<select name="mepay" id="mepay"></select>
+						</td>
+					</tr>
+					<tr>
+						<td>装修进度</td>
+						<td>
+							<select name="mejd" id="mejd"></select>
+						</td>
+					</tr>
+					<tr>
+						<td>消费日期</td>
+						<td>
+							<button class="button" id="mecalendar"></button>
+        					<div id="calendar_demo" style="margin:10px;"></div>
+						</td>
+					</tr>					
+					<tr>
+						<td>备注信息</td>
+						<td><input type="text" class="finput" id="mememo" name="mememo" placeholder="备注..."></td>
+					</tr>
+				</table>
+				<input type="hidden" name="meyear" id="meyear" value="" />
+				<input type="hidden" name="memonth" id="memonth" value="" />
+				<input type="hidden" name="meday" id="meday" value="" />
+				<input type="hidden" name="meold" id="meold" value="" />
+				<input type="hidden" name="meocat" id="meocat" value="" />
+			</div>	
+			<div class="fbuttoncon">
+				<button id="moneyedit" class="fbtn z">确认修改</button>
+				<button id="moneydel" class="fbtn y">删除记录</button>
+			</div>
+		</div>
+
+		</div>
+    </article>
+</section>
+<script type="text/javascript">
+	$("#moneyedit_section").on('pageshow',function(){
+		setSonParam();	
+	}); 
+		
+	$("#moneyedit_section").on('pageinit',function(){
+			var mrid=getID();	
+			if(localStorage['token']!=undefined){
+				var meurl=localStorage['server']+'money.php?t='+localStorage['token']+'&u='+localStorage['uname']+'&id='+mrid+'&a=melist&callback=?';
+				//alert(maurl);
+				$.getJSON(meurl,function(data){
+					if(data==undefined){
+						J.showToast('服务器无响应，请重试!');
+						window.history.go(-1);
+					}else{
+						
+						var me=eval(data);
+						//alert(d['name']);
+						
+						var jd='';
+						var mcat='';
+						var mpay='';
+						var y=parseInt(me['year']);
+						var m=parseInt(me['month']);
+						var d=parseInt(me['day']);
+						
+						$("#mecost").val(parseInt(me["cost"]));
+						$("#meold").val(parseInt(me["cost"]));
+						$("#mename").val(me['name']);
+						$("#mememo").val(me['info']);
+						$("#meocat").val(me['mc_id']);
+						$("#meyear").val(y);
+						$("#memonth").val(m);
+						$("#meday").val(d);
+						$("#mecalendar").text(y+'-'+m+'-'+d);
+						
+						$.each(me['jd'], function(k,v) { 
+							if(me['jd_id']==k){
+								jd+='<option value="'+k+'" selected>'+v+'</option>';  
+							}else{
+								jd+='<option value="'+k+'">'+v+'</option>';  
+							}						                                                       
+						});
+						$('#mejd').html(jd);
+						
+						
+						//alert(d['mcat']['1']);
+						$.each(me['mcat'], function(k,v){  
+							if(me['mc_id']==k){
+								mcat+='<option value="'+k+'" selected>'+v+'</option>';
+							}else{
+								mcat+='<option value="'+k+'">'+v+'</option>'; 
+							}                                               
+						});
+						$('#mecat').html(mcat);
+						
+						$.each(me['mpay'], function(k,v) {  
+							if(me['mp_id']==k){
+								mpay+='<option value="'+k+'" selected>'+v+'</option>';
+							}else{
+								mpay+='<option value="'+k+'">'+v+'</option>'; 
+							}                                                   
+						});
+						$('#mepay').html(mpay);
+					}
+				}); 
+			}
+			
+			$("#moneyedit_article").attr('class','active');
+			$("#mewaiting_article").removeAttr('class');
+			
+			$("#moneyedit").click(function(){
+				$("#moneyedit_article").removeAttr('class');
+				$("#mewaiting_article").attr('class','active');
+				
+				var mrid=getID();
+				var cost=$('#mecost').val();
+				var old=$('#meold').val();
+				var omc=$('#meocat').val();
+				var name=$('#mename').val();
+				var mact=$("#mecat  option:selected").val();
+				var mpay=$("#mepay  option:selected").val();
+				var jd=$("#mejd option:selected").val();
+				var memo=$("#mememo").val();
+				var year=$("#meyear").val();
+				var month=$("#memonth").val();
+				var day=$("#meday").val();
+				if(cost==''){
+					J.showToast('请输入花费','error');
+					return false;
+				}
+				
+				if(name==''){
+					J.showToast('请输入费用名称','error');
+					return false;
+				}
+				
+				var meurl=localStorage['server']+'money.php?t='+localStorage['token']+'&u='+localStorage['uname'];
+				meurl+='&d[cost]='+cost+'&d[name]='+name+'&d[mc_id]='+mact+'&d[mp_id]='+mpay+'&d[jd_id]='+jd;							
+				if(memo!=''){meurl+='&d[info]='+memo;}
+				meurl+='&d[year]='+year+'&d[month]='+month+'&d[day]='+day;
+				meurl+='&old='+old+'&omc='+omc+'&id='+mrid+'&a=edit&callback=?';
+				//alert(meurl);
+				$.getJSON(meurl,function(data){
+					showAccount();
+					var myDate = new Date();
+					var y=myDate.getFullYear();
+					var m=myDate.getMonth()+1;		
+					showRecord(y,m);
+					$("#moneyedit_article").attr('class','active');
+					$("#mewaiting_article").removeAttr('class');
+					window.history.go(-1);
+				}); 		
+			});	
+			
+		$("#moneydel").click(function(){
+			if(confirm('确认要删除这条记录吗？删除后将无法恢复')){
+				$("#moneyedit_article").removeAttr('class');
+				$("#mewaiting_article").attr('class','active');
+				
+				var mrid=getID();
+				var mdurl=localStorage['server']+'money.php?t='+localStorage['token']+'&u='+localStorage['uname']+'&id='+mrid+'&a=del&callback=?';
+				$.getJSON(mdurl,function(data){
+					showAccount();
+					var myDate = new Date();
+					var y=myDate.getFullYear();
+					var m=myDate.getMonth()+1;		
+					showRecord(y,m);
+					
+					$("#moneyedit_article").attr('class','active');
+					$("#mewaiting_article").removeAttr('class');
+					window.history.go(-1);
+				}); 
+				}	
+		});	
+			
+		$('#mecalendar').click(function(){
+			var y=$('#meyear').val();
+			var m=$('#memonth').val();
+			var d=$('#meday').val();
+			
+			    J.popup({
+                html : '<div id="popup_calendar"></div>',
+                pos : 'center',
+                backgroundOpacity : 0.4,
+                showCloseBtn : false,
+                onShow : function(){
+                    new J.Calendar('#popup_calendar',{
+                        date : new Date(y,m,d),
+                        onSelect:function(date){
+                            $('#mecalendar').text(date);
+                            //设置年月日的值
+                            var arr=date.split("-");
+                            $("#meyear").val(parseInt(arr[0]));
+							$("#memonth").val(parseInt(arr[1]));
+							$("#meday").val(parseInt(arr[2]));
+                            J.closePopup();
+                        }
+                    });
+                }
+            });			
+       });
+			
+	}); 	
+</script>

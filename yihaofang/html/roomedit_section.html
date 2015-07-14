@@ -1,0 +1,249 @@
+<style TYPE="text/css">
+#recon table tr td:nth-child(1){width: 25%;text-align: center;color:#BBB;}
+#recon table tr td:nth-child(2){width: 75%;text-align: center;}
+#recon table tr td:nth-child(2) .z{width: 70%;text-align: center;color:#BBB;}
+#recon table tr td:nth-child(2) .y{width: 30%;text-align: center;color:#BBB;}
+#doorcon table{margin-bottom: 5px;margin-top: 5px;}
+#doorcon table tr {margin: 3px auto;}
+#doorcon table tr td:nth-child(1){width: 10%;text-align: center;color:#BBB;}
+#doorcon table tr td:nth-child(2){width: 25%;text-align: center;}
+#doorcon table tr td:nth-child(3){width: 10%;text-align: center;color:#BBB;}
+#doorcon table tr td:nth-child(4){width: 25%;text-align: center;}
+#doorcon table tr td:nth-child(5){width: 15%;text-align: center;}
+#doorcon table tr td:nth-child(6){width: 15%;text-align: center;}
+#doorcon img{width: 30px;margin-top:5px;opacity: 0.1;}
+
+#wincon{margin-top:-5px;}
+#wincon table{margin-bottom: 5px;margin-top: 5px;}
+#wincon table tr {margin: 3px auto;}
+#wincon table tr td:nth-child(1){width: 10%;text-align: center;color:#BBB;}
+#wincon table tr td:nth-child(2){width: 25%;text-align: center;}
+#wincon table tr td:nth-child(3){width: 10%;text-align: center;color:#BBB;}
+#wincon table tr td:nth-child(4){width: 25%;text-align: center;}
+#wincon table tr td:nth-child(5){width: 15%;text-align: center;}
+#wincon table tr td:nth-child(6){width: 15%;text-align: center;}
+#wincon img{width: 30px;margin-top:5px;opacity: 0.1;}
+
+#newwin{width: 100%;height: 50px;line-height: 50px;border: 1px solid #BBB;background: #F4F8F8;-webkit-border-radius:0px;}
+#newwin img{width: 30px;opacity: 0.1;margin-top:-3px;}
+
+#newdoor{width: 100%;height: 50px;line-height: 50px;border: 1px solid #BBB;background: #F4F8F8;-webkit-border-radius:0px;}
+#newdoor img{width: 30px;opacity: 0.1;margin-top:-3px;}
+
+#roomedit{margin: 0 auto;margin-bottom:15px;margin-top:-15px;}
+</style>
+
+<section id="roomedit_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">修改房间信息</h1>
+    </header>
+    <article id="rewaiting_article" class="active" >
+		<img src="./img/loading.gif" width="100%">
+	</article>
+    <article id="roomedit_article" data-scroll="true">
+		<div class="scrollcon" style="padding: 5px 0px 10px 0px;">
+			<div class="feditcon" id="recon">		
+				<table>
+					<tr>
+						<td>房间名称</td>
+						<td>
+							<div class="z"><input type="text" class="finput" id="rename" name="rename" value=""></div>
+							<div class="y" id="roomtype"></div>
+						</td>
+					</tr>
+					<tr>
+						<td>房间面积</td>
+						<td>
+							<div class="z"><input type="number" class="finput" id="remj" name="remj" value=""></div>
+							<div class="y">平方米</div>
+						</td>
+					</tr>
+					<tr>
+						<td>房间周长</td>
+						<td>
+							<div class="z"><input type="number" class="finput" id="rezc" name="rezc" value=""></div>
+							<div class="y">米</div>
+						</td>
+					</tr>
+					<tr>
+						<td>房间高度</td>
+						<td>
+							<div class="z"><input type="number" class="finput" id="regd" name="regd" value=""></div>
+							<div class="y">米</div>
+						</td>
+					</tr>
+				</table>
+				<div class="fbuttoncon">
+				<button id="roomedit"class="fbtn">修改房间信息</button>
+				</div>	
+			</div>	
+					
+			<div class="clear"></div>
+			
+			<div class="feditcon" id="wincon">
+				<div class='feditheader' id="wininfo">窗的基本信息(单位：米)</div>
+				<table>
+				</table>
+			</div>
+			
+			<div class="feditcon" id="doorcon">
+				<div class='feditheader' id="doorinfo">门的基本信息(单位：米)</div>
+				<table>
+				</table>
+			</div>		
+		</div>
+    </article>
+</section>
+<script type="text/javascript">
+	$("#roomedit_section").on('pageshow',function(){
+		setSonParam();
+	});
+
+	$("#roomedit_section").on('pageinit',function(){
+		//加载数据
+		var rid=getID();
+		$('#room_id').val(rid);
+		$('#daurl').attr('href',"#dooradd_section?rid="+rid);
+		$('#waurl').attr('href',"#winadd_section?rid="+rid);
+		showRoomEdit(rid);
+		
+		$("#roomedit").click(function(){		
+			$("#rewaiting_article").attr('class','active');
+			$("#roomedit_article").removeAttr('class');
+			var pid=localStorage['pid'];
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var name=$('#rename').val();
+			var mj=$('#remj').val();
+			var zc=$('#rezc').val();
+			var gd=$("#regd").val();
+			var rid=getID();
+			//var rtype=$("#retype  option:selected").val();
+			
+			//var reurl=localStorage['server']+'room.php?t='+token+'&u='+user+'&a=edit&id='+rid+'&d[name]='+name+'&d[mj]='+mj+'&d[zc]='+zc+'&d[height]='+gd+'&d[rtype_id]='+rtype+'&callback=?';
+			var reurl=localStorage['server']+'room.php?t='+token+'&u='+user+'&a=edit&id='+rid+'&d[name]='+name+'&d[mj]='+mj+'&d[zc]='+zc+'&d[height]='+gd+'&callback=?';		
+			//alert(reurl);
+			$.getJSON(reurl,function(data){
+				showRoom(rid);
+				showPlan(pid);
+				showSites();
+				window.history.go(-1);
+				
+				$("#roomedit_article").attr('class','active');
+				$("#rewaiting_article").removeAttr('class');
+			});
+		});	
+	});
+	
+	function showRoomEdit(rid){
+		var pid=localStorage['pid'];
+		var token=localStorage['token'];
+		var user=localStorage['uname'];
+		//var furl=localStorage.server+'datatest.php?s=room&rid='+id+'&callback=?';
+		var furl=localStorage.server+'room.php?t='+token+'&u='+user+'&a=relist&id='+rid+'&callback=?';
+		$.getJSON(furl,function(data){
+			if(data!=0){
+				var r=eval(data);
+				$("#rename").val(r['room']['name']);
+				$(".rername").val(r['room']['name']);
+				$("#remj").val(r['room']['mj']);
+				$("#rezc").val(r['room']['zc']);
+				$("#regd").val(r['room']['height']);
+				
+				//输出房间类型
+				var rt=r['room']['rtype_id'];			
+				$("#roomtype").html(r['rtype'][rt]);
+				
+				var d='';
+				if(r['door']!=undefined){					
+					$.each(r['door'], function(k,v) {
+						d+='<tr><td>宽</td><td><input type="number" id="dw'+k+'"  value="'+v['w']+'"></td>';
+						d+='<td>高</td><td><input type="number"  id="dh'+k+'" value="'+v['h']+'" /></td>';
+						d+='<td><img src="./img/edit.png" onclick="updDoor(('+k+'))"></td><td><img src="./img/del.png"onclick="doorDel('+k+')"></td></tr>';
+					
+						//d+='<li><div class="z">宽:<input type="number" id="dw'+k+'" value="'+v['w']+'" />高:<input type="number" id="dh'+k+'" value="'+v['h']+'" /></div>';
+						//d+='<div class="y"><img src="./img/del.png" onclick="doorDel('+k+')"><img src="./img/edit.png" onclick="updDoor(('+k+'))"></div></li>';
+					});
+				}
+				d+='<tr><td colspan="6"><a href="#dooradd_section" data-target="section" id="daurl"><button id="newdoor"><img src="./img/add.png"/></button></a></td></tr>';
+				$("#doorcon table").html(d);
+				
+				var w='';
+				if(r['win']!=undefined){					
+					$.each(r['win'], function(k,v) {
+						w+='<tr><td>宽</td><td><input type="number" id="ww'+k+'"  value="'+v['w']+'"></td>';
+						w+='<td>高</td><td><input type="number"  id="wh'+k+'" value="'+v['h']+'" /></td>';
+						w+='<td><img src="./img/edit.png" onclick="updWin(('+k+'))"></td><td><img src="./img/del.png"onclick="winDel('+k+')"></td></tr>';
+						
+						//w+='<li><div class="z">宽:<input type="number" id="ww'+k+'" value="'+v['w']+'" />高:<input type="number" id="wh'+k+'" value="'+v['h']+'" /></div>';
+						//w+='<div class="y"><img src="./img/del.png" onclick="winDel('+k+')"><img src="./img/edit.png" onclick="updWin(('+k+'))"></div></li>';
+					});
+				}				
+				w+='<tr><td colspan="6"><a href="#winadd_section" data-target="section" id="waurl"><button id="newwin"><img src="./img/add.png"/></button></a></td></tr>';
+				$("#wincon table").html(w);
+				
+				//处理页面拉动
+				$("#roomedit_article").show();
+				J.Scroll('#roomedit_article',{vScroll:true,vScrollbar : false});	
+				
+				$("#rewaiting_article").removeAttr('class');
+				$("#roomedit_article").attr('class','active');
+			}
+		});	
+	}
+	
+	function winDel(id){
+		if(confirm('不是点错了吧？真要删除这个窗吗？')){
+			var rid=getID();
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var wdurl=localStorage['server']+'room.php?t='+token+'&u='+user+'&a=wdel&id='+id+'&callback=?';
+			$.getJSON(wdurl,function(data){
+				showRoomEdit(rid);
+			});	
+		}
+	}
+	
+	function doorDel(id){
+		if(confirm('不是点错了吧？真要删除这个门吗？')){
+			var rid=getID();
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var ddurl=localStorage['server']+'room.php?t='+token+'&u='+user+'&a=ddel&id='+id+'&callback=?';
+			$.getJSON(ddurl,function(data){
+				showRoomEdit(rid);
+			});	
+		}
+	}
+	
+	function updDoor(id){
+		var rid=getID();
+		var token=localStorage['token'];
+		var user=localStorage['uname'];
+		var w=$('#dw'+id).val();
+		var h=$('#dh'+id).val();
+		var daurl=localStorage['server']+'room.php?t='+token+'&u='+user+'&a=dedit&id='+id+'&d[w]='+w+'&d[h]='+h+'&callback=?';
+		//alert(daurl);
+		$.getJSON(daurl,function(data){
+			J.showToast('门信息更新成功','success')
+			showRoomEdit(rid);
+		});
+	}
+	
+	function updWin(id){
+		var rid=getID();
+		var token=localStorage['token'];
+		var user=localStorage['uname'];
+		var w=$('#ww'+id).val();
+		var h=$('#wh'+id).val();
+		var waurl=localStorage['server']+'room.php?t='+token+'&u='+user+'&a=wedit&id='+id+'&d[w]='+w+'&d[h]='+h+'&callback=?';
+		//alert(waurl);
+		$.getJSON(waurl,function(data){
+			J.showToast('窗户信息更新成功','success')
+			showRoomEdit(rid);
+		});	
+	}
+</script>

@@ -1,0 +1,125 @@
+<style TYPE="text/css">
+</style>
+
+<section id="newreg_section" data-scroll="true" >
+    <header>
+    	<nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">注册新用户</h1>
+    </header>
+    <article id="nrgwaiting_article">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+    <article id="newreg_article" data-scroll="true"  class="active"> 
+    	 <div class="scrollcon" style="padding: 0px 0px 30px 0px;">
+    	 	
+    	 	<div class='fbody' style="text-align: center;width: 95%;">
+    	 		<div class='feditheader' id="nreginfo">3秒钟注册既可详细调整装修方案</div>
+    	 		<iframe  width="100%" height="260px" id="nregframe" src="http://bao.yihaofang.com/applogin/reg.php"></iframe>
+    	 	</div>
+    	 	
+    	 	 <div style="width: 80%;margin: 0 auto;text-align: center;">
+				<button id="nreguser"style="width:45%;background:#CC0000; border:1px solid #CC0000;"><input type="hidden"  id="reguser" value="" />注册新用户</button>				
+			</div>
+		 </div>	 	
+    </article>
+</section>
+<script type="text/javascript">
+	document.addEventListener("plusready",function(){
+		
+	},false);
+	
+	$("#newreg_section").on('pageshow',function(){
+		setSonParam();
+	}); 
+
+	$("#newreg_section").on('pageinit',function(){
+		//$("#nregframe").attr('src',localStorage['userver']+'reg.php');
+		//登陆检查
+		$("#nreguser").click(function(){
+			//模拟iframe中的远程FORM的submit被点击
+			var regframe=$(window.frames["nregframe"].document);
+			
+			//获取hash，防止非法登陆
+			var hash=regframe.find('#hash').val();
+			var regname=regframe.find('#regname').val();
+			var regpass=regframe.find('#regpass').val();
+			var repass=regframe.find('#repass').val();
+			var email=regframe.find('#regemail').val();
+			
+			//检测用户输入是否输入用户名
+			if(regname==''){
+				J.showToast('请输入用户名','error top');
+				return false;
+			}
+			
+			//检测用户输入是否输入用户名
+			if(email==''){
+				J.showToast('请输入您的邮箱','error top');
+				return false;
+			}
+			
+			//检测用户是否输入密码
+			if(regpass==''){
+				J.showToast('请输入密码','error top');
+				return false;
+			}
+			
+			//检测用户是否输入密码
+			if(regpass!=repass){
+				J.showToast('您的密码输入有误','error top');
+				return false;
+			}
+			
+			//判断用户输入是否正确，必须输入用户名和密码
+			regframe.find("#appreg").click();
+			
+			//1.加载动画，关闭iframe
+			$("#nrgwaiting_article").addClass("active");
+			$("#newreg_article").removeClass();
+			//10秒钟后超时,重新登陆
+			checknewReg(10);					
+		});
+		
+	}); 
+	
+	//用户登陆信息侦听函数
+	//判断用户登陆iframe中是否存在正确的返回值
+	function checknewReg(limit){
+		if(limit>0){
+			limit--;
+			var token=$(window.frames["nregframe"].document).find("#token").val();
+			var uname=$(window.frames["nregframe"].document).find("#uname").val();
+			var time=$(window.frames["nregframe"].document).find("#time").val();
+			var loged=$(window.frames["nregframe"].document).find("#loged").val();
+
+			if(loged==1){
+				if(typeof(token)!='undefined' && typeof(uname)!='undefined' && typeof(time)!='undefined'){
+						//3.保存本地令牌及guid				
+						window.localStorage.setItem('token',token);
+						window.localStorage.setItem('uname',uname);
+						window.localStorage.setItem('time',time);
+						window.localStorage.setItem('loged',1);				//设置登陆标志
+						localStorage.setItem('cntPage',2); 						//设置将要显示页面		
+						window.parent.location.href ="loading.html";		//重载所有窗口
+					}else{
+						var regerror=$(window.frames["nregframe"].document).find("#error").val();					
+						//location.href="login.html";
+						$("#nrgwaiting_article").removeClass();
+						$("#reg_article").addClass("active");
+						window.history.go(-2);
+						J.showToast(regerror,'error');
+					}
+							
+			}else{
+				setTimeout('checknewReg('+limit+')',1000);
+			}
+					
+		}else{
+			$("#nrgwaiting_article").removeClass();
+			$("#newreg_article").addClass("active");
+			J.showToast('服务器超时，请重试','error top');
+		}				
+	}
+</script>

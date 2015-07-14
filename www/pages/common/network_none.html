@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html app-event="reconnect">
+
+	<head>
+		<meta charset="utf-8">
+		<title>无网络连接</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link href="../../lib/mui/mui.css" rel="stylesheet" />
+		<link href="../../css/app.css" rel="stylesheet">
+	</head>
+
+	<body>
+		<div class="mui-content">
+			<div style="margin-top: 50%; font-size: 18px; color: #888; text-align: center;">点击屏幕&nbsp;&nbsp;重新加载</div>
+		</div>
+	</body>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js"></script>
+	<script>
+		App.go({
+			events : {
+				keys : {
+					back : function(e){
+						mui.back();
+					}
+				},
+				gesture : {
+					swiperight : function(e) {
+						mui.back();
+					}
+				},
+				custom : {
+					reconnect : function(e) {
+						App.showWaiting();
+						var view = plus.webview.currentWebview();
+						var styles = view.getStyle();
+						var reloadUrl = styles.reload_url;
+						view.loadURL(reloadUrl);
+						view.addEventListener('loaded', function(){
+							view.removeEventListener('loaded');
+							plus.nativeUI.closeWaiting();
+						})
+					}
+				}
+			}
+		});
+	</script>
+
+</html>

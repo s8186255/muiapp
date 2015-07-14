@@ -1,0 +1,133 @@
+<section id="sroom_section" data-scroll="true"  data-transition="cover">
+	<style TYPE="text/css">
+	    #rptroom{width: 95%;margin: 0 auto;text-align: center;}
+		#rptroom ul{width: 100%; line-height:35px; float:right; text-align:center; margin:0 auto; background: #E5E5E5;list-style: none;}	
+		#rptroom ul li{width: 33.33%; float: left; font-size: 10px; border-right:1px solid #DCDDDD;background:orange ;}	
+		.itemdel{margin: 0 auto;margin:12px 0px 0px 5px;float:left;}
+		.itemdel img{width: 25px;opacity: 0.3;}
+		.flist li{margin-top:3px;}
+	</style>
+    <header>
+        <nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">临时方案房间报表</h1>
+    </header>
+    <article id="sroom_waiting" class="active">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+    <article id="sroom_article" data-scroll="true">
+    	<div id="scrollcon" style="padding: 5px 0px 10px 0px;">
+    		
+    		<div class="fheader">
+			<table border="0">
+				<tr>
+					<td width="55%" class="ffee">
+						<h2 id="rfee"></h2>
+						<p id="rbasic"></p>
+					</td>
+					<td width="35%" class="finfo">
+						<ul>
+							<li id='rf01'></li>
+							<li id='rf02'></li>
+							<li id='rf03'></li>
+						</ul>
+					</td>
+					<td style="border-left: 1px solid #DCDDDD;">
+						<ul class="fact">
+							<li><a data-target="section" href="#newreg_section"><img src="img/edit.png"/></a></li>
+							<li><a data-target="section" href="#newreg_section"><img src="img/del.png"/></a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>			
+		</div>
+		<div id="rptroom">
+		</div>
+		<div class="clear"></div>
+		<div class='fbody' id='sroombody'>
+		</div>	
+		<div class="clear"></div>
+    	</div>		
+    </article>
+</section>
+
+<script type="text/javascript">
+	$("#sroom_section").on('pageshow',function(){
+		setSonParam();
+	});
+
+	$("#sroom_section").on('pageinit',function(){
+		var rid=getID();	
+		showSroom(rid);
+		
+	});
+	
+	function showSroom(id){
+		var token=localStorage['plantoken'];
+		//var furl=localStorage.server+'datatest.php?s=room&rid='+id+'&callback=?';
+		var furl=localStorage.server+'sample.php?t='+token+'&s=room&id='+id+'&callback=?';
+		$.getJSON(furl,function(data){
+			
+			var r=eval(data);
+			//J.showToast('ok');
+			//处理头部数据
+			$('#rfee').html(myNum(r['info'][0],3,','));
+						
+			var basic=r['info'][1]+'平米,'+r['info'][2]+'个门,'+r['info'][3]+'个窗';					
+			$('#rbasic').html(basic);					
+			
+			$('#rf01').html(r['info'][4]);
+			$('#rf02').html(r['info'][5]);
+			$('#rf03').html(myNum(r['info'][6],3,',')+'元/平米');
+			
+			//处理报表显示		
+			var rpt='<ul>';
+			$.each(r['rpt'], function(k,v){
+				rpt+='<li>'+r['rptname'][k]+'：'+myNum(v,3,',')+'</li>';
+			});
+			rpt+='</ul>';
+			$('#rptroom').html(rpt);
+			
+			
+			//显示变价条目
+			var c='';
+			if(typeof(r['ci']) != 'undefined'){
+				c+='<ul class="flist" id="citem">';
+				$.each(r['ci'], function(k,v){
+					c+='<li><a data-target="section" href="#newreg_section">';
+					c+='<div class="item"><div class="z">';
+					c+='<span class="fname">'+r['cname'][k]+'</span>	</div><div class="y"><span class="ficon"></span>';
+					c+='<span class="fsum">￥'+myNum(r['cprice'][k],3,',')+'</span>';
+					c+='</div></div></li>';			
+				});
+				c+='</u>';
+			}
+
+			//显示固定价条目
+			var b='';
+			if(typeof(r['bi']) != 'undefined'){
+				b+='<ul class="flist" id="bitem">';
+				$.each(r['bi'], function(k,v){
+					b+='<li><a data-target="section" href="#newreg_section">';
+					b+='<div class="item"><div class="z">';
+					b+='<span class="fname">'+r['bname'][k]+'</span>	</div><div class="y"><span class="ficon"></span>';
+					b+='<span class="fsum">￥'+myNum(r['bprice'][k],3,',')+'</span>';
+					b+='</div></div></a></li>';			
+				});
+				b+='</u>';
+			}
+
+			$('#sroombody').html(c+b);
+			
+			//处理开始页面就能滚动
+			$("#sroom_article").show();
+			J.Scroll('#sroom_article',{vScroll:true,vScrollbar : false});	
+			
+			
+			$("#sroom_waiting").removeAttr('class');
+			$("#sroom_article").attr('class','active');
+		});	
+	}
+</script>

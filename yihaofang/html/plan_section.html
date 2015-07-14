@@ -1,0 +1,242 @@
+<section id="plan_section" data-scroll="true" >
+	<style TYPE="text/css">	
+		#rptbody{width: 95%; margin:0px auto; font-family:Microsoft YaHei;}		
+		#rptplan{width: 95%;margin: 0 auto;text-align: center;}
+		#rptplan ul{width: 100%; line-height:35px; float:right; text-align:center; margin:0 auto; background: #E5E5E5;list-style: none;}	
+		#rptplan ul li{width: 25%; float: left; font-size: 10px; border-right:1px solid #DCDDDD;background:#E5E5E5;}
+		.planact{list-style: none;float:right;margin: 0 auto;height: 42px;}
+		.planact li{float: left;margin:0 auto;margin: 8px;}
+		.planact img{width: 25px;opacity: 0.1;}
+	</style>
+	<header>
+        <nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title" id="plantitle">预算方案</h1>
+    </header>
+
+	<article id="plan_waiting">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+
+	<article id="plan_article" data-scroll="true" class="active">
+		<div class="scrollcon" style="padding: 5px 0px 10px 0px;">
+		<div class="fheader" id='planheader'>
+			<table border="0">
+				<tr>
+					<td width="55%" class="ffee">
+						<h2 id='pfee'>0</h2>
+						<p id='pbasic'>努力加载中...</p>
+					</td>
+					<td width="35%" class="finfo">
+						<ul>
+							<li id='pf01'>努力加载中...</li>
+							<li id='pf02'>努力加载中...</li>
+							<li id='pf03'>努力加载中...</li>
+						</ul>
+					</td>
+					<td style="border-left: 1px solid #DCDDDD;">
+						<ul class="fact">
+							<li><a data-target="section" href="#planedit_section" id='pebtn'><img src="img/edit.png" /></a></li>
+							<li><img src="img/del.png" onclick="plandel()"/></a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		</div>	
+		<div id="rptplan"></div>
+		<div class="clear"></div>
+		<div class='fbody' id='planbody'></div> 
+	</article>
+</section>
+
+<script type="text/javascript">
+	$("#plan_section").on('pageshow',function(){
+		setSonParam();	//设置通用的事件
+	});
+	
+    //页面显示时候的事件
+    $("#plan_section").on('pageinit',function(){
+		var pid=getID();
+		localStorage.setItem('pid',pid);
+		$('#pebtn').attr('href','#planedit_section?id='+pid);
+		
+		showPlan(pid);	
+  	});
+  	
+  	function showPlan(id){
+  		var token=localStorage['token'];
+		var user=localStorage['uname'];
+  		//var furl=localStorage.server+'datatest.php?s=plan&pid='+id+'&callback=?';
+  		var furl=localStorage.server+'data.php?t='+token+'&u='+user+'&s=plan&id='+id+'&callback=?';
+  		
+		$.getJSON(furl,function(data){
+			var p=eval(data);
+			//处理头部数据
+			$('#plantitle').html(p['info'][7]+'-'+p['info'][4]);
+			$('#pfee').html('<span class="sy">￥</span>'+allNum(p['info'][0],3,','));
+						
+			var basic='输入'+p['info'][1]+'m²，计算'+p['info'][6]+'m²，预算￥'+p['info'][2]+'万';					
+			$('#pbasic').html(basic);
+						
+			var f=eval(p['info'][3]);
+			var pf1=f[0]+'房'+f[1]+'厅'+f[2]+'厨'+f[3]+'卫';			
+			$('#pf01').html(pf1);
+			$('#pf02').html('档次:'+p['info'][8]);
+			$('#pf03').html(myNum(p['info'][5],3,',')+'￥/m²');
+			
+			//处理报表显示		
+			var rpt='<ul>';
+			$.each(p['rpt'], function(k,v){
+				rpt+='<li>'+p['rptname'][k]+':￥'+allNum(v,3,',')+'</li>';
+			});
+			rpt+='</ul>';
+			$('#rptplan').html(rpt);
+			var txt='';
+			
+			//添加高级系统信息
+			if(typeof(p['s']) != 'undefined'){
+				var s='<ul class="flist">';
+				var ssum=0;			
+				$.each(p['s'], function(k,v){
+					s+='<li><a data-target="section" href="#system_section?mid='+v+'"><div class="rec sys"></div>';
+					s+='<div class="detail"><div class="z"><span class="fname">'+p['sname'][k]+'</span>';
+					s+='<span class="favg">'+p['savg'][k]+'￥/m²</span></div>';
+					s+='<div class="y"><span class="ficon"><img src="img/an-ts.png"></span>';
+					s+='<span class="fsum">￥'+myNum(p['sfee'][k],3,',')+'</span></div></div></a></li>';	
+					ssum+=p['sfee'][k];
+				});
+				s+='</u><div class="clear"></div>';				
+				txt+='<div class="ftitle" id="systitle">';
+				txt+='<div class="z"><img src="img/sys.png"><h4>高级家居系统  ￥'+(ssum/10000).toFixed(2)+'万</h4></div>'
+				txt+='<div class="y"><ul class="planact"><li><a data-target="section" href="#systemadd_section?type=s" ><img src="img/edit.png"/></a></li></ul></div></div><div class="clear"></div>';
+				txt+=s;
+			}else{
+				var ns='<div class="nosystemadd"><a data-target="section" href="#systemadd_section?type=s" ><button>+添加高级家居系统</button></a></div>';
+				txt+=ns;
+			}
+			
+			//添加居住空间信息
+			if(typeof(p['b']) != 'undefined'){		
+				var b='<ul class="flist">';
+				var bsum=0;
+				$.each(p['b'], function(k,v){				
+					b+='<li><a data-target="section" href="#room_section?rid='+v+'"><div class="rec bed"></div>';
+					b+='<div class="detail"><div class="z"><span class="fname">'+p['bname'][k]+'</span>';
+					b+='<span class="favg">'+p['bavg'][k]+'￥/m²</span></div>';
+					b+='<div class="y"><span class="ficon"><img src="img/an-ts.png"></span>';
+					b+='<span class="fsum">￥'+myNum(p['bfee'][k],3,',')+'</span></div></div></a></li>';	
+					bsum+=p['bfee'][k];
+				});
+				b+='</u><div class="clear"></div>';
+				
+				txt+='<div class="ftitle" id="bedtitle">';
+				txt+='<div class="z"><img src="img/bed.png"><h4>居住空间  ￥'+(bsum/10000).toFixed(2)+'万</h4></div>';
+				txt+='<div class="y"><ul class="planact"><li><a data-target="section" href="#roomadd_section?type=b"><img src="img/add.png"/></a></li></ul></div></div><div class="clear"></div>';
+				txt+=b;
+			}
+			
+			//添加公共空间信息
+			if(typeof(p['t']) != 'undefined'){
+				var t='<ul class="flist">';
+				var tsum=0;
+				$.each(p['t'], function(k,v){				
+					t+='<li><a data-target="section" href="#room_section?rid='+v+'"><div class="rec pub"></div>';
+					t+='<div class="detail"><div class="z"><span class="fname">'+p['tname'][k]+'</span>';
+					t+='<span class="favg">'+p['tavg'][k]+'￥/m²</span></div>';
+					t+='<div class="y"><span class="ficon"><img src="img/an-ts.png"></span>';
+					t+='<span class="fsum">￥'+myNum(p['tfee'][k],3,',')+'</span></div></div></a></li>';	
+					tsum+=p['tfee'][k];
+				});
+				t+='</u><div class="clear"></div>';
+				
+				txt+='<div class="ftitle" id="pubtitle">';
+				txt+='<div class="z"><img src="img/pub.png"><h4>公共空间  ￥'+(tsum/10000).toFixed(2)+'万</h4></div>';
+				txt+='<div class="y"><ul class="planact"><li><a data-target="section" href="#roomadd_section?type=t"><img src="img/add.png"/></a></li></ul></div></div>';		
+				txt+=t;
+			}
+			
+			//添加厨卫空间信息
+			if(typeof(p['c']) != 'undefined'){
+				var c='<ul class="flist">';
+				var csum=0;
+				$.each(p['c'], function(k,v){				
+					c+='<li><a data-target="section" href="#room_section?rid='+v+'"><div class="rec bath"></div>';
+					c+='<div class="detail"><div class="z"><span class="fname">'+p['cname'][k]+'</span>';
+					c+='<span class="favg">'+p['cavg'][k]+'￥/m²</span></div>';
+					c+='<div class="y"><span class="ficon"><img src="img/an-ts.png"></span>';
+					c+='<span class="fsum">￥'+myNum(p['cfee'][k],3,',')+'</span></div></div></a></li>';	
+					csum+=p['cfee'][k];
+				});
+				c+='</u><div class="clear"></div>';
+				
+				txt+='<div class="ftitle" id="bathtitle">';
+				txt+='<div class="z"><img src="img/bath.png"><h4>厨卫空间  ￥'+(csum/10000).toFixed(2)+'万</h4></div>';
+				txt+='<div class="y"><ul class="planact"><li><a data-target="section" href="#roomadd_section?type=c"><img src="img/add.png"/></a></li></ul></div></div>';			
+				txt+=c;
+			}
+			
+			//添加其他空间信息
+			if(typeof(p['q']) != 'undefined'){
+				var q='<ul class="flist">';
+				var qsum=0;
+				$.each(p['q'], function(k,v){				
+					q+='<li><a data-target="section" href="#room_section?rid='+v+'"><div class="rec other"></div>';
+					q+='<div class="detail"><div class="z"><span class="fname">'+p['qname'][k]+'</span>';
+					q+='<span class="favg">'+p['qavg'][k]+'￥/m²</span></div>';
+					q+='<div class="y"><span class="ficon"><img src="img/an-ts.png"></span>';
+					q+='<span class="fsum">￥'+myNum(p['qfee'][k],3,',')+'</span></div></div></a></li>';	
+					qsum+=p['qfee'][k];
+				});
+				q+='</u><div class="clear"></div>';
+				
+				txt+='<div class="ftitle" id="othertitle">';
+				txt+='<div class="z"><img src="img/other.png"><h4>其他空间 ￥'+(qsum/10000).toFixed(2)+'万</h4></div>';
+				txt+='<div class="y"><ul class="planact"><li><a data-target="section" href="#roomadd_section?type=q"><img src="img/add.png"/></a></li></ul></div></div>';				
+				txt+=q;
+			}
+			
+			//添加系统信息
+			if(typeof(p['z']) != 'undefined'){
+				var z='<ul class="flist">';
+				var ssum=0;			
+				$.each(p['z'], function(k,v){
+					z+='<li><a data-target="section" href="#system_section?mid='+v+'"><div class="rec sys"></div>';
+					z+='<div class="detail"><div class="z"><span class="fname">'+p['zname'][k]+'</span>';
+					z+='<span class="favg">'+p['zavg'][k]+'￥/m²</span></div>';
+					z+='<div class="y"><span class="ficon"><img src="img/an-ts.png"></span>';
+					z+='<span class="fsum">￥'+myNum(p['zfee'][k],3,',')+'</span></div></div></a></li>';	
+					ssum+=p['zfee'][k];
+				});
+				z+='</u><div class="clear"></div>';				
+				txt+='<div class="ftitle" id="systitle">';		
+				txt+='<div class="z"><img src="img/sys.png"><h4>其他整体花销  ￥'+(ssum/10000).toFixed(2)+'万</h4></div>';
+				txt+='<div class="y"><ul class="planact"><li><a data-target="section" href="#systemadd_section?type=z" ><img src="img/edit.png"/></a></li></ul></div></div>';				
+				txt+=z;
+			}else{
+				var ns='<div class="nosystemadd"><a data-target="section" href="#systemadd_section?type=z" ><button>+添加整体花销</button></a></div>';
+				txt+=ns;
+			}			
+			$('#planbody').html(txt);
+			
+			//$('#planheader').removeClass('fhidden');
+			//处理开始页面就能滚动
+			$("#plan_article").show();
+			J.Scroll('#plan_article',{vScroll:true,vScrollbar : false});			
+		});	
+  	}
+  	
+    function plandel(){
+		//J.showToast(confirm('确认要删除这个工地吗？'));
+		if(confirm('确认要删除这个方案吗？')){
+			var pid=localStorage['pid'];
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			var furl=localStorage.server+'plan.php?t='+token+'&u='+user+'&id='+pid+'&a=del&callback=?';
+			$.getJSON(furl,function(data){
+				showSites();
+				window.history.go(-1);
+			});
+		}
+	}
+</script>

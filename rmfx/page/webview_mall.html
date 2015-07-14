@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../js/md5.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			var page = 1;
+			var keyw = '';
+
+			function loadData(ikey) {
+				plus.nativeUI.showWaiting("数据加载中~");
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=mall&uid=' + localStorage.getItem("rm_uid") + '&keyw=' + ikey + '&page=' + page + '&jsoncallback=test1',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						$("#mallList").find("li").remove();
+						if (data.length > 0) {
+							$.each(data, function(index, element) {
+								$('#li_load').hide();
+								$("#mallList").append("<li class='ditem_mall' onclick=" + "isLogin('webview_info.html',true,false,'" + element.url + "','" + element.url + "')" + ">" + "<div class='goods-li' style='margin-top: 5px;'>" + "<img src='" + element.img + "' height='35' /></br>" + "<div class='goods-title' style='margin-top: 5px;'>" + "<span class='title-text'>最高返</span><span class='zhe-text'>" + element.fan + "</span>" + "</div>" + "</div>" + "</li>");
+							});
+							$('#li_more').show();
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,木有您要的商城");
+							$('#li_load').show();
+							$('#li_more').hide();
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+
+			function plusReady() {
+				keyw = '';
+				loadData('');
+			}
+
+			 //加载账户信息
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+			
+			function goBack() {
+				ws = plus.webview.currentWebview();
+				ws.close();
+			}
+
+			function search() {
+				keyw = document.getElementById("mallName").value;
+				if (keyw.trim().length == 0) {
+					return;
+				}
+				loadData(keyw);
+			}
+
+			function isLogin(id, wa, ns, url) {
+				if (localStorage.getItem("rm_uid")) {
+					clicked(id, wa, ns, url);
+				} else {
+					clicked('webview_login.html', true, false, url,url);
+				}
+			}
+
+			function more() {
+				plus.nativeUI.showWaiting("数据加载中~");
+				$('#li_more').html("玩命加载中,请等待~");
+				page++;
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=mall&uid=' + localStorage.getItem("rm_uid") + '&keyw=' + keyw + '&page=' + page + '&jsoncallback=test1',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						if (data.length > 0) {
+							$.each(data, function(index, element) {
+								$('#li_load').hide();
+								$("#mallList").append("<li class='ditem_mall' onclick=" + "isLogin('webview_info.html',true,false,'" + element.url + "','" + element.url + "')" + ">" + "<div class='goods-li' style='margin-top: 5px;'>" + "<img src='" + element.img + "' height='35' /></br>" + "<div class='goods-title' style='margin-top: 5px;'>" + "<span class='title-text'>最高返</span><span class='zhe-text'>" + element.fan + "</span>" + "</div>" + "</div>" + "</li>");
+							});
+							$('#li_more').html(" 点击查看更多商品>>");
+						} else {
+							$('#li_load').html("o(︶︿︶)o ,没有了!");
+							$('#li_load').show();
+							$('#li_more').hide();
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="goBack();"></div>
+			<div class="nvtt_tao">
+				<input id="url" type="hidden" value="http://www.rmfanx.com"></input>
+				<div style="width: 100%;">
+					<input id="mallName" style="-webkit-user-select:auto; width:85%;height:30px;border:solid 2px #FFC8B4;color: #777;font-size: 16px;" type="text" placeholder="搜索商城名称(300家合作商城)" />
+				</div>
+			</div>
+			<div class="search" onclick="search();"></div>
+		</header>
+		<div id="content" class="scontent">
+			<ul class="dlist_mall" id="mallList">
+			</ul>
+			<li class="ditem" id="li_load">玩命加载中,请等待~</li>
+			<li class="ditem" id="li_more" onclick="more()" style="display:none;font-siz:12px;height: 22px;"> 点击加载更多商城>></li>
+		</div>
+	</body>
+
+</html>

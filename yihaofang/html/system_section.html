@@ -1,0 +1,96 @@
+<style TYPE="text/css">
+	
+</style>
+
+<section id="system_section" data-scroll="true">
+    <header>
+        <nav class="left">
+           <a href="#" data-icon="undo" data-target="back"></a>
+        </nav>
+        <h1 class="title">系统说明</h1>
+    </header>
+    
+     <article id="system_waiting" class="active">
+		<img src="./img/loading.gif" width="100%">
+	</article>
+	
+    <article id="system_article" data-scroll="true">
+    	<div id="scrollcon" style="padding: 5px 0px 10px 0px;">
+    	
+	    	<div class="fheader">
+				<table border="0">
+					<tr>
+						<td width="90%" class="ffee">
+							<h2 id='yfee'></h2>
+							<p id='yname'></p>
+						</td>
+						<td style="border-left: 1px solid #DCDDDD;">
+							<ul class="fact" id="test">
+								<li><a href="#systemedit_section" data-target="section"><img src="img/edit.png"/></a></li>
+								<li><img src="img/del.png" onclick="systemdel()"/></li>
+							</ul>
+						</td>
+					</tr>
+				</table>
+			</div>
+			
+			<div class="clear"></div>
+		
+			<div class='fbody' id='sysack'>		
+			</div>	 
+		
+    	</div>
+    </article>
+</section>
+
+<script type="text/javascript">
+	$("#system_section").on('pageshow',function(){
+		setSonParam();
+	});
+	
+	$("#system_section").on('pageinit',function(){
+		var yid=getID();
+		var pid=localStorage['pid'];
+		$("#test li a").attr('href','#systemedit_section?mid='+yid);
+
+		showSystem(pid,yid);
+	});
+	
+	function showSystem(pid,yid){
+		var token=localStorage['token'];
+		var user=localStorage['uname'];
+		var furl=localStorage.server+'data.php?t='+token+'&u='+user+'&s=system&id='+pid+'&callback=?';
+		$.getJSON(furl,function(data){			
+			var r=eval(data);
+			if(r['si']!=undefined){
+				$.each(r['si'], function(k,v){
+					//alert(v);
+					if(v==yid){
+						$('#yfee').html('<span class="sy">￥</span>'+myNum(r['sprice'][k],3,','));
+						$('#yname').html(r['sname'][k]);
+						localStorage.setItem('sysname',r['sname'][k]); //保持系统名称，在后面编辑中用到
+					}					
+				});	
+			}
+			$("#system_waiting").removeAttr('class');
+			$("#system_article").attr('class','active');
+		});	
+	}
+	
+	function systemdel(){
+		if(confirm('确认要删除这个项目吗？删除后将无法恢复')){	
+			var yid=getID();
+			var pid=localStorage['pid'];
+			var token=localStorage['token'];
+			var user=localStorage['uname'];
+			//system.php?t=554cf195b9a7048716ee2d802d1be5f7&u=9981&a=del&id=3&pid=212&callback=?
+			var yeurl=localStorage['server']+'system.php?t='+token+'&u='+user+'&a=del&id='+yid+'&pid='+pid+'&callback=?';
+			$.getJSON(yeurl,function(data){
+				showSystem(pid,yid);
+				showPlan(pid);			
+				showSites();
+				window.history.go(-1);	
+			});
+		}
+	}
+</script>

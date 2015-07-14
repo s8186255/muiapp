@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>1号装修宝</title>
+    <link rel="stylesheet" href="css/Jingle.css">
+    <link rel="stylesheet" href="css/bao.css">
+</head>
+
+<body>
+	<div id="section_container">
+	<style TYPE="text/css">
+		#more{width: 100%;list-style: none;}
+		#more li{width: 100%;float: left;height: 60px;line-height: 60px;border-bottom: 1px solid #E5E5E5;}
+		#more li .z{width: 20%;text-align: center;}
+		#more li .z img{width: 30px;}
+		#more li .y{width: 80%;}
+		#more li .y .z{width: 90%;height: 60px;line-height: 60px;float: left;}
+		#more li .y .y{width: 10%;text-align: center;}
+		#more li .y .y img{width: 10px;}
+		.moretitle{width:100%;float:left;margin:0 auto;height: 20px;line-height: 20px;font-size:16px;color:#000000;text-align: left;margin-top: 15px;color:#EE7621;}
+		.moredesc{width:100%;float:left;margin:0 auto;height: 18px;line-height: 18px;font-size:12px;color:#7A7A7A;text-align: left;}
+	</style>
+	<section id="more_section" class="active" >
+	<header>
+		<nav class="left">
+
+		</nav>
+		<h1 class="title">装修百宝箱</h1>
+		<nav class="right">
+		      
+		</nav>
+	</header>
+	<article id="more_article" class="active" data-scroll="true">
+			<ul id="more">
+				<li>
+					<a data-target="section" href="#ack_section">
+					<div class="z">
+						<img src="img/m01.png">
+					</div>
+					<div class="y">
+						<div class="z">
+							<h2 class="moretitle" >装修必读</h2>
+							<h3 class="moredesc" >装修流程，起底装修的点点滴滴</h3>
+						</div>
+						<div class="y">
+							<img src="img/an-ts.png">
+						</div>
+					</div>
+					</a>
+				</li>
+				
+				<li>
+					<a data-target="section" href="#article_section">
+					<div class="z">
+						<img src="img/m02.png">
+					</div>
+					<div class="y">
+						<div class="z">
+							<h2 class="moretitle" >装修知识</h2>
+							<h3 class="moredesc" >各种装修知识，解决您的装修难题</h3>
+						</div>
+						<div class="y">
+							<img src="img/an-ts.png">
+						</div>
+					</div>
+					</a>
+				</li>
+				
+				<li>
+					<a data-target="section" href="#buz_section">
+					<div class="z">
+						<img src="img/m03.png">
+					</div>
+					<div class="y">
+						<div class="z">
+							<h2 class="moretitle" >商家精选</h2>
+							<h3 class="moredesc" >1号房精选设计公司、施工单位</h3>
+						</div>
+						<div class="y">
+							<img src="img/an-ts.png">
+						</div>
+					</div>
+					</a>
+				</li>
+			</ul>
+	</article>
+	</section>	
+	</div>
+<script type="text/javascript" src="js/zepto.js"></script>
+<script type="text/javascript" src="js/iscroll.js"></script>
+<script type="text/javascript" src="js/template.min.js"></script>
+<script type="text/javascript" src="js/Jingle.debug.js"></script>
+<script type="text/javascript" src="js/zepto.touch2mouse.js"></script>
+<script type="text/javascript" src="js/function.js"></script>
+<script type="text/javascript" src="js/app.js"></script>
+<script type="text/javascript">
+	document.addEventListener("plusready",function(){
+			//backbutton('more_section');		//监控硬件按钮			
+	},false);
+	
+	$("#more_section").on('pageshow',function(){
+		setFatherParam();
+	});
+	
+	$("#more_section").on('pageinit',function(){
+		//设置目录深度，响应按钮
+		window.localStorage.setItem('stat','1');
+
+	}); 
+</script>
+</body>
+</html>

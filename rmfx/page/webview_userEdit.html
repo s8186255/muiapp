@@ -1,0 +1,190 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="HandheldFriendly" content="true" />
+		<meta name="MobileOptimized" content="320" />
+		<title>人脉返现</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/jquery-1.11.1.min.js"></script>
+		<script type="text/javascript" src="../js/md5.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			function openWebview(url) {
+				plus.webview.create(url).show();
+			}
+			//加载账户信息
+			function loadInfo(){
+				plus.nativeUI.showWaiting("数据准备中~");
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=info&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + localStorage.getItem("rm_md5pwd") + '&jsoncallback=userInfo',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data) {
+						plus.nativeUI.closeWaiting();
+						if (data.status == 1) {
+							if (data.default_pwd != "") {
+								document.getElementById("default_pwd").innerHTML = "亲的初始密码为: <span style = 'font-weight: bold;' >" + data.default_pwd + "</span>";
+							}
+							document.getElementById("username").value = data.username;
+							document.getElementById("email").value = data.email;
+							if (data.realname.length > 1) {
+								document.getElementById("realname").readOnly = true;
+								document.getElementById("realname").value = data.realname+"(不可修改)";
+							}
+							if (data.zfb.length > 5) {
+								document.getElementById("alipay").readOnly = true;
+								document.getElementById("alipay").value = data.zfb+"(不可修改)";
+							}
+							document.getElementById("qq").value = data.qq;
+							document.getElementById("mobile").value = data.mobile;
+							document.getElementById("email").value = data.email;
+							
+						} else {
+							ws = plus.webview.currentWebview();
+							ws.close();
+							plus.ui.alert("登录信息错误,请重新登录!", function() {}, "温馨提示");
+							localStorage.clear();
+							clicked('webview_login.html',true);
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!', function() {}, "温馨提示");
+					}
+				});
+			}
+			
+			function refresh(){
+				loadInfo();
+			}
+			
+			function plusReady() {
+				loadInfo();
+			}
+
+			 //加载账户信息
+			if (window.plus) {
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+			}
+
+			function updateUser() {
+				if (document.getElementById("email").value.trim().length <= 8) {
+					plus.ui.alert('邮箱格式错误,请重新输入!', '', '系统提示')
+					//document.getElementById("pwd").focus();
+					return;
+				}
+				if (document.getElementById("mobile").value.trim().length>0 && document.getElementById("mobile").value.trim().length != 11) {
+					plus.ui.alert('手机号错误,请重新输入!', '', '系统提示')
+					//document.getElementById("pwd").focus();
+					return;
+				}
+				if (document.getElementById("pwd").value.length < 6) {
+					plus.ui.alert('登录密码错误,请重新输入!', '', '系统提示')
+					//document.getElementById("pwd").focus();
+					return;
+				}
+				if (document.getElementById("newpwd").value.length>0 && document.getElementById("newpwd").value.length < 6) {
+					plus.ui.alert('新密码必须大于5位!', '', '系统提示')
+					//document.getElementById("pwd").focus();
+					return;
+				}
+				plus.nativeUI.showWaiting("数据提交中~");
+				$.ajax({
+					type: 'get',
+					url: 'http://www.rmfanx.com/app/index.php?mod=app&act=userEdit&uid=' + localStorage.getItem("rm_uid") + '&md5pwd=' + hex_md5(document.getElementById("pwd").value) + '&name=' + document.getElementById("realname").value + '&email=' + document.getElementById("email").value + '&qq='+ document.getElementById("qq").value + '&mob='+	document.getElementById("mobile").value + '&zfb=' +document.getElementById("alipay").value+ '&newPwd=' + hex_md5(document.getElementById("newpwd").value)+ '&jsoncallback=userEdit',
+					timeout: 20000,
+					dataType: 'jsonp',
+					jsonp: "jsoncallback",
+					success: function(data1) {
+						plus.nativeUI.closeWaiting();
+						if (data1.status == 1) {
+							plus.ui.alert("资料更新成功!", function() {}, "系统提示");
+							ws = plus.webview.currentWebview();
+							ws.close();
+						} else if(data1.status == 2){
+							plus.ui.alert(data1.message, function() {}, "系统提示");
+						}
+						else{
+							plus.ui.alert("用户名或密码错误,修改失败!", function() {}, "系统提示");
+						}
+					},
+					complete: function(XMLHttpRequest, status) { //请求完成后最终执行参数
+						plus.nativeUI.closeWaiting();
+						if (status == 'timeout') { //超时,status还有success,error等值的情况
+							plus.ui.alert('操作超时,亲的网络不够给力哦~', function() {}, "温馨提示");
+						}
+					},
+					error: function() {
+						plus.nativeUI.closeWaiting();
+						plus.ui.alert('数据异常请联系人脉在线客服!');
+					}
+				});
+
+			}
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8" />
+	</head>
+
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="back();"></div>
+			<div class="nvtt">账户资料</div>
+			<div class="refresh" onclick="refresh();"></div>
+		</header>
+		<div id="content" class="scontent">
+			<ul class="dlist" id="dlist">
+				<li class="ditem_userEdit">会员帐号*
+					<input id="username" class="input_userEdit" readOnly="true" type="text" placeholder="会员帐号不可修改" />
+				</li>
+				<li class="ditem_userEdit">邮箱地址*
+					<input id="email" class="input_userEdit" type="text" style="color:#FF7472;" placeholder="用于找回密码和通知" />
+				</li>
+				<li class="ditem_userEdit">真实姓名*
+					<input id="realname" class="input_userEdit" type="text" placeholder="提取返利时核对信息" />
+				</li>
+				<li class="ditem_userEdit">支付宝帐号*
+					<input id="alipay" class="input_userEdit" type="text" placeholder="提取返利的支付宝帐号" />
+				</li>
+				<li class="ditem_userEdit">手机号码*
+					<input id="mobile" class="input_userEdit" type="number" style="color:#FF7472;" placeholder="用于返利到账通知" />
+				</li>
+				<li class="ditem_userEdit">QQ*
+					<input id="qq" class="input_userEdit" type="number" style="color:#FF7472;" placeholder="便于客服即时与您联系" />
+				</li>
+				<li class="ditem-empty"></li>
+				<li class="ditem-empty" style="font-size: 14px;color: #ff7472;"><span style='font-weight: bold;'>'真实姓名'</span>和<span style='font-weight: bold;'>'支付宝帐号'</span>填写后不可修改,</br>
+					特殊原因需修改,请联系在线客服!
+				</li>
+				<li class="ditem_userEdit" style="padding: 0.2em; ">登录密码*
+					<input id="pwd" class="input_userEdit" type="password" placeholder="人脉返现登录密码" />
+				</li>
+				<li class="ditem-empty" id='default_pwd' style="padding: 0.3em; font-size: 14px;color: #ff7472;">
+				</li>
+			<center>
+				<div onclick="updateUser()" style="width:98%;height: 2em;padding-top: 0.6em;margin-top: 10px; border-radius:5px;background: #ff7472;color: white;font-weight: bold;font-size: 20px;">保存修改</div>
+			</center>
+				<li class="ditem_userEdit" style="padding: 0.2em; margin-top:0.5em">新登录密码
+					<input id="newpwd" class="input_userEdit" type="password" placeholder="用于修改登录密码" />
+				</li>
+				<li class="ditem-empty" id='default_pwd' style="padding: 0.3em; font-size: 14px;color: #ff7472;">
+					若需要修改登录密码,请在此填写新密码
+				</li>
+			</ul>
+
+		</div>
+
+	</body>
+
+</html>

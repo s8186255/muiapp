@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Share</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../lib/mui/mui.css">
+		<link rel="stylesheet" href="../../css/app.css">
+	</head>  
+
+	<body>
+		<header class="app-bar mui-bar mui-bar-nav app-no-shadow">
+			<button id="back" class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left app-bar-btn"></button>
+			<h1 class="mui-title">Share</h1>
+		</header>
+		
+		<div class="mui-content" style="background: #fff;"> 
+			<div class="mui-table-view-divider"></div>
+			<div class="mui-content-padded">
+				<p style="font-size: 17px;">Copy the link on the below and then share it to your friends!</p>
+				<textarea>http://shan-gong.com/iask-download.html</textarea> 
+				<img src="http://shan-gong.com/iask-qrcode.png" width="100%" />
+			</div>
+		</div>
+	</body>
+	<script src="../../lib/mui/mui.js"></script>
+	<script src="../../lib/framework/z-app.js" ></script>
+	<script src="../../lib/mustache/mustache.min.js"></script>
+	
+	<script>
+		// GO GO GGO
+		App.go({
+			deviceReady : function() {
+			},
+			events : {
+				keys : {
+					back : function(e) {
+						mui.back();
+					}
+				},
+				gesture : {
+					swiperight : function(e) {
+						mui.back();
+					}
+				},
+				custom : {
+				}
+			},
+		});
+	</script>
+</html>
