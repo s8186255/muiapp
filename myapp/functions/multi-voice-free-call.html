@@ -24,11 +24,10 @@
 	</head>
 
 	<body>
-		<header class="mui-bar mui-bar-nav">
-			<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
-			<h1 class="mui-title">选择群</h1>
-			<button id='done' class="mui-btn mui-pull-right mui-btn-blue">完成</button>
-		</header>
+<header class="mui-bar mui-bar-nav">
+	<a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+	<h1 class="mui-title">标题</h1>
+</header>
 		<div class="mui-content">
 			<div id='list' class="mui-group-list">
 				<div class="mui-group-list-search mui-input-row mui-search">
@@ -84,7 +83,7 @@
 			var list = document.getElementById('list');
 			var done = document.getElementById('done');
 			//calc hieght
-			list.style.height = (document.body.offsetHeight - header.offsetHeight - 35) + 'px';
+			list.style.height = (document.body.offsetHeight  - 75) + 'px';
 			//create
 			window.groupList = new mui.GroupList(list);
 			//done event

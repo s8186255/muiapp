@@ -8,7 +8,7 @@
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
 
-		<link rel="stylesheet" href="css/mui.min.css">
+		<link rel="stylesheet" href="../css/mui.min.css">
 		<style>
 			html,
 			body {
@@ -23,29 +23,28 @@
 			<h1 id="title" class="mui-title">首页</h1>
 		</header>
 		<nav class="mui-bar mui-bar-tab">
-			<a id="defaultTab" class="mui-tab-item mui-active" href="functions/multi-voice.html">
-
-									<span class="mui-icon mui-icon-phone"></span>
-					<span class="mui-tab-label">一呼百应</span>
+			<a id="defaultTab" class="mui-tab-item mui-active" href="functions/multi-voice.html.html">
+				<span class="mui-icon mui-icon-home"></span>
+				<span class="mui-tab-label">首页</span>
 			</a>
-			<a class="mui-tab-item" href="functions/multi-record.html">
-					<span class="mui-icon mui-icon-chatboxes"></span>
-					<span class="mui-tab-label">群发语音</span>
+			<a class="mui-tab-item" href="multi-record.html.html">
+				<span class="mui-icon mui-icon-email"><span class="mui-badge">9</span></span>
+				<span class="mui-tab-label">消息</span>
 			</a>
-			<a class="mui-tab-item" href="functions/multi-message.html">
-					<span class="mui-icon mui-icon-chat"></span>
-					<span class="mui-tab-label">群发短信</span>
+			<a class="mui-tab-item" href="multi-message.html">
+				<span class="mui-icon mui-icon-contact"></span>
+				<span class="mui-tab-label">通讯录</span>
 			</a>
-			<a class="mui-tab-item" href="functions/me.html">
-					<span class="mui-icon mui-icon-person"></span>
-					<span class="mui-tab-label">我的</span>
+			<a class="mui-tab-item" href="me.html">
+				<span class="mui-icon mui-icon-gear"></span>
+				<span class="mui-tab-label">设置</span>
 			</a>
 		</nav>
-		<script src="js/mui.min.js"></script>
+		<script src="../js/mui.min.js"></script>
 		<script type="text/javascript" charset="utf-8">
-			//mui初始化
+			 //mui初始化
 			mui.init();
-			var subpages = ['functions/multi-voice.html', 'functions/multi-record.html', 'functions/multi-message.html', 'functions/me.html'];
+			var subpages = ['multi-voice.html', 'multi-record.html', 'multi-message', 'me.html'];
 			var subpage_style = {
 				top: '46px',
 				bottom: '50px'
@@ -105,24 +104,6 @@
 					defaultTab.classList.add('mui-active');
 				}
 			});
-			
-					var first = null;
-		mui.back = function() {
-
-				//首次按键，提示‘再按一次退出应用’
-				if (!first) {
-					first = new Date().getTime();
-					mui.toast('再按一次退出应用了');
-					setTimeout(function() {
-						first = null;
-					}, 1000);
-				} else {
-					if (new Date().getTime() - first < 1000) {
-						plus.runtime.quit();
-					}
-				}
-
-		};
 		</script>
 	</body>
 
