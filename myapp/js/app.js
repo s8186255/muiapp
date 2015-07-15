@@ -8,6 +8,7 @@
 	 * 用户登录
 	 **/
 	owner.login = function(loginInfo, callback) {
+		//获取参数，校验参数
 		callback = callback || $.noop;
 		loginInfo = loginInfo || {};
 		loginInfo.account = loginInfo.account || '';
@@ -18,10 +19,12 @@
 		if (loginInfo.password.length < 6) {
 			return callback('密码最短为 6 个字符');
 		}
+		//获取本地用户信息，并与本地信息进行对照；
 		var users = JSON.parse(localStorage.getItem('$users') || '[]');
 		var authed = users.some(function(user) {
 			return loginInfo.account == user.account && loginInfo.password == user.password;
 		});
+		
 		if (authed) {
 			return owner.createState(loginInfo.account, callback);
 		} else {
@@ -41,6 +44,7 @@
 	 * 新用户注册
 	 **/
 	owner.reg = function(regInfo, callback) {
+		//获取数据并进行数据的校验；
 		callback = callback || $.noop;
 		regInfo = regInfo || {};
 		regInfo.account = regInfo.account || '';
@@ -54,9 +58,15 @@
 		if (!checkEmail(regInfo.email)) {
 			return callback('邮箱地址不合法');
 		}
+		//验证过程，先取本地存储中的用户信息，如果有，则取出，或者就是空；不管怎样users就是一个object；
 		var users = JSON.parse(localStorage.getItem('$users') || '[]');
+		//将用户填写的注册信息，写入到本地；
 		users.push(regInfo);
 		localStorage.setItem('$users', JSON.stringify(users));
+		//实际上还缺一个，应该将信息通过ajax的方式传递到用户服务端，实现真正的注册。
+		//现实中的逻辑应该是：将用户注册信息传到后台，后台返回正常后，在本地创建用户信息。
+		
+		//前期的会吐数据返回给调用者；
 		return callback();
 	};
 
