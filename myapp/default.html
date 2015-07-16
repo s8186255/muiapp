@@ -80,9 +80,7 @@
 					}
 					self.append(sub);
 				}
-				plus.storage.setItem('username', 'su');
-				plus.storage.setItem('password', '123456');
-				plus.storage.setItem('token', '123456')
+	
 			});
 			 //当前激活选项
 			var activeTab = subpages[0];
@@ -104,19 +102,20 @@
 					temp[targetTab] = "true";
 					mui.extend(aniShow, temp);
 					plus.webview.show(targetTab, "fade-in", 0);
-					plus.webview.hide(baidu);
+					//plus.webview.hide(baidu);
 				}
 				//隐藏当前;
 				plus.webview.hide(activeTab);
 				//更改当前活跃的选项卡
 				activeTab = targetTab;
+				console.log(activeTab)
 			});
 			var first = null;
 			mui.back = function() {
 				//首次按键，提示‘再按一次退出应用’
 				if (!first) {
 					first = new Date().getTime();
-					mui.toast('再按一次退出应用了');
+					mui.toast('再按一次退出应用');
 					setTimeout(function() {
 						first = null;
 					}, 1000);
@@ -126,63 +125,7 @@
 					}
 				}
 			};
-			 //用户登录类
-			function UserInfo() {};
-			 //清除登录信息
-			UserInfo.clear = function() {
-					plus.storage.removeItem('username');
-					plus.storage.removeItem('password');
-					plus.storage.removeItem('token');
-				}
-				//检查是否包含自动登录的信息
-			UserInfo.auto_login = function() {
-					var username = UserInfo.username();
-					var pwd = UserInfo.password();
-					if (!username || !pwd) {
-						return false;
-					}
-					return true;
-				}
-				//检查是否已登录
-			UserInfo.has_login = function() {
-				var username = UserInfo.username();
-				var pwd = UserInfo.password();
-				var token = UserInfo.token();
-				if (!username || !pwd || !token) {
-					return false;
-				}
-				return true;
-			};
-			UserInfo.username = function() {
-				if (arguments.length == 0) {
-					return plus.storage.getItem('username');
-				}
-				if (arguments[0] === '') {
-					plus.storage.removeItem('username');
-					return;
-				}
-				plus.storage.setItem('username', arguments[0]);
-			};
-			UserInfo.password = function() {
-				if (arguments.length == 0) {
-					return plus.storage.getItem('password');
-				}
-				if (arguments[0] === '') {
-					plus.storage.removeItem('password');
-					return;
-				}
-				plus.storage.setItem('password', arguments[0]);
-			};
-			UserInfo.token = function() {
-				if (arguments.length == 0) {
-					return plus.storage.getItem('token');
-				}
-				if (arguments[0] === '') {
-					plus.storage.removeItem('token');
-					return;
-				}
-				plus.storage.setItem('token', arguments[0]);
-			};
+
 		</script>
 	</body>
 

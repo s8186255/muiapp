@@ -236,9 +236,7 @@
 						$.openWindow({
 							url: 'reg.html',
 							id: 'reg',
-							show: {
-								aniShow: 'pop-in'
-							},
+
 							styles: {
 								popGesture: 'hide'
 							},
@@ -267,21 +265,24 @@
 						oauthArea.style.display = document.body.clientHeight > 400 ? 'block' : 'none';
 					}, false);
 					//
-					var backButtonPress = 0;
-					$.back = function(event) {
-						backButtonPress++;
-						if (backButtonPress > 1) {
-							plus.runtime.quit();
-						} else {
-							plus.nativeUI.toast('再按一次退出应用');
-						}
-						setTimeout(function() {
-							backButtonPress = 0;
-						}, 1000);
-						return false;
-					};
+//					var backButtonPress = 0;
+//					$.back = function(event) {
+//						backButtonPress++;
+//						if (backButtonPress > 1) {
+//							plus.runtime.quit();
+//						} else {
+//							plus.nativeUI.toast('再按一次退出应用');
+//						}
+//						setTimeout(function() {
+//							backButtonPress = 0;
+//						}, 1000);
+//						return false;
+//					};
+//					function back() {
+
 				});
 			}(mui, document));
+	
 		</script>
 	</body>
 
