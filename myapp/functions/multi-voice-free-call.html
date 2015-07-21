@@ -73,7 +73,7 @@
 
 	</body>
 	<script src="../js/sys/mui.min.js"></script>
-	<script src="../js/mui.indexedlist.js"></script>
+	<script src="../js/sys/mui.indexedlist.js"></script>
 
 	<script type="text/javascript" charset="utf-8">
 	
@@ -112,7 +112,7 @@
 							length = contacts.length;
 							for (var i = 0; i < length; i++) {
 								try {
-									contactStr += '<li  class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left"><input type="checkbox"/>' + contacts[i].displayName + "|" + contacts[i].phoneNumbers[0].value + '</li>';
+									contactStr += '<li  class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left" onclick="handle(this)"><input type="checkbox"/>' + contacts[i].displayName + "|" + contacts[i].phoneNumbers[0].value + '</li>';
 								} catch (e) {
 									continue;
 								}
@@ -128,6 +128,9 @@
 				function(e) {
 					alert("Get address book failed: " + e.message);
 				});
+		};
+		function handle(item){
+			alert(item.querySelector("input").checked);
 		}
 	</script>
 
