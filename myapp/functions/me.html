@@ -67,28 +67,24 @@
 		mui.init({
 			swipeBack: true //启用右滑关闭功能
 		});
-		 //		openUrl('hello02', 'hello02');
-		 //		openUrl('hello01', 'hello01');
-		 //		openUrl('multi-voice', 'multi-voice');
-		 //openUrl('contact','contact')
-		openNewPage("loginme", "login.html")
-		 openNewPage("new-call-group", "new-call-group.html")
+		openNewPage("loginme", "login.html");
+		openNewPage("new-call-group", "new-call-group.html");
 
 		function openNewPage(tapId, url) {
 			document.getElementById(tapId).addEventListener('tap', function() {
 				//打开关于页面
-				currentpage=plus.webview.currentWebview();
-				currentpage.append(plus.webview.create(url));
+				currentpage = plus.webview.currentWebview();
+				//currentpage.append(plus.webview.create(url));
 				console.log(JSON.stringify(plus.webview.all()));
-//				var webview = mui.openWindow({
-//					//id: tapId,
-//					url: url,
-//					styles: {
-//						top: '45px',
-//						bottom: '50px',
-//						bounce: 'vertical',
-//					},
-//				});
+				var webview = mui.openWindow({
+					//id: tapId,
+					url: url,
+					styles: {
+						top: '45px',
+						bottom: '50px',
+						bounce: 'vertical',
+					},
+				});
 			});
 		}
 	</script>
