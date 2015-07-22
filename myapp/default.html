@@ -101,14 +101,18 @@
 					var temp = {};
 					temp[targetTab] = "true";
 					mui.extend(aniShow, temp);
+					
 					plus.webview.show(targetTab, "fade-in", 0);
 					//plus.webview.hide(baidu);
 				}
-				//隐藏当前;
+				//隐藏当前,以及当前页面;
+				//plus.webview.getWebviewById('new-call-group.html').hide();
+				plus.webview.hide('new-call-group.html')
 				plus.webview.hide(activeTab);
 				//更改当前活跃的选项卡
 				activeTab = targetTab;
-				console.log(activeTab)
+				//console.log(JSON.stringify(activeTab.children()));
+				
 			});
 			var first = null;
 			mui.back = function() {

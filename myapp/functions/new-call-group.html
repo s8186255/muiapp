@@ -94,7 +94,14 @@
 							checkedValues.push(box.parentNode.innerText);
 						}
 					});
-					mui.alert('你选择了: ' + checkedValues);
+					mui.confirm('你选择了: ' + checkedValues);
+					mui.ajax('',{
+						data:{},
+						dataType:'json',
+						type:'post',
+						success:function(){},
+						error:function(){}
+					})
 				}, false);
 			});
 			//添加plus事件处理
@@ -129,11 +136,12 @@
 					function(e) {
 						alert("Get address book failed: " + e.message);
 					});
-			}
+			};
 
 			function handle(item) {
 				alert(item.querySelector("input").checked);
-			}
+			};
+			
 		</script>
 	</body>
 

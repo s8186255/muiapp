@@ -12,7 +12,7 @@
 		<link rel="stylesheet" href="../css/mui.min.css">
 		<!--App自定义的css-->
 		<link rel="stylesheet" type="text/css" href="../css/app.css" />
-
+		<script src="../js/sys/template.js"></script>
 	</head>
 
 	<body>
@@ -36,35 +36,61 @@
 				</li>
 			</ul>
 		</div>
+		<div id="content"></div>
+		<script id="test" type="text/html">
+			{{if isAdmin}}
+
+			<h1>{{title}}</h1>
+			<ul>
+				{{each list as value i}}
+				<li>索引 {{i + 1}} ：{{value}}</li>
+				{{/each}}
+			</ul>
+
+			{{/if}}
+		</script>
+
+		<script>
+			var data = {
+				title: '基本例子',
+				isAdmin: true,
+				list: ['文艺', '博客', '摄影', '电影', '民谣', '旅行', '吉他']
+			};
+			var html = template('test', data);
+			document.getElementById('content').innerHTML = html;
+		</script>
+
 	</body>
 	<script src="../js/sys/mui.min.js"></script>
+
 	<script>
 		mui.init({
 			swipeBack: true //启用右滑关闭功能
 		});
-//		openUrl('hello02', 'hello02');
-//		openUrl('hello01', 'hello01');
-//		openUrl('multi-voice', 'multi-voice');
-		//openUrl('contact','contact')
-
+		 //		openUrl('hello02', 'hello02');
+		 //		openUrl('hello01', 'hello01');
+		 //		openUrl('multi-voice', 'multi-voice');
+		 //openUrl('contact','contact')
 		openNewPage("loginme", "login.html")
-		openNewPage("new-call-group", "new-call-group.html")
+		 openNewPage("new-call-group", "new-call-group.html")
+
 		function openNewPage(tapId, url) {
 			document.getElementById(tapId).addEventListener('tap', function() {
 				//打开关于页面
-				var webview = mui.openWindow({
-					//id: tapId,
-					url: url,
-					styles: {
-						top: '45px',
-						bottom: '50px',
-						bounce: 'vertical',
-
-					},
-				});
+				currentpage=plus.webview.currentWebview();
+				currentpage.append(plus.webview.create(url));
+				console.log(JSON.stringify(plus.webview.all()));
+//				var webview = mui.openWindow({
+//					//id: tapId,
+//					url: url,
+//					styles: {
+//						top: '45px',
+//						bottom: '50px',
+//						bounce: 'vertical',
+//					},
+//				});
 			});
 		}
-		
 	</script>
 
 </html>

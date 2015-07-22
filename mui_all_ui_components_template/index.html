@@ -39,10 +39,12 @@
 					}
 				}]
 			});
+			 //console.log(JSON.stringify(plus.webview.getWebviewById('list')));
 			mui.plusReady(function() {
 				//仅支持竖屏显示
 				plus.screen.lockOrientation("portrait-primary");
 				main = plus.webview.currentWebview();
+				
 				main.addEventListener('maskClick', closeMenu);
 				//处理侧滑导航，为了避免和子页面初始化等竞争资源，延迟加载侧滑页面；
 				setTimeout(function() {
@@ -59,7 +61,9 @@
 						}
 					});
 				}, 200);
+				var list = plus.webview.all();
 			});
+			
 			var isInTransition = false;
 			/**
 			 * 显示侧滑菜单
@@ -129,6 +133,7 @@
 			});
 			 //敲击顶部导航，内容区回到顶部
 			document.querySelector('header').addEventListener('doubletap', function() {
+				console.log(JSON.stringify(main.children()));
 				main.children()[0].evalJS('mui.scrollTo(0, 100)');
 			});
 			 //主界面向右滑动，若菜单未显示，则显示菜单；否则不做任何操作
@@ -153,11 +158,12 @@
 				if (subWebview == null) {
 					//获取共用父窗体
 					template = plus.webview.getWebviewById("default-main");
+					
 				}
 				if (template) {
 					subWebview = template.children()[0];
 					subWebview.loadURL('examples/info.html');
-//					修改共用父模板的标题
+					//					修改共用父模板的标题
 					mui.fire(template, 'updateHeader', {
 						title: '关于',
 						showMenu: false
@@ -186,6 +192,17 @@
 					}
 				}
 			};
+
+			function plusReady() {
+				console.log('hello')
+			}
+			if (window.plus) {
+console.log(plus.webview.all());
+				plusReady();
+			} else {
+				document.addEventListener("plusready", plusReady, false);
+				
+			}
 		</script>
 	</body>
 
