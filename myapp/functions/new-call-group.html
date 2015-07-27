@@ -85,6 +85,7 @@
 				list.style.height = (document.body.offsetHeight - header.offsetHeight) + 'px';
 				//create
 				window.indexedList = new mui.IndexedList(list);
+				
 				//done event
 				done.addEventListener('tap', function() {
 					var checkboxArray = [].slice.call(list.querySelectorAll('input[type="checkbox"]'));
@@ -94,12 +95,12 @@
 							checkedValues.push(box.parentNode.innerText);
 						}
 					});
-					mui.confirm('你选择了: ' + checkedValues);
-					mui.ajax('',{
-						data:{},
+					//mui.confirm('你选择了: ' + checkedValues);
+					mui.ajax('http://220.171.108.251:3000/mod/comm/groups.json',{
+						//data:{},
 						dataType:'json',
-						type:'post',
-						success:function(){},
+						type:'get',
+						success:function(data){alert('hello')},
 						error:function(){}
 					})
 				}, false);
@@ -139,6 +140,7 @@
 			};
 
 			function handle(item) {
+				//if(item.querySelector("input").checked
 				alert(item.querySelector("input").checked);
 			};
 			
