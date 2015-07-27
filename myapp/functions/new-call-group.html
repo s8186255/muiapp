@@ -96,12 +96,12 @@
 						}
 					});
 					//mui.confirm('你选择了: ' + checkedValues);
-					mui.ajax('http://220.171.108.251:3000/mod/comm/groups.json',{
+					mui.ajax('http://192.168.1.106:3000/mod/comm/groups.json',{
 						//data:{},
 						dataType:'json',
 						type:'get',
 						success:function(data){alert('hello')},
-						error:function(){}
+						error:function(){alert('hello error')}
 					})
 				}, false);
 			});
