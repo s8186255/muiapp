@@ -29,37 +29,37 @@
 	<h1 class="mui-title">标题</h1>
 </header>
 		<div class="mui-content">
-			<div id='list' class="mui-group-list">
-				<div class="mui-group-list-search mui-input-row mui-search">
-					<input type="search" class="mui-input-clear mui-group-list-search-input" placeholder="搜索群">
+			<div id='list' class="mui-indexed-list">
+				<div class="mui-indexed-list-search mui-input-row mui-search">
+					<input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="搜索群">
 				</div>
-				<div class="mui-group-list-bar">
+				<div class="mui-indexed-list-bar">
 				</div>
-				<div class="mui-group-list-alert"></div>
-				<div class="mui-group-list-inner">
-					<div class="mui-group-list-empty-alert">没有数据</div>
+				<div class="mui-indexed-list-alert"></div>
+				<div class="mui-indexed-list-inner">
+					<div class="mui-indexed-list-empty-alert">没有数据</div>
 					<ul class="mui-table-view" id="acc">
-						<li class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left">
+						<li class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
 							<input type="checkbox" />阿克苏机场</li>
-						<li data-value="BPL" data-tags="ALaShanKou" class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left">
+						<li data-value="BPL" data-tags="ALaShanKou" class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
 							<input type="checkbox" />阿拉山口机场</li>
-						<li data-value="AAT" data-tags="ALeTai" class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left">
+						<li data-value="AAT" data-tags="ALeTai" class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
 							<input type="checkbox" />阿勒泰机场</li>
-						<li data-value="NGQ" data-tags="ALiKunSha" class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left">
+						<li data-value="NGQ" data-tags="ALiKunSha" class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
 							<input type="checkbox" />阿里昆莎机场</li>
-						<li data-value="AQG" data-tags="AnQingTianZhuShan" class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left">
+						<li data-value="AQG" data-tags="AnQingTianZhuShan" class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
 							<input type="checkbox" />安庆天柱山机场</li>
-						<li data-value="MFM" data-tags="AoMenGuoJi" class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left">
+						<li data-value="MFM" data-tags="AoMenGuoJi" class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
 							<input type="checkbox" />澳门国际机场</li>
-						<li data-value="BSD" data-tags="BaoShan" class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left">
+						<li data-value="BSD" data-tags="BaoShan" class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
 							<input type="checkbox" />保山机场</li>
-						<li data-value="BAV" data-tags="BaoTou" class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left">
+						<li data-value="BAV" data-tags="BaoTou" class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
 							<input type="checkbox" />包头机场</li>
-						<li data-value="BHY" data-tags="BeiHaiFuCheng" class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left">
+						<li data-value="BHY" data-tags="BeiHaiFuCheng" class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
 							<input type="checkbox" />北海福成机场</li>
-						<li data-value="NAY" data-tags="BeiJingNanYuan" class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left">
+						<li data-value="NAY" data-tags="BeiJingNanYuan" class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
 							<input type="checkbox" />北京南苑机场</li>
-						<li data-value="PEK" data-tags="BeiJingShouDuGuoJi" class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left">
+						<li data-value="PEK" data-tags="BeiJingShouDuGuoJi" class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left">
 							<input type="checkbox" />北京首都国际机场</li>
 					</ul>
 				</div>
@@ -85,7 +85,7 @@
 			//calc hieght
 			list.style.height = (document.body.offsetHeight  - 75) + 'px';
 			//create
-			window.groupList = new mui.GroupList(list);
+			window.indexedList = new mui.IndexedList(list);
 			//done event
 			done.addEventListener('tap', function() {
 				var checkboxArray = [].slice.call(list.querySelectorAll('input[type="checkbox"]'));
@@ -112,7 +112,7 @@
 							length = contacts.length;
 							for (var i = 0; i < length; i++) {
 								try {
-									contactStr += '<li  class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left" onclick="handle(this)"><input type="checkbox"/>' + contacts[i].displayName + "|" + contacts[i].phoneNumbers[0].value + '</li>';
+									contactStr += '<li  class="mui-table-view-cell mui-indexed-list-item mui-checkbox mui-left" onclick="handle(this)"><input type="checkbox"/>' + contacts[i].displayName + "|" + contacts[i].phoneNumbers[0].value + '</li>';
 								} catch (e) {
 									continue;
 								}

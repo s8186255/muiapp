@@ -39,35 +39,15 @@
 		</div>
 	</body>
 	<script src="../js/sys/mui.min.js"></script>
-	<script>
+<script type="text/javascript" src="../js/login.js" ></script>
+<script>
 		mui.init({
 			swipeBack: true //启用右滑关闭功能
 		});
 		openNewPage("multi-voice-free-call", "multi-voice-free-call.html");
 		openNewPage("multi-voice-group-call", "multi-voice-group-call.html");
 
-		function openNewPage(tapId, url) {
-			document.getElementById(tapId).addEventListener('tap', function() {
-				//打开关于页面
-//				console.log(localStorage.token);
-				console.log(plus.storage.getItem('token'));
-				if (localStorage.getItem("token") != '') {
-					var webview = mui.openWindow({
-						//id: tapId,
-						url: url,
-						styles: {
-							//top: '45px',
-							//bottom: '50px',
-							bounce: 'vertical',
-						},
-					});
-				} else {
-					mui.openWindow({
-						url: "login.html"
-					})
-				}
-			});
-		}
+		
 	</script>
 
 </html>
