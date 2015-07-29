@@ -101,7 +101,8 @@
 					});
 					//mui.confirm('你选择了: ' + checkedValues);
 					var groupName = document.getElementById('group-name').value;
-					mui.ajax('http://135.224.187.47:3000/mod/comm/groups', {
+					var serviceUrl = 'http://135.224.187.47:3000/mod/comm/groups?toke=';
+					mui.ajax(serviceUrl+getToken(), {
 						data: {
 							groupName: groupName,
 							phones: checkedValues
