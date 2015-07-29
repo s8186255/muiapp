@@ -74,3 +74,7 @@ function login() {
 		url: "login.html"
 	})
 }
+
+function getToken(){
+	localStorage.getItem('token')
+}
