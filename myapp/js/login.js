@@ -44,7 +44,7 @@ function openNewPage(tapId, url) {
 }
 
 function isLogin() {
-	if (localStorage.getItem("token") == null) {
+	if (localStorage.getItem("token") != null) {
 		return true;
 	} else {
 		return false;
@@ -75,6 +75,12 @@ function login() {
 	})
 }
 
-function getToken(){
-	localStorage.getItem('token')
+function getToken() {
+	var token = localStorage.getItem('token');
+	console.log(token);
+	if (token == null) {
+		return false
+	} else {
+		return token;
+	}
 }

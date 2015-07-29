@@ -101,7 +101,7 @@
 					});
 					//mui.confirm('你选择了: ' + checkedValues);
 					var groupName = document.getElementById('group-name').value;
-					var serviceUrl = 'http://135.224.187.47:3000/mod/comm/groups?toke=';
+					var serviceUrl = 'http://135.224.187.47:3000/mod/comm/groups?token=';
 					mui.ajax(serviceUrl+getToken(), {
 						data: {
 							groupName: groupName,
@@ -113,11 +113,13 @@
 							if (data.login) {
 								console.log(JSON.stringify(data.login));
 							} else {
+								console.log(JSON.stringify(data.login));
 								login();
 							}
 						},
 						error: function(data) {
-							console.log(JSON.stringify(data.login));
+							console.log(JSON.stringify(data));
+							alert("network is not ok");
 						},
 						timeout: 1000,
 					});

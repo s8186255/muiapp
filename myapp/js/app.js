@@ -13,23 +13,37 @@
 		loginInfo = loginInfo || {};
 		loginInfo.account = loginInfo.account || '';
 		loginInfo.password = loginInfo.password || '';
-		if (loginInfo.account.length < 5) {
-			return callback('账号最短为 5 个字符');
+		if (loginInfo.account.length < 2) {
+			return callback('账号最短为 2 个字符');
 		}
-		if (loginInfo.password.length < 6) {
-			return callback('密码最短为 6 个字符');
+		if (loginInfo.password.length < 2) {
+			return callback('密码最短为 2 个字符');
 		}
 		//获取本地用户信息，并与本地信息进行对照；
-		var users = JSON.parse(localStorage.getItem('$users') || '[]');
-		var authed = users.some(function(user) {
-			return loginInfo.account == user.account && loginInfo.password == user.password;
-		});
-		
-		if (authed) {
-			return owner.createState(loginInfo.account, callback);
-		} else {
-			return callback('用户名或密码错误');
-		}
+//		var users = JSON.parse(localStorage.getItem('$users') || '[]');
+//		var authed = users.some(function(user) {
+//			return loginInfo.account == user.account && loginInfo.password == user.password;
+//		});
+//		
+//		if (authed) {
+//			return owner.createState(loginInfo.account, callback);
+//		} else {
+//			return callback('用户名或密码错误');
+//		}
+		// 获取用户输入信息，并发送到服务端，如果验证通过，服务端会返回一个token，手机端将token保存在本地
+		serviceUrl = 'http://135.224.187.47:3000/members/login'
+		mui.ajax(serviceUrl,{
+			type:'post',
+			data:{user:{
+				name: 'suanqi',
+				password: '123'
+			}},
+			success:function(data){
+				console.log(JSON.stringify(data));
+				localStorage.setItem('token',data.token);
+				console.log(localStorage.token);
+			}
+		})
 	};
 
 	owner.createState = function(name, callback) {
