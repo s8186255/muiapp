@@ -39,4 +39,5 @@ function find() {
 function handle(item) {
 	//if(item.querySelector("input").checked
 	//alert(item.querySelector("input").checked);
+	
 };

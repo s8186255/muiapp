@@ -101,8 +101,13 @@
 						}
 					});
 					var groupName = document.getElementById('group-name').value;
+					if(groupName==''){
+						return mui.toast("hello")
+					}
+					if(checkedValues==''){
+						return mui.toast("hello1")
+					}
 					var serviceUrl = host+'mod/comm/groups?token='+getToken();
-					console.log(getToken()+'token');
 					mui.ajax(serviceUrl, {
 						data: {
 							groupName: groupName,
