@@ -31,7 +31,8 @@
 //			return callback('用户名或密码错误');
 //		}
 		// 获取用户输入信息，并发送到服务端，如果验证通过，服务端会返回一个token，手机端将token保存在本地
-		serviceUrl = 'http://135.224.187.47:3000/members/login'
+		var serviceUrl = host+'members/login';
+		//serviceUrl = 'http://135.224.187.47:3000/members/login';
 		mui.ajax(serviceUrl,{
 			type:'post',
 			data:{user:{

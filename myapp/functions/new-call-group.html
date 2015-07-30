@@ -80,6 +80,7 @@
 		<script src="../js/sys/mui.indexedlist.js"></script>
 		<script type="text/javascript" src="../js/login.js"></script>
 		<script type="text/javascript" src="../js/contacts.js"></script>
+		<script type="text/javascript" src="../js/setting.js"></script>
 		<script type="text/javascript" charset="utf-8">
 			 //			mui.init();
 			mui.ready(function() {
@@ -99,10 +100,10 @@
 							checkedValues.push(box.parentNode.innerText);
 						}
 					});
-					//mui.confirm('你选择了: ' + checkedValues);
 					var groupName = document.getElementById('group-name').value;
-					var serviceUrl = 'http://135.224.187.47:3000/mod/comm/groups?token=';
-					mui.ajax(serviceUrl+getToken(), {
+					var serviceUrl = host+'mod/comm/groups?token='+getToken();
+					console.log(getToken()+'token');
+					mui.ajax(serviceUrl, {
 						data: {
 							groupName: groupName,
 							phones: checkedValues

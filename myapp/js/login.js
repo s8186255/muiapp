@@ -44,6 +44,7 @@ function openNewPage(tapId, url) {
 }
 
 function isLogin() {
+	console.log(localStorage.getItem("token"));
 	if (localStorage.getItem("token") != null) {
 		return true;
 	} else {
@@ -77,7 +78,6 @@ function login() {
 
 function getToken() {
 	var token = localStorage.getItem('token');
-	console.log(token);
 	if (token == null) {
 		return false
 	} else {
