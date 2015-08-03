@@ -2,63 +2,150 @@
 <html>
 
 	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-		<title>Accelerometer Example</title>
-		<link rel="stylesheet" href="../css/mui.css" />
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title></title>
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link href="../css/mui.indexedlist.css" rel="stylesheet" />
+		<style>
+			html,
+			body {
+				height: 100%;
+				overflow: hidden;
+			}
+			.mui-bar {
+				-webkit-box-shadow: none;
+				box-shadow: none;
+			}
+			.mui-bar-nav .mui-btn {
+				padding: 4px 8px;
+			}
+		</style>
 	</head>
 
 	<body>
+		<header class="mui-bar mui-bar-nav">
+			<a class="mui-action-back mui-icon mui-pull-left"></a>
+			<h1 class="mui-title">我的组</h1>
+			<button id='done' class="mui-btn mui-pull-right mui-btn-blue">呼叫</button>
+		</header>
 
-		Acceleration:
-		<br/>
-		<p id="acc"></p>
-		<button onclick="find()">Find</button>
-	</body>
-	<script src="../js/sys/mui.min.js"></script>
-	<script type="text/javascript">
-		 // 监听plusready事件  
-		 //		mui.plusReady(function() {
-		 // 扩展API加载完毕，现在可以正常调用扩展API
-		 //				plus.contacts.getAddressBook(
-		 //					plus.contacts.ADDRESSBOOK_PHONE,
-		 //					function(addressbook) {
-		 //						alert('successfully get addressbook');
-		 //					},
-		 //					function(e) {
-		 //						alert("Get address book failed: " + e.message);
-		 //					})
-		 //		})
-		document.addEventListener("plusready", function() {}, false);
-		function find() {
-				plus.contacts.getAddressBook(
-					plus.contacts.ADDRESSBOOK_PHONE,
-					function(addressbook) {
-						contactStr = '';
-						addressbook.find(
-							["displayName", "phoneNumbers"],
-							function(contacts) {
-								length = contacts.length;
-								for (var i=0;i<length;i++) {
-									try {
-										contactStr += '<li data-value="AKU" data-tags="AKeSu" class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left"><input type="checkbox"/>'+contacts[i].displayName + "|"+contacts[i].phoneNumbers[0].value+'</li>';
-									} catch (e) {
-										continue;
-									}
-								};
-								document.getElementById('acc').innerHTML = contactStr+length.toString();
-							},
-							function() {
-								alert("error");
-							}, {
-								multiple: true
-							});
+		<div class="mui-content">
+
+			<div id='list' class="mui-indexed-list">
+				<div class="mui-indexed-list-search mui-input-row mui-search">
+					<input type="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="搜索">
+				</div>
+				<div class="mui-indexed-list-bar">
+					<a>A</a>
+					<a>B</a>
+					<a>C</a>
+					<a>D</a>
+					<a>E</a>
+					<a>F</a>
+					<a>G</a>
+					<a>H</a>
+					<a>I</a>
+					<a>J</a>
+					<a>K</a>
+					<a>L</a>
+					<a>M</a>
+					<a>N</a>
+					<a>O</a>
+					<a>P</a>
+					<a>Q</a>
+					<a>R</a>
+					<a>S</a>
+					<a>T</a>
+					<a>U</a>
+					<a>V</a>
+					<a>W</a>
+					<a>X</a>
+					<a>Y</a>
+					<a>Z</a>
+				</div>
+				<div class="mui-indexed-list-alert"></div>
+				<div class="mui-indexed-list-inner">
+					<div class="mui-indexed-list-empty-alert">没有数据</div>
+					<ul class="mui-table-view" id="phoneList">
+
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script src="../js/sys/mui.min.js"></script>
+		<script src="../js/sys/mui.indexedlist.js"></script>
+		<script type="text/javascript" src="../js/login.js"></script>
+		<script type="text/javascript" src="../js/contacts.js"></script>
+		<script type="text/javascript" src="../js/setting.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			mui.ready(function() {
+				var header = document.querySelector('header.mui-bar');
+				var list = document.getElementById('list');
+				var done = document.getElementById('done');
+				//calc hieght
+				list.style.height = (document.body.offsetHeight - header.offsetHeight) + 'px';
+				//create
+				window.indexedList = new mui.IndexedList(list);
+				serviceUrl = host + "groups";
+				groups = [];
+				mui.ajax(serviceUrl,{
+					type:'get',
+					success:function(data){
+						groups:['su','an','qi']
 					},
-					function(e) {
-						alert("Get address book failed: " + e.message);
+					error: function(data){
+						
+					}
+				});
+				groups = ['su','an','qi'];
+				groupLength= groups.length;
+				groupsStr = "";
+				for(i in groups){
+					groupsStr+= '<li  class="mui-table-view-cell mui-group-list-item mui-checkbox mui-left" onclick="handle(this)"><input type="checkbox"/>' + groups[i]  + '</li>'
+				}
+				document.getElementById("phoneList").innerHTML = groupsStr;
+				//done event
+				done.addEventListener('tap', function() {
+					var checkboxArray = [].slice.call(list.querySelectorAll('input[type="checkbox"]'));
+					var checkedValues = [];
+					checkboxArray.forEach(function(box) {
+						if (box.checked) {
+							checkedValues.push(box.parentNode.innerText);
+						}
 					});
-			}
-			//
-	</script>
+					var groupName = document.getElementById('group-name').value;
+					if (groupName == '') {
+						return mui.toast("hello")
+					}
+					if (checkedValues == '') {
+						return mui.toast("hello1")
+					}
+					var serviceUrl = host + 'mod/comm/groups?token=' + getToken();
+					mui.ajax(serviceUrl, {
+						data: {
+							groupName: groupName,
+							phones: checkedValues
+						},
+						dataType: 'json',
+						type: 'post',
+						success: function(data) {
+							if (data.login) {
+								console.log(JSON.stringify(data.login));
+							} else {
+								console.log(JSON.stringify(data.login));
+								login();
+							}
+						},
+						error: function(data) {
+							console.log(JSON.stringify(data));
+							alert("network is not ok");
+						},
+						timeout: 1000,
+					});
+				}, false);
+			});
+		</script>
+	</body>
 
 </html>

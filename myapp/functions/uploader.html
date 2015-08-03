@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+		<meta name="HandheldFriendly" content="true"/>
+		<meta name="MobileOptimized" content="320"/>
+		<title>Hello H5+</title>
+		<script type="text/javascript" src="../js/common.js"></script>
+		<script type="text/javascript" src="../js/handle-file.js"></script>
+
+		</script>
+		<link rel="stylesheet" href="../css/common.css" type="text/css" charset="utf-8"/>
+	</head>
+	<body>
+		<header>
+			<div class="nvbt iback" onclick="back(true);"></div>
+			<div class="nvtt">Uploader</div>
+			<div class="nvbt idoc" onclick="openDoc('Uploader Document','/doc/uploader.html')"></div>
+		</header>
+		<div id="dcontent" class="dcontent">
+			<br/>
+			<p class="heading">上传文件列表：</p>
+			<ul id="files" style="text-align:left;">
+				<p id="empty" style="font-size:12px;color:#C6C6C6;">无上传文件</p>
+			</ul>
+			<table style="width:100%;">
+				<tbody>
+					<tr>
+						<td style="width:40%"><div class="button button-select" onclick="appendByCamera()">拍照</div></td>
+						<td style="width:40%"><div class="button button-select" onclick="appendByGallery()">相册选取</div></td>
+						<td style="width:40%"><div class="button button-select" onclick="startRecord()">录音</div></td>
+					</tr>
+				</tbody>
+			</table>
+			<br/>
+			<div class="button" onclick="upload()">上 传</div>
+			<br/>
+			<!--<ul class="dlist">
+				<li class="ditem" onclick="appendByCamera()">拍照添加文件</li>
+				<li class="ditem" onclick="appendByGallery()">相册添加文件</li>
+			</ul>-->
+		</div>
+
+	</body>
+
+</html>
