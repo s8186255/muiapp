@@ -11,6 +11,7 @@
 var watchId;
 function geoInf( position ) {
 	var str = "";
+	str += "地址："+position.addresses+"\n";//获取地址信息
 	var timeflag = position.timestamp;//获取到地理位置信息的时间戳；一个毫秒数；
 	str += "时间戳："+timeflag+"\n";
 	var codns = position.coords;//获取地理坐标信息；

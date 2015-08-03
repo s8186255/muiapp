@@ -1,10 +1,10 @@
 ﻿{
     "@platforms": ["android", "iPhone", "iPad"],
-    "id": "H587C5538",/*应用的标识，创建应用时自动生成，勿手动修改*/
-    "name": "html5plus_local_res_template",/*应用名称，程序桌面图标名称*/
+    "id": "H53D5B582",/*应用的标识，创建应用时自动生成，勿手动修改*/
+    "name": "hello",/*应用名称，程序桌面图标名称*/
     "version": {
-        "name": "1.4.2",/*应用版本名称*/
-        "code": "142"
+        "name": "1.5.0",/*应用版本名称*/
+        "code": "150"
     },
     "description": "HTML5 Plus演示应用",/*应用描述信息*/
     "icons": {
@@ -21,94 +21,100 @@
     ],
     "permissions": {
         "Accelerometer": {
-            "description": "访问加速度感应器"
+            "description": "加速度传感器"
         },
         "Audio": {
-            "description": "访问麦克风"
+            "description": "音频录制与播放"
         },
         "Cache": {
-            "description": "管理应用缓存"
+            "description": "缓存管理"
         },
         "Camera": {
-            "description": "访问摄像头"
+            "description": "摄像头"
         },
         "Console": {
-            "description": "跟踪调试输出日志"
+            "description": "调试输出日志"
         },
         "Contacts": {
-            "description": "访问系统联系人信息"
+            "description": "系统通讯录"
         },
         "Device": {
-            "description": "访问设备信息"
+            "description": "设备信息"
         },
         "Downloader": {
-            "description": "文件下载管理"
+            "description": "文件下载"
         },
         "Events": {
-            "description": "应用扩展事件"
+            "description": "扩展事件"
         },
         "File": {
-            "description": "访问本地文件系统"
+            "description": "本地文件系统"
         },
         "Gallery": {
-            "description": "访问系统相册"
+            "description": "系统相册"
         },
         "Geolocation": {
-            "description": "访问位置信息"
+            "description": "位置信息"
         },
         "Invocation": {
-            "description": "使用Native.js能力"
+            "description": "Native.js能力"
         },
         "Messaging": {
-            "description": "访问通讯能力"
+            "description": "消息通讯"
         },
         "Orientation": {
-            "description": "访问方向感应器"
+            "description": "方向传感器"
         },
         "Proximity": {
-            "description": "访问距离感应器"
+            "description": "距离传感器"
         },
         "Storage": {
-            "description": "管理应用本地数据"
+            "description": "本地数据存储"
         },
-        "UI": {
-            "description": "管理系统原生控件"
+        "Webview": {
+            "description": "窗口管理"
+        },
+        "NativeUI": {
+            "description": "原生UI控件"
+        },
+        "Navigator": {
+            "description": "浏览器信息"
         },
         "Uploader": {
-            "description": "管理文件上传任务"
+            "description": "文件上传"
         },
         "Runtime": {
-            "description": "访问运行期环境"
+            "description": "运行环境"
         },
         "XMLHttpRequest": {
-            "description": "跨域网络访问"
+            "description": "跨域网络请求"
         },
         "Zip": {
-            "description": "文件压缩与解压缩"
+            "description": "压缩与解压"
         },
         "Barcode": {
-            "description": "管理二维码扫描插件"
+            "description": "二维码扫描"
         },
         "Maps": {
-            "description": "管理地图插件"
+            "description": "地图"
         },
         "OAuth": {
-            "description": "管理登录授权插件"
+            "description": "登录授权"
         },
         "Payment": {
-            "description": "管理支付插件"
+            "description": "支付"
         },
         "Push": {
-            "description": "管理推送消息插件"
+            "description": "消息推送"
         },
         "Share": {
-            "description": "管理社交分享插件"
+            "description": "社交分享"
         },
         "Speech": {
-            "description": "管理语音识别插件"
+            "description": "语音识别"
         },
         "Statistic": {
-            "description": "管理统计插件"
+            "description": "统计"
         }
     },
     "plus": {

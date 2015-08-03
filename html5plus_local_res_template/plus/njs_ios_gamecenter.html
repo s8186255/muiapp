@@ -9,6 +9,8 @@
 		<script type="text/javascript" src="../js/common.js"></script>
 		<script type="text/javascript">
 /*	
+NSNotificationCenter *nc = nil;
+
 // 游戏玩家登录状态监听函数
 - (void)authenticationChanged:(NSNotification*)notification
 {
@@ -35,12 +37,6 @@
 // 登录到游戏中心
 - (void)loginGamecenter
 {
-    // 监听用户登录状态变更事件
-    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    [nc addObserver:self
-           selector:@selector(authenticationChanged)
-               name:@"GKPlayerAuthenticationDidChangeNotificationName"
-             object:nil];
     // 获取游戏玩家共享实例对象
     GKLocalPlayer *localplayer = [GKLocalPlayer localPlayer];
     // 判断游戏玩家是否已经登录认证
@@ -48,32 +44,39 @@
         // 玩家已登录认证，获取玩家信息
         [self playerInformation:localplayer];
     } else {
+	    // 监听用户登录状态变更事件
+	    if(!nc){
+		    nc = [NSNotificationCenter defaultCenter];
+		    [nc addObserver:self
+		           selector:@selector(authenticationChanged)
+		               name:@"GKPlayerAuthenticationDidChangeNotificationName"
+		             object:nil];
+		}
         // 玩家未登录认证，发起认证请求
         [localplayer authenticateWithCompletionHandler:nil];
         NSLog(@"登录中...");
     }
 	// 释放使用的对象
     [localplayer release];
-    [nc release];
 }
 
 // 停止监听登录游戏状态变化
 - (void)logoutGamecenter
 {
     // 取消监听用户登录状态变化
-    NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    [nc removeObserver:self
-                  name:@"GKPlayerAuthenticationDidChangeNotificationName"
-                object:nil];
-	// 释放使用的对象
-    [nc release];
+    if(nc){
+	    [nc removeObserver:self
+	                  name:@"GKPlayerAuthenticationDidChangeNotificationName"
+	                object:nil];
+	}
 }
 */
 
 // H5 plus事件处理
 var GKLocalPlayer=null,NSNotificationCenter=null;
-var delegate=null;
+var nc=null,delegate=null;
 function plusReady(){
+	plus.webview.currentWebview().setStyle({popGesture:"none"});
 	if ( plus.os.name == "iOS" ) {
 		GKLocalPlayer  = plus.ios.importClass("GKLocalPlayer");
 		NSNotificationCenter = plus.ios.importClass("NSNotificationCenter");
@@ -107,11 +110,13 @@ function authenticationChanged( notification ){
 		bLogin = true;
 	} else {
 		// 玩家未登录认证，提示用户登录
-		eStart.innerText = "请登录";
-        bLogin = false;
+		setTimeout(function(){
+			eStart.innerText = "请登录";
+	        bLogin = false;
+		},500);
 	}
 	// 释放使用的对象
-	plus.ios.deleteObject(player);
+//	plus.ios.deleteObject(player);
 }
 
 // 获取游戏玩家状态信息
@@ -125,16 +130,6 @@ function longinGamecenter(){
 	if ( bLogin ){
 		return;
 	}
-    // 监听用户登录状态变更事件
-    var nc = NSNotificationCenter.defaultCenter();
-    if(delegate){
-    	nc.removeObservernameobject(delegate,"GKPlayerAuthenticationDidChangeNotificationName",null);
-    }
-    delegate = plus.ios.implements("NSObject",{"authenticationChanged:":authenticationChanged});
-    nc.addObserverselectornameobject(delegate,
-    	plus.ios.newObject("@selector","authenticationChanged:"),
-    	"GKPlayerAuthenticationDidChangeNotificationName",
-    	null);
     // 获取游戏玩家共享实例对象
     var localplayer = GKLocalPlayer.localPlayer();
     // 判断游戏玩家是否已经登录认证
@@ -143,24 +138,30 @@ function longinGamecenter(){
         playerInformation( localplayer );
         bLogin = true;
     } else {
+        eStart.innerText = "登录中...";
+		// 监听用户登录状态变更事件
+	    if(!nc){
+	    	nc = NSNotificationCenter.defaultCenter();
+	    	delegate||(delegate=plus.ios.implements("NSObject",{"authenticationChanged:":authenticationChanged}));
+	    	nc.addObserverselectornameobject(delegate,
+		    	plus.ios.newObject("@selector","authenticationChanged:"),
+		    	"GKPlayerAuthenticationDidChangeNotificationName",
+		    	null);
+	    }
         // 玩家未登录认证，发起认证请求
         localplayer.authenticateWithCompletionHandler(null);
-        eStart.innerText = "登录中...";
     }
     // 释放使用的对象
 	plus.ios.deleteObject(localplayer);
-	plus.ios.deleteObject(nc);
 }
 
 // 停止监听登录游戏状态变化
 function stopGamecenterObserver()
 {
     // 取消监听用户登录状态变化
-    var nc = NSNotificationCenter.defaultCenter();
-    nc.removeObservernameobject(delegate,"GKPlayerAuthenticationDidChangeNotificationName",null);
-    plus.ios.deleteObject(nc);
-    plus.ios.deleteObject(delegate);
-    delegate = null;
+    nc&&nc.removeObservernameobject(delegate,"GKPlayerAuthenticationDidChangeNotificationName",null);
+    plus.ios.deleteObject(nc);nc = null;
+    plus.ios.deleteObject(delegate);delegate = null;
 }
 		</script>
 		<style type="text/css">
