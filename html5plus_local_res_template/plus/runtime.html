@@ -38,21 +38,21 @@ function getWidgetInfo() {
 	} );
 }
 function setBadge() {
+	plus.runtime.setBadgeNumber( 50 );
+	outSet( "设置程序图标右上角显示的提示数字为50\n请返回桌面查看" );
 	if(plus.os.name=="iOS"){
-		plus.runtime.setBadgeNumber( 50 );
-		outSet( "设置程序图标右上角显示的提示数字为50\n请按Home键回桌面查看" );
 		outLine( '*如果无法设置提示数字，请到"设置"->"通知"中配置应用在通知中心显示!' );
 	}else{
-		outSet( "此平台不支持设置程序图标右上角数字！" );
+		outLine( "注：仅支持小米(MIUI v5)，其它设备暂不支持此功能!" );
 	}
 }
 function clearBadge() {
+	plus.runtime.setBadgeNumber( 0 );
+	outSet( "清除程序图标右上角显示的提示数字\n请返回桌面查看" );
 	if(plus.os.name=="iOS"){
-		plus.runtime.setBadgeNumber( 0 );
-		outSet( "清除程序图标右上角显示的提示数字\n请按Home键回桌面查看" );
-		outLine( '*如果无法清除提示数字，请到"设置"->"通知"中配置应用在通知中心显示!' );
+		outLine( '如果无法清除提示数字，请到"设置"->"通知"中配置应用在通知中心显示!' );
 	}else{
-		outSet( "此平台不支持设置程序图标右上角数字！" );
+		outLine( "注：仅支持小米(MIUI v5)，其它设备暂不支持此功能!" );
 	}
 }
 function exitApp(){

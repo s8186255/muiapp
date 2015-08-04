@@ -52,8 +52,13 @@ function showWaiting(){
 }
 function showAlert(){
 	outSet( "弹出系统提示对话框：" );
-	plus.nativeUI.alert("请注意！\n我是系统提示框",function(){
-		outLine( "提示框已关闭！" );
+	plus.nativeUI.alert("请注意！\n我是系统提示框",function(e){
+		var i=e.index;
+		if(i<0){
+			outLine( "按\"返回\"键关闭提示框！" );
+		}else{
+			outLine( "提示框已关闭！" );	
+		}
 	},"nativeUI","好");
 }
 function showConfirm(){
